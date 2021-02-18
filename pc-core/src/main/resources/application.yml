@@ -1,0 +1,19 @@
+server:
+  port: 40323
+  tomcat:
+    uri-encoding: UTF-8
+spring:
+  profiles:
+    active: dev
+  messages:
+    basename: i18n/messages
+  application:
+    name: push-center
+  servlet:
+    multipart:
+      max-request-size: 10MB
+      max-file-size: 10MB
+      enabled: true
+#  jackson:
+#    time-zone: GMT+8
+
