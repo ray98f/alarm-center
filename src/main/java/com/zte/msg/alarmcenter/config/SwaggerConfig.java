@@ -69,7 +69,7 @@ public class SwaggerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("消息中心 API")
+                .title("集中告警 API")
                 .description("后端 接口文档")
                 .version("1.0")
                 .build();
