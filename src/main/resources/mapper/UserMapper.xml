@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.UserMapper">
+    <select id="selectUserInfo" resultType="com.zte.msg.alarmcenter.dto.req.UserReqDTO">
+        select * from user where user_name=#{userName}
+    </select>
+
+    <select id="selectUserRoles" resultType="java.lang.Long">
+        select role_id from user_role where user_id=#{userId} and is_deleted=0
+    </select>
+
+    <insert id="insertUser">
+        insert into user(user_name, password,created_by,updated_by
+        <if test="user.userRealName!=null" >
+            , user_real_name
+        </if>
+        <if test="user.phone!=null" >
+            , phone
+        </if>
+        <if test="user.mail!=null" >
+            , mail
+        </if>
+        <if test="user.status!=null" >
+            , status
+        </if>
+        <if test="user.remark!=null" >
+            , remark
+        </if>
+        ) value(#{user.userName},#{user.password},#{doName},#{doName}
+        <if test="user.userRealName!=null">
+            ,#{user.userRealName}
+        </if>
+        <if test="user.phone!=null" >
+            , #{user.phone}
+        </if>
+        <if test="user.mail!=null" >
+            , #{user.mail}
+        </if>
+        <if test="user.status!=null" >
+            , #{user.status}
+        </if>
+        <if test="user.remark!=null" >
+            , #{user.remark}
+        </if>
+        );
+    </insert>
+
+    <insert id="insertUserRole">
+        insert into user_role(user_id,role_id,created_by,updated_by) values
+        <foreach collection="roleIds" index="index" item="roleId" separator=",">
+            (#{userId},#{roleId},#{doName},#{doName})
+        </foreach>
+    </insert>
+
+    <update id="changePwd" parameterType="com.zte.msg.alarmcenter.dto.req.PasswordReqDTO">
+        update user set password=#{passwordReqDTO.newPwd},updated_by=#{updateBy}
+        where user_name=#{passwordReqDTO.userName} and password=#{passwordReqDTO.oldPwd}
+    </update>
+
+    <update id="resetPwd">
+        update user set password=#{password},updated_by=#{updateBy} where id=#{id}
+    </update>
+
+    <update id="editUser">
+        update user
+        <set>
+            <if test="userReqDTO.userRealName!=null">
+                user_real_name=#{userReqDTO.userRealName},
+            </if>
+            <if test="userReqDTO.phone!=null">
+                phone=#{userReqDTO.phone},
+            </if>
+            <if test="userReqDTO.mail!=null">
+                mail=#{userReqDTO.mail},
+            </if>
+            <if test="userReqDTO.status!=null">
+                status=#{userReqDTO.status},
+            </if>
+            <if test="userReqDTO.remark!=null">
+                remark=#{userReqDTO.remark},
+            </if>
+            updated_by=#{updateBy}
+        </set>
+        where id=#{userReqDTO.userId}
+    </update>
+
+    <update id="deleteUserRole">
+        update user_role set is_deleted=1 where user_id=#{userId} and is_deleted=0
+    </update>
+
+    <update id="deleteUser">
+        <foreach collection="list" index="index" item="id" separator=";">
+            update user set is_deleted=1 where id=#{id} and is_deleted=0
+        </foreach>
+    </update>
+
+    <select id="listAllUser" resultType="com.zte.msg.alarmcenter.entity.User">
+        select * from user where is_deleted=0
+    </select>
+
+    <select id="listUser" resultType="com.zte.msg.alarmcenter.entity.User">
+        select * from user where is_deleted=0
+        <if test="userReqDTO.status!=null">
+            and status=#{userReqDTO.status}
+        </if>
+        <if test="userReqDTO.userRealName!=null">
+            and user_real_name=#{userReqDTO.userRealName}
+        </if>
+    </select>
+</mapper>

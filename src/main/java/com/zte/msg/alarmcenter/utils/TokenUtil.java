@@ -3,6 +3,8 @@ package com.zte.msg.alarmcenter.utils;
 import com.zte.msg.alarmcenter.config.RequestHeaderContext;
 import com.zte.msg.alarmcenter.dto.OpenApiTokenInfo;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
+import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
+import com.zte.msg.alarmcenter.entity.User;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.enums.TokenStatus;
@@ -12,9 +14,7 @@ import io.jsonwebtoken.security.Keys;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * description:
@@ -94,33 +94,6 @@ public class TokenUtil {
     }
 
     /**
-     * OpenApi
-     * 根据请求登录的信息生成令牌
-     *
-     * @param item      登录请求相关信息，同时也是令牌解密所需验证信息
-     * @param ttlMillis 令牌有效时间
-     * @return 返还生成的令牌
-     */
-    public static String createOpenApiToken(OpenApiTokenInfo item, long ttlMillis) {
-        long nowMillis = System.currentTimeMillis();
-        Date now = new Date(nowMillis);
-        JwtBuilder builder = Jwts.builder()
-                .setId(String.valueOf(item.getAppId()))
-                .setSubject(item.getAppName())
-                .claim("appKey", item.getAppKey())
-                .claim("appSecret", item.getAppSecret())
-                .claim("role", item.getRole())
-                .setIssuedAt(now)
-                .signWith(generalKey(item.getAppSecret()));
-        if (ttlMillis >= 0) {
-            long expMillis = nowMillis + ttlMillis;
-            Date exp = new Date(expMillis);
-            builder.setExpiration(exp);
-        }
-        return builder.compact();
-    }
-
-    /**
      * Simple
      * 生成Token
      *
@@ -128,7 +101,7 @@ public class TokenUtil {
      * @return String
      * @throws Exception Token校验失败
      */
-    public static String createSimpleToken(User item) throws Exception {
+    public static String createSimpleToken(UserReqDTO item) throws Exception {
         //默认token有效时间为2小时
         return createSimpleToken(item, 60 * 60 * 2 * 1000);
     }
@@ -141,14 +114,14 @@ public class TokenUtil {
      * @param ttlMillis 令牌有效时间
      * @return 返还生成的令牌
      */
-    public static String createSimpleToken(User item, long ttlMillis) {
+    public static String createSimpleToken(UserReqDTO item, long ttlMillis) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         JwtBuilder builder = Jwts.builder()
                 .setId(String.valueOf(item.getId()))
                 .setSubject(item.getUserName())
                 .claim("userRealName", item.getUserRealName())
-                .claim("roleId", item.getRoleId())
+                .claim("roleIds", item.getRoleIds())
                 .setIssuedAt(now)
                 .signWith(generalKey(SIMPLE_TOKEN_SECRET));
         if (ttlMillis >= 0) {
@@ -177,9 +150,8 @@ public class TokenUtil {
         return new SimpleTokenInfo(
                 res.getId(),
                 res.getSubject(),
-                (String) res.get("userRealName"),
-                Long.valueOf(res.get("roleId").toString())
-
+                res.get("userRealName", String.class),
+                res.get("roleIds", List.class)
         );
     }
 
@@ -241,13 +213,14 @@ public class TokenUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        User user = new User();
+        UserReqDTO user = new UserReqDTO();
         user.setId(1L);
         user.setUserName("frp");
         user.setUserRealName("冯锐鹏");
-        user.setRoleId(3L);
+        List<Long> roleIds = new ArrayList<>();
+        roleIds.add(1L);
+        roleIds.add(2L);
+        user.setRoleIds(roleIds);
         System.out.println(createSimpleToken(user, 999999999));
     }
-
-
 }

@@ -2,6 +2,8 @@ package com.zte.msg.alarmcenter.dto;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author frp
  */
@@ -10,15 +12,15 @@ public class SimpleTokenInfo {
     private String userId;
     private String userName;
     private String userRealName;
-    private Long roleId;
+    private List<Long> roleIds;
 
     public SimpleTokenInfo(){}
 
-    public SimpleTokenInfo(String userId, String userName, String userRealName, Long roleId) {
+    public SimpleTokenInfo(String userId, String userName, String userRealName, List<Long> roleIds) {
         this.userId = userId;
         this.userName = userName;
         this.userRealName = userRealName;
-        this.roleId = roleId;
+        this.roleIds = roleIds;
     }
 
     public SimpleTokenInfo(String userId, String userName) {
