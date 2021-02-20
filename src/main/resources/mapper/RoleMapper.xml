@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.RoleMapper">
+    <select id="listAllRole" resultType="com.zte.msg.alarmcenter.entity.Role">
+        select * from role where is_deleted=0
+    </select>
+
+    <select id="listRole" resultType="com.zte.msg.alarmcenter.entity.Role">
+        select * from role where is_deleted=0
+        <if test="roleReqDTO.status!=''">
+            and status=#{roleReqDTO.status}
+        </if>
+        <if test="roleReqDTO.roleName!=''">
+            and role_name=#{roleReqDTO.roleName}
+        </if>
+        ORDER BY updated_at DESC
+    </select>
+
+    <update id="deleteRole">
+        update role set is_deleted=1 where id in (
+        <foreach collection="list" item="id" index="index" separator=",">
+            #{id}
+        </foreach>
+        ) and is_deleted=0
+    </update>
+
+    <insert id="insertRole" useGeneratedKeys="true" keyProperty="id" parameterType="com.zte.msg.alarmcenter.dto.req.RoleReqDTO">
+        insert into role
+        <trim prefix="(" suffix=")">
+            <if test="roleName!=null" >
+                role_name,
+            </if>
+            <if test="roleStr!=null" >
+                role_str,
+            </if>
+            <if test="roleSort!=null" >
+                role_sort,
+            </if>
+            <if test="status!=null" >
+                status,
+            </if>
+            <if test="remark!=null" >
+                remark,
+            </if>
+            created_by,updated_by
+        </trim>
+        value
+        <trim prefix="(" suffix=")">
+            <if test="roleName!=null" >
+                #{roleName},
+            </if>
+            <if test="roleStr!=null" >
+                #{roleStr},
+            </if>
+            <if test="roleSort!=null" >
+                #{roleSort},
+            </if>
+            <if test="status!=null" >
+                #{status},
+            </if>
+            <if test="remark!=null" >
+                #{remark},
+            </if>
+            #{createdBy},#{createdBy}
+        </trim>
+    </insert>
+
+    <update id="updateRole" parameterType="com.zte.msg.alarmcenter.dto.req.RoleReqDTO">
+        update role
+        <set>
+            <if test="roleName!=null" >
+                role_name=#{roleName},
+            </if>
+            <if test="roleStr!=null" >
+                role_str=#{roleStr},
+            </if>
+            <if test="roleSort!=null" >
+                role_sort=#{roleSort},
+            </if>
+            <if test="status!=null" >
+                status=#{status},
+            </if>
+            <if test="remark!=null" >
+                remark=#{remark},
+            </if>
+            updated_by=#{createdBy}
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

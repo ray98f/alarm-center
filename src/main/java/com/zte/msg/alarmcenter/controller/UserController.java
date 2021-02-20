@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author frp
  * @version 1.0
- * @date 2020/12/28 14:42
+ * @date 2021/2/19 10:42
  */
 @Slf4j
 @RestController
@@ -41,7 +41,7 @@ public class UserController {
      * @param userReqDTO 用户信息
      * @return DataResponse
      */
-//    @PermissionCheck(permissionName = {"system:user:add"})
+    @PermissionCheck(permissionName = {"system:user:add"})
     @PutMapping
     @ApiOperation(value = "新增管理平台登录用户")
     public <T> DataResponse<T> createUser(@RequestBody @Valid UserReqDTO userReqDTO) {
@@ -68,7 +68,7 @@ public class UserController {
      * @param id 用户id
      * @return DataResponse
      */
-//    @PermissionCheck(permissionName = {"system:user:reset-psw"})
+    @PermissionCheck(permissionName = {"system:user:reset-psw"})
     @GetMapping("/change")
     @ApiOperation(value = "重置密码")
     public <T> DataResponse<T> resetPwd(@Valid @RequestParam @NotNull(message = "32000006") Integer id) {
@@ -82,7 +82,7 @@ public class UserController {
      * @param userReqDTO 用户修改信息
      * @return <T>
      */
-//    @PermissionCheck(permissionName = {"system:user:modify"})
+    @PermissionCheck(permissionName = {"system:user:modify"})
     @PostMapping
     @ApiOperation(value = "修改用户信息")
     public <T> DataResponse<T> edit(@RequestBody @Valid UserReqDTO userReqDTO) {
@@ -96,7 +96,7 @@ public class UserController {
      * @param ids 用户id
      * @return DataResponse
      */
-//    @PermissionCheck(permissionName = {"system:user:remove"})
+    @PermissionCheck(permissionName = {"system:user:remove"})
     @DeleteMapping
     @ApiOperation(value = "删除用户")
     public <T> DataResponse<T> deleteUser(@Valid @RequestBody List<Integer> ids) {
@@ -118,7 +118,7 @@ public class UserController {
      * @param userReqDTO 查询用户信息
      * @return
      */
-//    @PermissionCheck(permissionName = {"system:user:list"})
+    @PermissionCheck(permissionName = {"system:user:list"})
     @PostMapping("/list")
     @ApiOperation(value = "分页查询用户列表")
     public PageResponse<User> listUser(@Valid @RequestBody UserReqDTO userReqDTO){
