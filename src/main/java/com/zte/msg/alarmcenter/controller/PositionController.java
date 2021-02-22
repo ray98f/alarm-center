@@ -3,12 +3,14 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
+import com.zte.msg.alarmcenter.dto.req.PositionReqDTO;
 import com.zte.msg.alarmcenter.dto.res.PositionResDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -41,17 +43,45 @@ public class PositionController {
         return null;
     }
 
-    @GetMapping("/export")
-    @ApiOperation(value = "线路站点信息-列表导出")
-    public <T> DataResponse<T> exportLinePosition() {
+    @PostMapping
+    @ApiOperation(value = "新增位置")
+    public <T> DataResponse<T> addPosition(@Valid PositionReqDTO reqDTO,
+                                           @RequestParam(required = false) @ApiParam(value = "位置图标") MultipartFile icon,
+                                           @RequestParam(required = false) @ApiParam(value = "地形图") MultipartFile topographic) {
 
         return DataResponse.success();
     }
 
-    @GetMapping("/{pId}/export")
-    @ApiOperation(value = "位置信息-列表导出")
-    public <T> DataResponse<T> exportPosition(@PathVariable @ApiParam(value = "线路id") Long pId) {
+    @PutMapping
+    @ApiOperation(value = "修改位置")
+    public <T> DataResponse<T> modifyPosition(@RequestParam Long id,
+                                              @Valid PositionReqDTO reqDTO,
+                                              @RequestParam(required = false) @ApiParam(value = "位置图标") MultipartFile icon,
+                                              @RequestParam(required = false) @ApiParam(value = "地形图") MultipartFile topographic) {
+
         return DataResponse.success();
     }
+
+    @DeleteMapping
+    @ApiOperation(value = "删除位置")
+    public <T> DataResponse<T> deletePosition(@RequestParam Long id) {
+
+        return DataResponse.success();
+    }
+
+
+
+//    @GetMapping("/export")
+//    @ApiOperation(value = "线路站点信息-列表导出")
+//    public <T> DataResponse<T> exportLinePosition() {
+//
+//        return DataResponse.success();
+//    }
+//
+//    @GetMapping("/{pId}/export")
+//    @ApiOperation(value = "位置信息-列表导出")
+//    public <T> DataResponse<T> exportPosition(@PathVariable @ApiParam(value = "线路id") Long pId) {
+//        return DataResponse.success();
+//    }
 
 }
