@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class SystemParameter extends BaseEntity{
+public class SystemParameter extends BaseEntity {
     @ApiModelProperty(value = "参数")
     private String parameter;
 
