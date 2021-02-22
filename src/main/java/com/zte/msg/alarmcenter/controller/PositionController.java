@@ -50,7 +50,7 @@ public class PositionController {
 
     @GetMapping("/{pId}/export")
     @ApiOperation(value = "位置信息-列表导出")
-    public <T> DataResponse<T> exportPosition() {
+    public <T> DataResponse<T> exportPosition(@PathVariable @ApiParam(value = "线路id") Long pId) {
         return DataResponse.success();
     }
 

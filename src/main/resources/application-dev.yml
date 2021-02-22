@@ -13,28 +13,6 @@ spring:
       login-timeout: 5
       maximum-pool-size: 60
       minimum-idle: 10
-  kafka:
-    bootstrap-servers: 127.0.0.1:9092
-    consumer:
-      auto-commit-interval: 1000ms
-      auto-offset-reset: earliest
-      enable-auto-commit: false
-      group-id: push-center-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      max-poll-records: 1000
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      thread:
-        min: 2
-        max: 3
-      topic: push-center-topic
-    producer:
-      batch-size: 65536
-      buffer-memory: 524288
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      retries: 3
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    listener:
-      missing-topics-fatal: false
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
   type-aliases-package: com.zte.msg.pushcenter.pccore.entity
