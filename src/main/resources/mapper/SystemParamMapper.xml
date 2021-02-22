@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.SystemParamMapper">
+    <select id="listSystemParam" resultType="com.zte.msg.alarmcenter.entity.SystemParameter">
+        SELECT * FROM system_parameter WHERE is_deleted=0
+        <if test="parameter!=null">
+            and parameter is like "%"#{parameter}"%"
+        </if>
+    </select>
+
+    <select id="listAllSystemParam" resultType="com.zte.msg.alarmcenter.entity.SystemParameter">
+        SELECT * FROM system_parameter WHERE is_deleted=0
+    </select>
+
+    <update id="deleteSystemParam">
+        update system_parameter set is_deleted=1 where is_deleted=0 and id in (
+        <foreach collection="ids" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="updateSystemParam" parameterType="com.zte.msg.alarmcenter.entity.SystemParameter">
+        update system_parameter
+        <set>
+            <if test="parameter!=null and parameter!=''">
+                parameter=#{parameter},
+            </if>
+            <if test="parameterDescribe!=null and parameterDescribe!=''">
+                parameter_describe=#{parameterDescribe},
+            </if>
+            <if test="value!=null and value!=''">
+                value=#{value},
+            </if>
+            <if test="valueDescribe!=null and valueDescribe!=''">
+                value_describe=#{valueDescribe},
+            </if>
+            updated_by=#{updatedBy}
+        </set>
+        where id=#{id}
+    </update>
+
+    <insert id="insertSystemParam" parameterType="com.zte.msg.alarmcenter.entity.SystemParameter">
+        insert into system_parameter
+        (
+            <if test="parameter!=null and parameter!=''">
+                parameter,
+            </if>
+            <if test="parameterDescribe!=null and parameterDescribe!=''">
+                parameter_describe,
+            </if>
+            <if test="value!=null and value!=''">
+                value,
+            </if>
+            <if test="valueDescribe!=null and valueDescribe!=''">
+                value_describe,
+            </if>
+            created_by, updated_by
+        )
+        value
+        (
+            <if test="parameter!=null and parameter!=''">
+                #{parameter},
+            </if>
+            <if test="parameterDescribe!=null and parameterDescribe!=''">
+                #{parameterDescribe},
+            </if>
+            <if test="value!=null and value!=''">
+                #{value},
+            </if>
+            <if test="valueDescribe!=null and valueDescribe!=''">
+                #{valueDescribe},
+            </if>
+            #{createdBy}, #{createdBy}
+        )
+    </insert>
+</mapper>
