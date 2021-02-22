@@ -11,7 +11,7 @@
             and status=#{roleReqDTO.status}
         </if>
         <if test="roleReqDTO.roleName!=''">
-            and role_name=#{roleReqDTO.roleName}
+            and role_name is like "%"#{roleReqDTO.roleName}"%"
         </if>
         ORDER BY updated_at DESC
     </select>

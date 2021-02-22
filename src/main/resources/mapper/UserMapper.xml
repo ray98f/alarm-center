@@ -104,7 +104,7 @@
             and status=#{userReqDTO.status}
         </if>
         <if test="userReqDTO.userRealName!=null">
-            and user_real_name=#{userReqDTO.userRealName}
+            and user_real_name is like "%"{userReqDTO.userRealName}"%"
         </if>
     </select>
 </mapper>
