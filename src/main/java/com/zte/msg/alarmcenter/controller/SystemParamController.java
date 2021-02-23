@@ -3,7 +3,6 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
-import com.zte.msg.alarmcenter.entity.Role;
 import com.zte.msg.alarmcenter.entity.SystemParameter;
 import com.zte.msg.alarmcenter.service.SystemParamService;
 import io.swagger.annotations.Api;
