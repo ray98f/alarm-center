@@ -1,7 +1,0 @@
-{
-	"host":"smtp.163.com",
-	"port":"465",
-	"protocol":"smtps",
-	"username":"",
-	"password":""
-}
