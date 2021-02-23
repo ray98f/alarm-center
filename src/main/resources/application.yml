@@ -10,7 +10,7 @@ spring:
   messages:
     basename: i18n/messages
   application:
-    name: alarm-center
+    name: push-center
   servlet:
     multipart:
       max-request-size: 10MB

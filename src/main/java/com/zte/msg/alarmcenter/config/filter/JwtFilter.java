@@ -1,10 +1,10 @@
 package com.zte.msg.alarmcenter.config.filter;
 
+import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.config.RequestHeaderContext;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.enums.TokenStatus;
-import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;

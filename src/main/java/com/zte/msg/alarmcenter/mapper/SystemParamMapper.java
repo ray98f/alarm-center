@@ -2,6 +2,8 @@ package com.zte.msg.alarmcenter.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.req.RoleReqDTO;
+import com.zte.msg.alarmcenter.entity.Role;
 import com.zte.msg.alarmcenter.entity.SystemParameter;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;

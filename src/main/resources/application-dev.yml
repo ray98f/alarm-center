@@ -15,7 +15,7 @@ spring:
       minimum-idle: 10
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
-  type-aliases-package: com.zte.msg.alarmcenter.entity
+  type-aliases-package: com.zte.msg.pushcenter.pccore.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     multiple-result-sets-enabled: true

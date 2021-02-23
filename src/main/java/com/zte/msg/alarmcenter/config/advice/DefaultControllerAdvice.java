@@ -1,8 +1,8 @@
 package com.zte.msg.alarmcenter.config.advice;
 
+import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.dto.BaseResponse;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
-import com.zte.msg.alarmcenter.exception.CommonException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
