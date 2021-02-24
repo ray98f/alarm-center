@@ -50,11 +50,4 @@ public class ChildSystemController {
         return DataResponse.success();
     }
 
-    @DeleteMapping
-    @ApiOperation(value = "删除")
-    public <T> DataResponse<T> removeChildSystemConfig(@RequestParam Long id) {
-        return DataResponse.success();
-    }
-
-
 }

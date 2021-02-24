@@ -76,7 +76,7 @@ public class AlarmManageController {
         return DataResponse.success();
     }
 
-    @GetMapping("/rule")
+    @GetMapping("/rule/page")
     @ApiOperation(value = "告警规则-分页查询")
     public PageResponse<AlarmRuleResDTO> getAlarmRules(@Valid PageReqDTO page,
                                                        @RequestParam(required = false) @ApiParam("告警名称模糊查询") String name,
