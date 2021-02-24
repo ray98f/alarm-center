@@ -66,4 +66,10 @@ public class DeviceController {
         return null;
     }
 
+    @DeleteMapping
+    @ApiOperation(value = "删除设备")
+    public <T> DataResponse<T> deleteDevice(@RequestParam Long id) {
+
+        return DataResponse.success();
+    }
 }

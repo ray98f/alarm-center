@@ -1,15 +1,10 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.zte.msg.alarmcenter.dto.DataResponse;
-import com.zte.msg.alarmcenter.dto.PageReqDTO;
-import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.req.ChildSystemConfigReqDTO;
-import com.zte.msg.alarmcenter.dto.req.ChildSystemReqDTO;
 import com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO;
-import com.zte.msg.alarmcenter.dto.res.ChildSystemPageResDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
