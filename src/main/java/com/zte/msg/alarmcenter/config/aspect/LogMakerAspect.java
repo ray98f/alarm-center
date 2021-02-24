@@ -38,7 +38,7 @@ public class LogMakerAspect {
      * 指向你的切面类方法
      * 由于这里使用了自定义注解所以指向你的自定义注解
      */
-    @Pointcut("@annotation(com.zking.component.Log)")
+    @Pointcut("@annotation(com.zte.msg.alarmcenter.annotation.LogMaker)")
     public void logPointCut() {
     }
 
