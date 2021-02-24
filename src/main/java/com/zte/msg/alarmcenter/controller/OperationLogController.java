@@ -37,16 +37,16 @@ public class OperationLogController {
     private OperationLogService operationLogService;
 
     /**
-     * 获取全部系统参数列表
+     * 分页查询操作日志列表
      *
-     * @return List<SystemParameter>
+     * @return List<OperationLog>
      */
     @GetMapping
-    @ApiOperation(value = "获取全部系统参数列表")
+    @ApiOperation(value = "分页查询操作日志列表")
     public PageResponse<OperationLog> pageSystemParam(@RequestParam(required = false)
                                                          @ApiParam("操作员") String userName,
                                                       @RequestParam(required = false)
-                                                         @ApiParam("操作类型") Integer operationType,
+                                                         @ApiParam("操作类型") String operationType,
                                                       @RequestParam(required = false)
                                                          @ApiParam("开始时间") Timestamp startTime,
                                                       @RequestParam(required = false)

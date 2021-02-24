@@ -31,8 +31,15 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
      */
     Page<OperationLog> listOperationLog(Page<OperationLog> page,
                                         String userName,
-                                        Integer operationType,
+                                        String operationType,
                                         Timestamp startTime,
                                         Timestamp endTime);
+
+    /**
+     * 添加操作记录
+     * @param operationLog
+     * @return
+     */
+    int addOperationLog(OperationLog operationLog);
 
 }

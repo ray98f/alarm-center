@@ -14,18 +14,22 @@ import java.sql.Timestamp;
 @Data
 @ApiModel
 public class OperationLog extends BaseEntity {
-    @ApiModelProperty(value = "操作人员id")
-    private Long userId;
+
+    @ApiModelProperty(value = "操作人")
+    private String userName;
 
     @ApiModelProperty(value = "操作时间")
     private Timestamp operationTime;
 
     @ApiModelProperty(value = "操作类型")
-    private Long operationType;
+    private String operationType;
+
+    @ApiModelProperty(value = "用时")
+    private Long useTime;
+
+    @ApiModelProperty(value = "参数")
+    private String params;
 
     @ApiModelProperty(value = "主机IP")
     private String hostIp;
-
-    @ApiModelProperty(value = "描述")
-    private String describe;
 }

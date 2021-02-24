@@ -41,7 +41,7 @@ public class OperationLogServiceImpl implements OperationLogService {
      */
     @Override
     public Page<OperationLog> listOperationLog(String userName,
-                                               Integer operationType,
+                                               String operationType,
                                                Timestamp startTime,
                                                Timestamp endTime,
                                                PageReqDTO pageReqDTO){

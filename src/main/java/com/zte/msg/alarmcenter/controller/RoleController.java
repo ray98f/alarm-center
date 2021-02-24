@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -51,6 +52,7 @@ public class RoleController {
      * @return PageInfo<Role>
      */
     @PermissionCheck(permissionName = {"system:role:list"})
+//    @LogMaker(value = "分页获取角色信息")
     @PostMapping("/list")
     @ApiOperation(value = "分页获取角色信息")
     public PageResponse<Role> listRole(@Valid @RequestBody RoleReqDTO roleReqDTO) {

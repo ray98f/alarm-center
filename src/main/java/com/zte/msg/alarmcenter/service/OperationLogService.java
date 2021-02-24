@@ -23,7 +23,7 @@ public interface OperationLogService {
      * @param pageReqDTO
      * @return
      */
-    Page<OperationLog> listOperationLog(String userName, Integer operationType, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
+    Page<OperationLog> listOperationLog(String userName, String operationType, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
 
 
 }
