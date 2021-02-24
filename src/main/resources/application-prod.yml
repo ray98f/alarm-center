@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://wshmang.f3322.net:33306/push_center?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://115.221.8.246:33306/alarm_center?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&allowPublicKeyRetrieval=true
     username: root
     password: root123456
     hikari:
@@ -15,9 +15,11 @@ spring:
       minimum-idle: 10
 mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
-  type-aliases-package: com.zte.msg.pushcenter.pccore.entity
+  type-aliases-package: com.zte.msg.alarmcenter.entity
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    multiple-result-sets-enabled: true
+    #    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     map-underscore-to-camel-case: true
   global-config:
     db-config:
@@ -25,10 +27,13 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
 sign:
-  verify: false
+  verify: true
 
 async:
   push:
     pool-size:
       core: 100
       max: 100
+logging:
+  file:
+    path: ./log

@@ -3,7 +3,6 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
-import com.zte.msg.alarmcenter.entity.Role;
 import com.zte.msg.alarmcenter.entity.SystemParameter;
 import com.zte.msg.alarmcenter.service.SystemParamService;
 import io.swagger.annotations.Api;
@@ -35,12 +34,12 @@ public class SystemParamController {
     private SystemParamService systemParamService;
 
     /**
-     * 获取全部系统参数列表
+     * 分页查询系统参数列表
      *
      * @return List<SystemParameter>
      */
     @GetMapping
-    @ApiOperation(value = "获取全部系统参数列表")
+    @ApiOperation(value = "分页查询系统参数列表")
     public PageResponse<SystemParameter> pageSystemParam(@RequestParam(required = false)
                                                          @ApiParam("参数名模糊查询") String parameter,
                                                          @Valid PageReqDTO pageReqDTO) {
@@ -76,7 +75,7 @@ public class SystemParamController {
      * @return <T>
      */
     @PostMapping
-    @ApiOperation(value = "批量删除系统参数")
+    @ApiOperation(value = "修改系统参数")
     public <T> DataResponse<T> updateSystemParam(@Valid @RequestBody SystemParameter systemParameter) {
         systemParamService.updateSystemParam(systemParameter);
         return DataResponse.success();
@@ -88,7 +87,7 @@ public class SystemParamController {
      * @return <T>
      */
     @PutMapping
-    @ApiOperation(value = "批量删除系统参数")
+    @ApiOperation(value = "新增系统参数")
     public <T> DataResponse<T> insertSystemParam(@Valid @RequestBody SystemParameter systemParameter) {
         systemParamService.insertSystemParam(systemParameter);
         return DataResponse.success();
