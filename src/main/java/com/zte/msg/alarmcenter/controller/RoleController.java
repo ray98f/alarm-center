@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/role")
+@RequestMapping("/role")
 @Api(tags = "角色管理")
 @Validated
 public class RoleController {

@@ -28,7 +28,7 @@ import java.sql.Timestamp;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/log")
+@RequestMapping("/log")
 @Api(tags = "操作日志")
 @Validated
 public class OperationLogController {

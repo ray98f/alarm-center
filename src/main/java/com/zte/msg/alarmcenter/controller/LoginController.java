@@ -30,7 +30,7 @@ import static com.zte.msg.alarmcenter.utils.TokenUtil.createSimpleToken;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping
 @Api(tags = "登录")
 @Validated
 public class LoginController {

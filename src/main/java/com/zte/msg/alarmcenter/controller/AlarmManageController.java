@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.sql.Timestamp;
 
 /**
  * description:
@@ -24,7 +25,7 @@ import javax.validation.Valid;
  * @date 2021/2/23 9:10
  */
 @RequestMapping("/alarm")
-@Api(tags = "子系统管理")
+@Api(tags = "告警管理")
 @Validated
 @RestController
 public class AlarmManageController {
@@ -192,6 +193,24 @@ public class AlarmManageController {
     @DeleteMapping("/snmp/code")
     @ApiOperation("SNMP告警码-删除")
     public <T> DataResponse<T> deleteSnmpCode(@RequestParam @ApiParam(value = "告警码id", required = true) Long id) {
+        return DataResponse.success();
+    }
+
+    @GetMapping("/history")
+    @ApiOperation("告警历史-查询")
+    public <T> DataResponse<T> getAlarmHistory(@RequestParam(required = false)
+                                               @ApiParam("所属子系统") Long childSystemId,
+                                               @RequestParam(required = false)
+                                               @ApiParam("站点") Long siteId,
+                                               @RequestParam(required = false)
+                                               @ApiParam("站点") Integer alarmLevel,
+                                               @RequestParam(required = false)
+                                               @ApiParam("站点") Integer alarmState,
+                                               @RequestParam(required = false)
+                                               @ApiParam("开始时间") Timestamp startTime,
+                                               @RequestParam(required = false)
+                                               @ApiParam("结束时间") Timestamp endTime,
+                                               @Valid PageReqDTO pageReqDTO) {
         return DataResponse.success();
     }
 
