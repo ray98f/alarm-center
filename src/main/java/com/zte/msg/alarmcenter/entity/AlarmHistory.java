@@ -22,7 +22,7 @@ public class AlarmHistory extends BaseEntity{
     private Integer alarmLevel;
 
     @ApiModelProperty(value = "站点")
-    private String site;
+    private Long siteId;
 
     @ApiModelProperty(value = "设备")
     private String equipment;
