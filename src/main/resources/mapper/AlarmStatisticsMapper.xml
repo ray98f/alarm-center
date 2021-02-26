@@ -1,5 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper">
+    <select id="totalAlarmData" resultType="com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO">
+        select cs.id as child_system_id,cs.name as child_system_name,p.id as site_id,p.name as site_name,
+        ah.alarm_name,ah.alarm_reason,count(ah.id) as alarm_num from alarm_history as ah
+        left join child_system as cs on ah.child_system_id=cs.id left join position as p on p.id=ah.site_id
+        where ah.is_deleted=0
+        <if test="systemId!=null">
+            and cs.id=#{systemId}
+        </if>
+        <if test="siteId!=null">
+            and p.id=#{siteId}
+        </if>
+        <if test="alarmReason!=null and alarmReason!=''">
+            and ah.alarm_reason=#{alarmReason}
+        </if>
+        <if test="startTime!=null">
+            and final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=final_time
+        </if>
+        group by cs.id,p.id
+    </select>
 
+    <select id="statisticsByLine" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
+
+    </select>
+
+    <select id="statisticsBySystem" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
+
+    </select>
+
+    <select id="statisticsByAlarmLevel" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
+
+    </select>
+
+    <select id="lineAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
+
+    </select>
+
+    <select id="levelAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
+
+    </select>
+
+    <select id="systemAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
+
+    </select>
+
+    <select id="alarmResolutionEfficiency" resultType="com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO">
+
+    </select>
 </mapper>

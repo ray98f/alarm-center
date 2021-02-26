@@ -1,11 +1,12 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.zte.msg.alarmcenter.dto.DataResponse;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
+import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO;
 import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
 import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
 import com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO;
-import com.zte.msg.alarmcenter.entity.OperationLog;
 import com.zte.msg.alarmcenter.service.AlarmStatisticsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -46,21 +48,23 @@ public class AlarmStatisticsController {
      * @param alarmReason
      * @param startTime
      * @param endTime
+     * @param pageReqDTO
      * @return
      */
     @GetMapping("/total")
     @ApiOperation(value = "告警数据总计")
-    public DataResponse<List<TotalAlarmDataResDTO>> totalAlarmData(@RequestParam(required = false)
-                                                                       @ApiParam("系统") Long systemId,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("站点") Long siteId,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("告警原因") String alarmReason,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("开始时间") Timestamp startTime,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+    public PageResponse<TotalAlarmDataResDTO> totalAlarmData(@RequestParam(required = false)
+                                                                 @ApiParam("系统") Long systemId,
+                                                             @RequestParam(required = false)
+                                                                 @ApiParam("站点") Long siteId,
+                                                             @RequestParam(required = false)
+                                                                 @ApiParam("告警原因") String alarmReason,
+                                                             @RequestParam(required = false)
+                                                                 @ApiParam("开始时间") Timestamp startTime,
+                                                             @RequestParam(required = false)
+                                                                 @ApiParam("结束时间") Timestamp endTime,
+                                                             @Valid PageReqDTO pageReqDTO) {
+        return PageResponse.of(alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, pageReqDTO));
     }
 
     @GetMapping("/line/statistics")
