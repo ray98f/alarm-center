@@ -67,36 +67,54 @@ public class AlarmStatisticsController {
         return PageResponse.of(alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, pageReqDTO));
     }
 
+    /**
+     * 按线路统计
+     *
+     * @param siteIds
+     * @param alarmLevels
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @GetMapping("/line/statistics")
     @ApiOperation(value = "按线路统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsByLine(@RequestParam(required = false)
                                                                           @ApiParam("站点") List<Long> siteIds,
                                                                       @RequestParam(required = false)
-                                                                          @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                          @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                       @RequestParam(required = false)
                                                                           @ApiParam("开始时间") Timestamp startTime,
                                                                       @RequestParam(required = false)
                                                                           @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.statisticsByLine(siteIds, alarmLevels, startTime, endTime));
     }
 
+    /**
+     * 按系统统计
+     *
+     * @param systemIds
+     * @param alarmLevels
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @GetMapping("/system/statistics")
     @ApiOperation(value = "按系统统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsBySystem(@RequestParam(required = false)
                                                                             @ApiParam("系统") List<Long> systemIds,
                                                                         @RequestParam(required = false)
-                                                                            @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                            @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                         @RequestParam(required = false)
                                                                             @ApiParam("开始时间") Timestamp startTime,
                                                                         @RequestParam(required = false)
                                                                             @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.statisticsBySystem(systemIds, alarmLevels, startTime, endTime));
     }
 
     @GetMapping("/level/statistics")
     @ApiOperation(value = "按告警级别统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsByAlarmLevel(@RequestParam(required = false)
-                                                                                @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                                @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                             @RequestParam(required = false)
                                                                                 @ApiParam("开始时间") Timestamp startTime,
                                                                             @RequestParam(required = false)
@@ -109,7 +127,7 @@ public class AlarmStatisticsController {
     public DataResponse<List<AnyAlarmTrendResDTO>> lineAlarmTrend(@RequestParam(required = false)
                                                                       @ApiParam("站点") Long siteId,
                                                                   @RequestParam(required = false)
-                                                                      @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                      @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                   @RequestParam(required = false)
                                                                       @ApiParam("统计周期") Integer statisticsCycle,
                                                                   @RequestParam(required = false)
@@ -122,7 +140,7 @@ public class AlarmStatisticsController {
     @GetMapping("/level/trend")
     @ApiOperation(value = "级别告警趋势")
     public DataResponse<List<AnyAlarmTrendResDTO>> levelAlarmTrend(@RequestParam(required = false)
-                                                                       @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                       @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                    @RequestParam(required = false)
                                                                        @ApiParam("统计周期") Integer statisticsCycle,
                                                                    @RequestParam(required = false)
@@ -137,7 +155,7 @@ public class AlarmStatisticsController {
     public DataResponse<List<AnyAlarmTrendResDTO>> systemAlarmTrend(@RequestParam(required = false)
                                                                         @ApiParam("系统") List<Long> systemIds,
                                                                     @RequestParam(required = false)
-                                                                        @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                        @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                     @RequestParam(required = false)
                                                                         @ApiParam("统计周期") Integer statisticsCycle,
                                                                     @RequestParam(required = false)
@@ -150,7 +168,7 @@ public class AlarmStatisticsController {
     @GetMapping("/resolution/efficiency")
     @ApiOperation(value = "告警解决效率")
     public DataResponse<List<AlarmResolutionEfficiencyResDTO>> alarmResolutionEfficiency(@RequestParam(required = false)
-                                                                                             @ApiParam("告警级别") List<Integer> alarmLevel,
+                                                                                             @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                                          @RequestParam(required = false)
                                                                                              @ApiParam("统计周期") Integer statisticsCycle,
                                                                                          @RequestParam(required = false)
