@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.config;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Configuration
 @EnableSwagger2
+@ConditionalOnProperty(name = "swagger.enable", havingValue = "true")
 public class SwaggerConfig {
     @Bean
     public Docket uapApi() {
