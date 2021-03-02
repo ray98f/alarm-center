@@ -12,10 +12,10 @@ import lombok.Data;
 public class StatisticsByAnyResDTO {
 
     @ApiModelProperty(value = "子系统id")
-    private Long childSystemId;
+    private Long subsystemId;
 
     @ApiModelProperty(value = "子系统名称")
-    private String childSystemName;
+    private String subsystemName;
 
     @ApiModelProperty(value = "站点id")
     private Long siteId;

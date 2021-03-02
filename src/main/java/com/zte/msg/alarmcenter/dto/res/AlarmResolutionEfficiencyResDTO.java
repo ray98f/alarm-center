@@ -14,11 +14,11 @@ import java.util.Date;
 public class AlarmResolutionEfficiencyResDTO {
 
     @ApiModelProperty(value = "日期")
-    private Date statisticsDate;
+    private String statisticsDate;
 
     @ApiModelProperty(value = "告警级别")
     private Integer alarmLevel;
 
-    @ApiModelProperty(value = "告警数据量")
+    @ApiModelProperty(value = "处置时间")
     private Long disposalTime;
 }

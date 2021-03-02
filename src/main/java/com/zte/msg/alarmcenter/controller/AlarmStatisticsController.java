@@ -119,9 +119,19 @@ public class AlarmStatisticsController {
                                                                                 @ApiParam("开始时间") Timestamp startTime,
                                                                             @RequestParam(required = false)
                                                                                 @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.statisticsByAlarmLevel(alarmLevels, startTime, endTime));
     }
 
+    /**
+     * 线路告警趋势
+     *
+     * @param siteId
+     * @param alarmLevels
+     * @param statisticsCycle
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @GetMapping("/line/trend")
     @ApiOperation(value = "线路告警趋势")
     public DataResponse<List<AnyAlarmTrendResDTO>> lineAlarmTrend(@RequestParam(required = false)
@@ -134,7 +144,7 @@ public class AlarmStatisticsController {
                                                                       @ApiParam("开始时间") Timestamp startTime,
                                                                   @RequestParam(required = false)
                                                                       @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.lineAlarmTrend(siteId, alarmLevels, statisticsCycle, startTime, endTime));
     }
 
     @GetMapping("/level/trend")
@@ -147,13 +157,13 @@ public class AlarmStatisticsController {
                                                                        @ApiParam("开始时间") Timestamp startTime,
                                                                    @RequestParam(required = false)
                                                                        @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.levelAlarmTrend(alarmLevels, statisticsCycle, startTime, endTime));
     }
 
     @GetMapping("/system/trend")
     @ApiOperation(value = "系统告警趋势")
     public DataResponse<List<AnyAlarmTrendResDTO>> systemAlarmTrend(@RequestParam(required = false)
-                                                                        @ApiParam("系统") List<Long> systemIds,
+                                                                        @ApiParam("系统") Long systemId,
                                                                     @RequestParam(required = false)
                                                                         @ApiParam("告警级别") List<Integer> alarmLevels,
                                                                     @RequestParam(required = false)
@@ -162,7 +172,7 @@ public class AlarmStatisticsController {
                                                                         @ApiParam("开始时间") Timestamp startTime,
                                                                     @RequestParam(required = false)
                                                                         @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.systemAlarmTrend(systemId, alarmLevels, statisticsCycle, startTime, endTime));
     }
 
     @GetMapping("/resolution/efficiency")
@@ -175,6 +185,6 @@ public class AlarmStatisticsController {
                                                                                              @ApiParam("开始时间") Timestamp startTime,
                                                                                          @RequestParam(required = false)
                                                                                              @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.success();
+        return DataResponse.of(alarmStatisticsService.alarmResolutionEfficiency(alarmLevels, statisticsCycle, startTime, endTime));
     }
 }

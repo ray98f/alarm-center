@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class AlarmHistory extends BaseEntity{
 
     @ApiModelProperty(value = "子系统id")
-    private Long childSystemId;
+    private Long subsystemId;
 
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;

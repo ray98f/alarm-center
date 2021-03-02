@@ -4,8 +4,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author frp
  */
@@ -14,7 +12,7 @@ import java.util.Date;
 public class AnyAlarmTrendResDTO {
 
     @ApiModelProperty(value = "日期")
-    private Date statisticsDate;
+    private String statisticsDate;
 
     @ApiModelProperty(value = "告警级别")
     private Integer alarmLevel;

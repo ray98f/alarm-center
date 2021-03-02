@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper">
     <select id="totalAlarmData" resultType="com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO">
-        select cs.id as child_system_id,cs.name as child_system_name,p.id as site_id,p.name as site_name,
+        select cs.id as subsystem_id,cs.name as subsystem_name,p.id as site_id,p.name as site_name,
         ah.alarm_name,ah.alarm_reason,count(ah.id) as alarm_num from alarm_history as ah
-        left join child_system as cs on ah.child_system_id=cs.id left join position as p on p.id=ah.site_id
+        left join subsystem as cs on ah.subsystem_id=cs.id left join position as p on p.id=ah.site_id
         where ah.is_deleted=0
         <if test="systemId!=null">
             and cs.id=#{systemId}
@@ -53,9 +53,9 @@
     </select>
 
     <select id="statisticsBySystem" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
-        select cs.id as child_system_id,cs.name as child_system_name,
+        select cs.id as subsystem_id,cs.name as subsystem_name,
         ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
-        left join child_system as cs on ah.child_system_id=cs.id
+        left join subsystem as cs on ah.subsystem_id=cs.id
         where ah.is_deleted=0
         <if test="systemIds!=null">
             and cs.id in(
@@ -81,22 +81,145 @@
     </select>
 
     <select id="statisticsByAlarmLevel" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
-
+        select ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
+        where ah.is_deleted=0
+        <if test="alarmLevels!=null">
+            and ah.alarm_level in(
+            <foreach collection="alarmLevels" index="index" item="level" separator=",">
+                #{level}
+            </foreach>
+            )
+        </if>
+        <if test="startTime!=null">
+            and ah.final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=ah.final_time
+        </if>
+        group by ah.alarm_level
     </select>
 
     <select id="lineAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-
+        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        <if test="statisticsCycle==1">
+            '%Y年%m月%d日'
+        </if>
+        <if test="statisticsCycle==2">
+            '%Y年%u周'
+        </if>
+        <if test="statisticsCycle==3">
+            '%Y年%m月'
+        </if>
+        ) as statistics_date from alarm_history as ah
+        left join position as p on p.id=ah.site_id
+        where ah.is_deleted=0
+        <if test="siteId!=null">
+            and p.id=#{siteId}
+        </if>
+        <if test="alarmLevels!=null">
+            and ah.alarm_level in(
+            <foreach collection="alarmLevels" index="index" item="level" separator=",">
+                #{level}
+            </foreach>
+            )
+        </if>
+        <if test="startTime!=null">
+            and ah.final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=ah.final_time
+        </if>
+        group by p.id,ah.alarm_level,statistics_date
     </select>
 
     <select id="levelAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-
+        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        <if test="statisticsCycle==1">
+            '%Y年%m月%d日'
+        </if>
+        <if test="statisticsCycle==2">
+            '%Y年%u周'
+        </if>
+        <if test="statisticsCycle==3">
+            '%Y年%m月'
+        </if>
+        ) as statistics_date from alarm_history as ah
+        where ah.is_deleted=0
+        <if test="alarmLevels!=null">
+            and ah.alarm_level in(
+            <foreach collection="alarmLevels" index="index" item="level" separator=",">
+                #{level}
+            </foreach>
+            )
+        </if>
+        <if test="startTime!=null">
+            and ah.final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=ah.final_time
+        </if>
+        group by ah.alarm_level,statistics_date
     </select>
 
     <select id="systemAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-
+        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        <if test="statisticsCycle==1">
+            '%Y年%m月%d日'
+        </if>
+        <if test="statisticsCycle==2">
+            '%Y年%u周'
+        </if>
+        <if test="statisticsCycle==3">
+            '%Y年%m月'
+        </if>
+        ) as statistics_date from alarm_history as ah
+        left join subsystem as cs on ah.subsystem_id=cs.id
+        where ah.is_deleted=0
+        <if test="systemId!=null">
+            and cs.id=#{systemId}
+        </if>
+        <if test="alarmLevels!=null">
+            and ah.alarm_level in(
+            <foreach collection="alarmLevels" index="index" item="level" separator=",">
+                #{level}
+            </foreach>
+            )
+        </if>
+        <if test="startTime!=null">
+            and ah.final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=ah.final_time
+        </if>
+        group by cs.id,ah.alarm_level,statistics_date
     </select>
 
     <select id="alarmResolutionEfficiency" resultType="com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO">
-
+        select ah.alarm_level,TIMESTAMPDIFF(SECOND,ah.first_time,ah.recovery_time) as disposal_time,DATE_FORMAT(ah.final_time,
+        <if test="statisticsCycle==1">
+            '%Y年%m月%d日'
+        </if>
+        <if test="statisticsCycle==2">
+            '%Y年%u周'
+        </if>
+        <if test="statisticsCycle==3">
+            '%Y年%m月'
+        </if>
+        ) as statistics_date from alarm_history as ah
+        where ah.is_deleted=0
+        <if test="alarmLevels!=null">
+            and ah.alarm_level in(
+            <foreach collection="alarmLevels" index="index" item="level" separator=",">
+                #{level}
+            </foreach>
+            )
+        </if>
+        <if test="startTime!=null">
+            and ah.final_time>=#{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime}>=ah.final_time
+        </if>
+        group by ah.alarm_level,statistics_date
     </select>
 </mapper>
