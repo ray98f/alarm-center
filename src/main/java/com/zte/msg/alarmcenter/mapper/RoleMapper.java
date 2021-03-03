@@ -56,4 +56,12 @@ public interface RoleMapper extends BaseMapper<Role> {
      */
     int updateRole(RoleReqDTO role);
 
+    /**
+     * 搜索角色对应菜单ids
+     *
+     * @param roleIds
+     * @return
+     */
+    List<Long> selectMenuIds(List<Long> roleIds);
+
 }

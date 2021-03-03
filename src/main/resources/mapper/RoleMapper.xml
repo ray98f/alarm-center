@@ -87,4 +87,12 @@
         </set>
         WHERE id=#{id}
     </update>
+
+    <select id="selectMenuIds" resultType="java.lang.String">
+        SELECT DISTINCT menu_id FROM role_menu WHERE role_id in (
+        <foreach collection="list" index="index" item="roleId" separator=",">
+            #{roleId}
+        </foreach>
+        ) AND is_deleted=0;
+    </select>
 </mapper>

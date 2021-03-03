@@ -3,8 +3,10 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.req.LoginReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
+import com.zte.msg.alarmcenter.dto.res.MenuResDTO;
 import com.zte.msg.alarmcenter.entity.ChangeShifts;
 import com.zte.msg.alarmcenter.service.ChangeShiftsService;
+import com.zte.msg.alarmcenter.service.MenuService;
 import com.zte.msg.alarmcenter.service.UserService;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import io.swagger.annotations.Api;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.zte.msg.alarmcenter.utils.TokenUtil.createSimpleToken;
@@ -42,6 +45,9 @@ public class LoginController {
     private UserService userService;
 
     @Resource
+    private MenuService menuService;
+
+    @Resource
     private ChangeShiftsService changeShiftsService;
 
     /**
@@ -62,8 +68,9 @@ public class LoginController {
         changeShifts.setUserName(userInfo.getUserName());
         changeShiftsService.addChangeShifts(changeShifts);
         Map<String, Object> data = new HashMap<>(16);
-        
+        List<MenuResDTO> menuResDTOList = menuService.listLoginMenu(userInfo.getId());
         data.put("token", token);
+        data.put("menu", menuResDTOList);
         log.info("登陆成功");
         return DataResponse.of(data);
     }

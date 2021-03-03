@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.MenuMapper">
+    <select id="listCatalog" resultType="com.zte.msg.alarmcenter.dto.res.MenuResDTO">
+        SELECT *
+        FROM menu WHERE is_catalog=0 AND is_deleted=0
+        <if test="menuIds!=null">
+            AND id IN (
+            <foreach collection="menuIds" index="index" item="menuId" separator=",">
+                #{menuId}
+            </foreach>
+            )
+        </if>
+        ORDER BY menu_sort
+    </select>
+
+    <select id="listMenu" resultType="com.zte.msg.alarmcenter.dto.res.MenuResDTO$MenuInfo">
+        SELECT *
+        FROM menu WHERE is_menu=0 AND is_deleted=0
+        <if test="catalogId!=null">
+            AND catalog_id=#{catalogId}
+        </if>
+        <if test="menuIds!=null">
+            AND id IN (
+            <foreach collection="menuIds" index="index" item="menuId" separator=",">
+                #{menuId}
+            </foreach>
+            )
+        </if>
+        ORDER BY menu_sort
+    </select>
+
+    <select id="listButton" resultType="com.zte.msg.alarmcenter.dto.res.MenuResDTO$MenuInfo$ButtonInfo">
+        SELECT *
+        FROM menu WHERE is_catalog=1 AND is_menu=1 AND is_deleted=0
+        <if test="menuId!=null">
+            AND menu_id=#{menuId}
+        </if>
+        <if test="menuIds!=null">
+            AND id IN (
+            <foreach collection="menuIds" index="index" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        ORDER BY menu_sort
+    </select>
+
+    <select id="listButtonRoleIdentify" resultType="java.lang.String">
+        SELECT GROUP_CONCAT(DISTINCT a.role_identify) AS roles FROM
+        (SELECT role_identify
+        FROM menu WHERE is_catalog=1 AND is_menu=1 AND is_deleted=0
+        <if test="menuId!=null">
+            AND menu_id=#{menuId}
+        </if>
+        <if test="menuIds!=null">
+            AND id IN (
+            <foreach collection="menuIds" index="index" item="id" separator=",">
+                #{id}
+            </foreach>
+            )
+        </if>
+        ) AS a
+    </select>
+</mapper>
