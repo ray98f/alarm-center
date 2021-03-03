@@ -58,10 +58,11 @@ public class LoginController {
         String token = createSimpleToken(userInfo);
         log.info("{} Token返回成功", userInfo.getUserName());
         ChangeShifts changeShifts = new ChangeShifts();
-        changeShifts.setType(1);
+        changeShifts.setType(2);
         changeShifts.setUserName(userInfo.getUserName());
         changeShiftsService.addChangeShifts(changeShifts);
         Map<String, Object> data = new HashMap<>(16);
+        
         data.put("token", token);
         log.info("登陆成功");
         return DataResponse.of(data);
@@ -77,7 +78,7 @@ public class LoginController {
     public <T> DataResponse<T> exit() {
         String userName = TokenUtil.getCurrentUserName();
         ChangeShifts changeShifts = new ChangeShifts();
-        changeShifts.setType(2);
+        changeShifts.setType(1);
         changeShifts.setUserName(userName);
         changeShiftsService.addChangeShifts(changeShifts);
         log.info("{} 登出成功", userName);

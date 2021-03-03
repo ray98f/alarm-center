@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @ApiModel
 public class ChangeShifts extends BaseEntity {
-    @ApiModelProperty(value = "交接班类型")
+    @ApiModelProperty(value = "交接班类型（1为交班，2为接班）")
     private Integer type;
 
     @ApiModelProperty(value = "记录人")
