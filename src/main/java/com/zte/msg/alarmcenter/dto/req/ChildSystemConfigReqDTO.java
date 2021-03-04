@@ -17,6 +17,9 @@ public class ChildSystemConfigReqDTO {
 
     private Long id;
 
+    @ApiModelProperty(value = "pid")
+    private Integer pid;
+
     @ApiModelProperty(value = "子系统名称")
     private String name;
 
@@ -34,4 +37,7 @@ public class ChildSystemConfigReqDTO {
 
     @ApiModelProperty(value = "状态, 0-离线，1-在线")
     private Integer isOnline;
+
+    @ApiModelProperty(value = "人员id")
+    private String userId;
 }

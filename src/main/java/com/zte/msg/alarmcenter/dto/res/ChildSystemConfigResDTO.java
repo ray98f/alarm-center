@@ -17,6 +17,9 @@ public class ChildSystemConfigResDTO {
 
     private Long id;
 
+    @ApiModelProperty(value = "父节点id")
+    private Integer pid;
+
     @ApiModelProperty(value = "子系统名称")
     private String name;
 

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.PositionMapper">
+
+
+    <insert id="addPosition">
+        INSERT INTO  `position`
+        (
+            id,
+            p_id,
+            position_code,
+            `name`,
+            icon,
+            topographic,
+            `type`,
+            coordinate,
+            created_at
+        <if test="userId != null and userId!=''">
+            ,created_by
+        </if>
+
+        )
+        VALUES
+        (
+            null,
+            #{pId},
+            #{positionCode},
+            #{name},
+            #{icon},
+            #{topographic},
+            #{type},
+            #{coordinate},
+            NOW()
+        <if test="userId != null and userId!=''">
+            ,#{userId}
+        </if>
+        )
+    </insert>
+    <update id="modifyPosition">
+        update `position`
+        set
+            p_id = #{reqDTO.pId},
+            `name` = #{reqDTO.name},
+            icon = #{reqDTO.icon},
+            topographic = #{reqDTO.topographic},
+            position_code = #{reqDTO.positionCode},
+            `type` = #{reqDTO.type},
+            coordinate = #{reqDTO.coordinate},
+            updated_at = NOW()
+        <if test="reqDTO.userId !=null and reqDTO.userId !=''">
+            ,updated_by = #{reqDTO.userId}
+        </if>
+        where id = #{id}
+    </update>
+    <update id="deletePosition">
+        update `position`
+        set
+            is_deleted = 1
+        where id = #{id}
+    </update>
+    <select id="getPositionsCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from `position`
+        where is_deleted = 0 and p_id is null
+    </select>
+    <select id="getPositions" resultType="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
+        select
+            id,
+            p_id,
+            position_code as code,
+            `name`,
+            icon,
+            topographic,
+            `type`,
+            coordinate
+        from `position`
+        where is_deleted = 0 and p_id is null
+        limit #{page}, #{size}
+    </select>
+    <select id="getPositionsByIdCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from `position`
+        where is_deleted = 0 and p_id = #{pId}
+    </select>
+    <select id="getPositionsById" resultType="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
+        select
+            id,
+            p_id,
+            position_code as code,
+            `name`,
+            icon,
+            topographic,
+            `type`,
+            coordinate
+        from `position`
+        where is_deleted = 0 and p_id = #{pId}
+        limit #{pageReqDTO.page}, #{pageReqDTO.size}
+    </select>
+</mapper>

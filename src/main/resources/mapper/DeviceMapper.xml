@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.DeviceMapper">
+    <insert id="importDevice"  parameterType="java.util.List">
+        insert into device
+        (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (
+             null,
+            #{item.name},
+            #{item.systemId},
+            #{item.positionId},
+            #{item.deviceCode},
+            #{item.brand},
+            #{item.serialNum},
+            #{item.description},
+            NOW(),
+            #{userId}
+            )
+        </foreach>
+    </insert>
+    <update id="modifyDevice">
+        update device
+        set
+            `name` = #{reqModifyDTO.name},
+            system_id = #{reqModifyDTO.systemId},
+            position_id = #{reqModifyDTO.positionId},
+            device_code = #{reqModifyDTO.deviceCode},
+            brand = #{reqModifyDTO.brand},
+            serial_num = #{reqModifyDTO.serialNum},
+            description = #{reqModifyDTO.description},
+            updated_at = NOW()
+        <if test="userId!=null and userId!=''">
+            ,updated_by = #{userId}
+        </if>
+        where id = #{id}
+    </update>
+    <update id="deleteDevice">
+        update device
+        set
+            is_deleted = 1
+        where id = #{id}
+    </update>
+
+    <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
+        select
+            id,
+            `name`,
+            system_id,
+            position_id,
+            device_code,
+            brand,
+            serial_num,
+            description
+        from device
+        where is_deleted = 0
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="deviceCode!=null and deviceCode!=''">
+            and device_code = #{deviceCode}
+        </if>
+        <if test="systemId!=null">
+            and system_id = #{systemId}
+        </if>
+        <if test="positionId!=null">
+            and position_id = #{positionId}
+        </if>
+        <if test="pageReq.page!=null and pageReq.size!=null">
+            limit #{pageReq.page},#{pageReq.size}
+        </if>
+    </select>
+    <select id="getDevicesCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from device
+        where is_deleted = 0
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        <if test="deviceCode!=null and deviceCode!=''">
+            and device_code = #{deviceCode}
+        </if>
+        <if test="systemId!=null">
+            and system_id = #{systemId}
+        </if>
+        <if test="positionId!=null">
+            and position_id = #{positionId}
+        </if>
+    </select>
+</mapper>

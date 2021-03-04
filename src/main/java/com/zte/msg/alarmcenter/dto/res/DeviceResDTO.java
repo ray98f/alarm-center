@@ -18,6 +18,10 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class DeviceResDTO {
 
+    @ApiModelProperty(value = "id")
+    @NotBlank(message = "32000006")
+    private String id;
+
     @ApiModelProperty(value = "设备名称")
     @NotBlank(message = "32000006")
     private String name;
@@ -37,6 +41,10 @@ public class DeviceResDTO {
     @ApiModelProperty(value = "")
     @NotBlank(message = "32000006")
     private String brand;
+
+    @ApiModelProperty(value = "")
+    @NotBlank(message = "32000006")
+    private String serialNum;
 
     @ApiModelProperty(value = "设备描述")
     private String description;
