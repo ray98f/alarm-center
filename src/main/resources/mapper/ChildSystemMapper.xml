@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.ChildSystemMapper">
+    <!--新增子系统-->
+    <insert id="addChildSystemConfigs">
+        INSERT INTO subsystem
+        (
+         id,
+         pid,
+         `name`,
+         sid,
+         server_ip,
+         server_port,
+         icon,
+         is_online,
+         created_at,
+        <if test="userId!=null and userId!=''">
+            created_by,
+        </if>
+         is_deleted)
+        VALUES (
+        null,
+        #{pid},
+        #{name},
+        #{sid},
+        #{serverIp},
+        #{serverPort},
+        #{icon},
+        #{isOnline},
+        NOW(),
+        <if test="userId!=null and userId!=''">
+        #{userId},
+        </if>
+        0)
+    </insert>
+    <!--修改子系统-->
+    <update id="modifyChildSystemConfig">
+        UPDATE subsystem
+        SET
+            pid = #{childSystemConfigReqDTO.pid},
+            `name` = #{childSystemConfigReqDTO.name},
+            sid = #{childSystemConfigReqDTO.sid},
+            server_ip = #{childSystemConfigReqDTO.serverIp},
+            server_port = #{childSystemConfigReqDTO.serverPort},
+            icon = #{childSystemConfigReqDTO.icon},
+            is_online = #{childSystemConfigReqDTO.isOnline},
+            updated_at = NOW()
+        <if test="childSystemConfigReqDTO.userId !=null and childSystemConfigReqDTO.userId!=''">
+            ,updated_by = #{childSystemConfigReqDTO.userId}
+        </if>
+        where id = #{id}
+    </update>
+    <!--删除子系统-->
+    <update id="removeChildSystem">
+        UPDATE subsystem
+        SET
+            is_deleted = 1
+        WHERE id = #{id}
+    </update>
+    <!--查询子系统数量-->
+    <select id="getChildSystemConfigsCount" resultType="java.lang.Integer">
+        SELECT count(1)
+        FROM subsystem
+        WHERE is_deleted = 0
+    </select>
+    <!--查询子系统list-->
+    <select id="getChildSystemConfigs" resultType="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO">
+        SELECT id,
+               pid,
+               `name`,
+               sid,
+               server_ip,
+               server_port,
+               icon,
+               is_online
+        FROM subsystem
+        WHERE is_deleted = 0
+            limit #{current},#{pageSize}
+    </select>
+
+
+</mapper>

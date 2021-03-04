@@ -37,3 +37,16 @@ async:
 logging:
   file:
     path: ./log
+
+fdfs:
+  connect-timeout: 600
+  so-timeout: 2500
+  thumb-image:
+    height: 60
+    width: 60
+  pool:
+    max-total: 300
+    max-total-per-key: 300
+    max-wait-millis: 5000
+  tracker-list:
+    - 192.168.30.103:22122

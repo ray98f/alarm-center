@@ -24,11 +24,21 @@ public class PositionReqDTO {
     @ApiModelProperty(value = "上级节点id，不传则表示新增根节点")
     private Long pId;
 
+    @ApiModelProperty(value = "位置图标")
+    private String icon;
+
+    @ApiModelProperty(value = "地形图")
+    private String topographic;
+
     @ApiModelProperty(value = "位置编码")
     private String positionCode;
 
     @ApiModelProperty(value = "位置类型，0-地图，1-线路，3-车站")
     private Integer type;
 
+    @ApiModelProperty(value = "坐标")
+    private String coordinate;
 
+    @ApiModelProperty(value = "人员id")
+    private String userId;
 }

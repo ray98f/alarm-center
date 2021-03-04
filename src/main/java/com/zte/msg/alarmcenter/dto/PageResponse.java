@@ -24,9 +24,14 @@ public class PageResponse<T> extends BaseResponse {
 
     private PageResponse.PagedData<T> data;
 
-    public static <T> PageResponse<T> of(Page<T> page) {
-        PageResponse.PagedData<T> data = new PageResponse.PagedData<>(page);
+    public static <T> PageResponse<T> of(Page<T> page, long current, long pageSize) {
+        PageResponse.PagedData<T> data = new PageResponse.PagedData<>(page == null ?
+                new Page<T>().setCurrent(current).setSize(pageSize): page);
         return new PageResponse<>(data);
+    }
+
+    public static <T> PageResponse<T> of(Page<T> page) {
+        return of(page,page.getCurrent(),page.getSize());
     }
 
     public static <T> PageResponse<T> of(PageInfo<T> page) {

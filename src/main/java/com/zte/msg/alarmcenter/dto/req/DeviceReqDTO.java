@@ -38,6 +38,10 @@ public class DeviceReqDTO {
     @NotBlank(message = "32000006")
     private String brand;
 
+    @ApiModelProperty(value = "")
+    @NotBlank(message = "32000006")
+    private String serialNum;
+
     @ApiModelProperty(value = "设备描述")
     private String description;
 

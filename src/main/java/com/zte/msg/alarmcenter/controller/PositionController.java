@@ -1,17 +1,23 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
+import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.dto.req.PositionReqDTO;
 import com.zte.msg.alarmcenter.dto.res.PositionResDTO;
+import com.zte.msg.alarmcenter.service.PositionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -27,48 +33,56 @@ import javax.validation.Valid;
 @Validated
 public class PositionController {
 
+    @Autowired
+    private PositionService myPositionService;
+
     @GetMapping("/list")
     @ApiOperation(value = "获取线路站点信息列表")
-    public PageResponse<PositionResDTO> getLinePositions(@Valid PageReqDTO pageReqDTO) {
-
-        return null;
+    public PageResponse<PositionResDTO> getPositions(@Valid @RequestBody PageReqDTO pageReqDTO) {
+        Page<PositionResDTO> resDTOPage = myPositionService.getPositions(pageReqDTO);
+        return PageResponse.of(resDTOPage, pageReqDTO.getPage(), pageReqDTO.getSize());
     }
 
-    @GetMapping("/{pId}")
+    @GetMapping("list/{pId}")
     @ApiOperation(value = "位置信息-分页查询")
-    public PageResponse<PositionResDTO> getPositions(@Valid PageReqDTO pageReqDTO,
-                                                     @PathVariable @ApiParam(value = "线路id") Long pId,
-                                                     @RequestParam(required = false) @ApiParam(value = "位置名称模糊查询") String name) {
-
-        return null;
+    public PageResponse<PositionResDTO> getPositionsById(@Valid @RequestBody PageReqDTO pageReqDTO,
+                                                     @PathVariable @ApiParam(value = "线路id") Long pId) {
+        Page<PositionResDTO> resDTOPageById = myPositionService.getPositionsById(pId,pageReqDTO);
+        return PageResponse.of(resDTOPageById, pageReqDTO.getPage(), pageReqDTO.getSize());
     }
 
-    @PostMapping
+    @PostMapping("/add")
     @ApiOperation(value = "新增位置")
-    public <T> DataResponse<T> addPosition(@Valid PositionReqDTO reqDTO,
-                                           @RequestParam(required = false) @ApiParam(value = "位置图标") MultipartFile icon,
-                                           @RequestParam(required = false) @ApiParam(value = "地形图") MultipartFile topographic) {
-
+    public DataResponse<Void> addPosition(@Valid @RequestBody PositionReqDTO reqDTO, ServletRequest request) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
+        if (null != tokenInfo) {
+            reqDTO.setUserId(tokenInfo.getUserId());
+        }
+        myPositionService.addPosition(reqDTO);
         return DataResponse.success();
     }
 
-    @PutMapping
+    @PutMapping("/upData/{id}")
     @ApiOperation(value = "修改位置")
-    public <T> DataResponse<T> modifyPosition(@RequestParam Long id,
-                                              @Valid PositionReqDTO reqDTO,
-                                              @RequestParam(required = false) @ApiParam(value = "位置图标") MultipartFile icon,
-                                              @RequestParam(required = false) @ApiParam(value = "地形图") MultipartFile topographic) {
-
+    public DataResponse<Void> modifyPosition(@PathVariable("id") Long id,
+                                             @RequestBody PositionReqDTO reqDTO,
+                                             ServletRequest request) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
+        if (null != tokenInfo) {
+            reqDTO.setUserId(tokenInfo.getUserId());
+        }
+        myPositionService.modifyPosition(id, reqDTO);
         return DataResponse.success();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "删除位置")
-    public <T> DataResponse<T> deletePosition(@RequestParam Long id) {
-
+    public DataResponse<Void> deletePosition(@PathVariable("id") Long id) {
+        myPositionService.deletePosition(id);
         return DataResponse.success();
     }
-
 
 
 //    @GetMapping("/export")

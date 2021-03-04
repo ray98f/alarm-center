@@ -27,8 +27,11 @@ public class PositionResDTO {
     @ApiModelProperty(value = "节点名称")
     private String name;
 
-    @ApiModelProperty(value = "节点简称")
-    private String abbreviation;
+    @ApiModelProperty(value = "位置图标")
+    private String icon;
+
+    @ApiModelProperty(value = "地形图")
+    private String topographic;
 
     @ApiModelProperty(value = "节点类型，0-线路，1-站点")
     private Integer type;
