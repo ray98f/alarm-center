@@ -24,7 +24,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
         FilterRegistrationBean<JwtFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new JwtFilter());
         registration.setName("JwtFilter");
-        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/*");
         registration.setOrder(2);
         return registration;
     }
