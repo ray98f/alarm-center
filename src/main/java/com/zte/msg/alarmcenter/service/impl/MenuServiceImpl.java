@@ -6,6 +6,7 @@ import com.zte.msg.alarmcenter.mapper.RoleMapper;
 import com.zte.msg.alarmcenter.mapper.UserMapper;
 import com.zte.msg.alarmcenter.service.MenuService;
 import com.zte.msg.alarmcenter.service.OperationLogService;
+import com.zte.msg.alarmcenter.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,12 @@ public class MenuServiceImpl implements MenuService {
 
     /**
      * 登录动态菜单列表获取
-     * @param id
+     *
      * @return
      */
     @Override
-    public List<MenuResDTO> listLoginMenu(Long id){
+    public List<MenuResDTO> listLoginMenu() {
+        Long id = userMapper.selectUserId(TokenUtil.getCurrentUserName());
         List<Long> userRoles = userMapper.selectUserRoles(id);
         return new ArrayList<>(menuService.listMenu(userRoles));
     }

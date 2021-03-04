@@ -15,10 +15,9 @@ public interface MenuService {
 
     /**
      * 登录动态菜单列表获取
-     * @param id
      * @return
      */
-    List<MenuResDTO> listLoginMenu(Long id);
+    List<MenuResDTO> listLoginMenu();
 
     /**
      * 根据权限获取菜单列表

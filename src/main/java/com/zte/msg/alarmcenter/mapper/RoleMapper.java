@@ -2,6 +2,7 @@ package com.zte.msg.alarmcenter.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.RoleReqDTO;
 import com.zte.msg.alarmcenter.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,12 +26,12 @@ public interface RoleMapper extends BaseMapper<Role> {
 
     /**
      * 查询角色列表
-     *
      * @param page
-     * @param roleReqDTO
+     * @param status
+     * @param roleName
      * @return
      */
-    Page<Role> listRole(Page<Role> page, RoleReqDTO roleReqDTO);
+    Page<Role> listRole(Page<Role> page, Integer status, String roleName);
 
     /**
      * 删除角色

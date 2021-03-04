@@ -145,14 +145,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public Page<User> listUser(UserReqDTO userReqDTO) {
-        if (Objects.isNull(userReqDTO)) {
+    public Page<User> listUser(Integer status, String userRealName, PageReqDTO pageReqDTO) {
+        if (Objects.isNull(status)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        PageReqDTO pageReqDTO = new PageReqDTO();
-        BeanUtils.copyProperties(userReqDTO, pageReqDTO);
-        PageHelper.startPage(userReqDTO.getPage().intValue(), userReqDTO.getSize().intValue());
-        Page<User> userPage = userMapper.listUser(pageReqDTO.of(), userReqDTO);
+        if (Objects.isNull(userRealName)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        Page<User> userPage = userMapper.listUser(pageReqDTO.of(), status, userRealName);
         userPage.getRecords().sort(Comparator.comparing(User::getUpdatedAt).reversed());
         return userPage;
     }

@@ -76,7 +76,7 @@ public class AlarmStatisticsController {
      * @param endTime
      * @return
      */
-    @GetMapping("/line/statistics")
+    @GetMapping("/line")
     @ApiOperation(value = "按线路统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsByLine(@RequestParam(required = false)
                                                                           @ApiParam("站点") List<Long> siteIds,
@@ -98,7 +98,7 @@ public class AlarmStatisticsController {
      * @param endTime
      * @return
      */
-    @GetMapping("/system/statistics")
+    @GetMapping("/system")
     @ApiOperation(value = "按系统统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsBySystem(@RequestParam(required = false)
                                                                             @ApiParam("系统") List<Long> systemIds,
@@ -111,7 +111,7 @@ public class AlarmStatisticsController {
         return DataResponse.of(alarmStatisticsService.statisticsBySystem(systemIds, alarmLevels, startTime, endTime));
     }
 
-    @GetMapping("/level/statistics")
+    @GetMapping("/level")
     @ApiOperation(value = "按告警级别统计")
     public DataResponse<List<StatisticsByAnyResDTO>> statisticsByAlarmLevel(@RequestParam(required = false)
                                                                                 @ApiParam("告警级别") List<Integer> alarmLevels,
@@ -175,7 +175,7 @@ public class AlarmStatisticsController {
         return DataResponse.of(alarmStatisticsService.systemAlarmTrend(systemId, alarmLevels, statisticsCycle, startTime, endTime));
     }
 
-    @GetMapping("/resolution/efficiency")
+    @GetMapping("/efficiency")
     @ApiOperation(value = "告警解决效率")
     public DataResponse<List<AlarmResolutionEfficiencyResDTO>> alarmResolutionEfficiency(@RequestParam(required = false)
                                                                                              @ApiParam("告警级别") List<Integer> alarmLevels,

@@ -29,7 +29,7 @@ public class RoleReqDTO extends PageReqDTO {
     private Integer roleSort;
 
     @ApiModelProperty(value = "状态")
-    private String status;
+    private Integer status;
 
     @ApiModelProperty(value = "备注")
     private String remark;

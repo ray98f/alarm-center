@@ -1,9 +1,13 @@
 package com.zte.msg.alarmcenter.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.RoleReqDTO;
 import com.zte.msg.alarmcenter.entity.Role;
+import io.swagger.annotations.ApiParam;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -23,10 +27,12 @@ public interface RoleService {
 
     /**
      * 查询角色列表
-     * @param roleReqDTO
+     * @param status
+     * @param roleName
+     * @param pageReqDTO
      * @return
      */
-    Page<Role> listRole(RoleReqDTO roleReqDTO);
+    Page<Role> listRole(Integer status,String roleName,PageReqDTO pageReqDTO);
 
     /**
      * 删除角色

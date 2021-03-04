@@ -13,13 +13,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,19 +66,18 @@ public class LoginController {
         changeShifts.setUserName(userInfo.getUserName());
         changeShiftsService.addChangeShifts(changeShifts);
         Map<String, Object> data = new HashMap<>(16);
-        List<MenuResDTO> menuResDTOList = menuService.listLoginMenu(userInfo.getId());
         data.put("token", token);
-        data.put("menu", menuResDTOList);
         log.info("登陆成功");
         return DataResponse.of(data);
     }
 
     /**
      * 管理平台登出
+     *
      * @param <T>
      * @return
      */
-    @PostMapping("/exit")
+    @PostMapping("/logout")
     @ApiOperation(value = "管理平台登出")
     public <T> DataResponse<T> exit() {
         String userName = TokenUtil.getCurrentUserName();
@@ -92,4 +89,15 @@ public class LoginController {
         return DataResponse.success();
     }
 
+    /**
+     * 动态菜单获取
+     *
+     * @return
+     */
+    @GetMapping("/menu")
+    @ApiOperation(value = "动态菜单获取")
+    public DataResponse<List<MenuResDTO>> menu() {
+        List<MenuResDTO> menuResDTOList = menuService.listLoginMenu();
+        return DataResponse.of(menuResDTOList);
+    }
 }

@@ -103,10 +103,17 @@ public interface UserMapper extends BaseMapper<User> {
 
     /**
      * 查询用户列表
-     *
      * @param page
-     * @param userReqDTO
+     * @param status
+     * @param userRealName
      * @return
      */
-    Page<User> listUser(Page<User> page, UserReqDTO userReqDTO);
+    Page<User> listUser(Page<User> page, Integer status,String userRealName);
+
+    /**
+     * 根据用户名获取用户id
+     * @param userName
+     * @return
+     */
+    Long selectUserId(String userName);
 }

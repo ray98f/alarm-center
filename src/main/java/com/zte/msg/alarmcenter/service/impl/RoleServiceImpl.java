@@ -42,14 +42,15 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Page<Role> listRole(RoleReqDTO roleReqDTO) {
-        if (Objects.isNull(roleReqDTO)) {
+    public Page<Role> listRole(Integer status,String roleName,PageReqDTO pageReqDTO) {
+        if (Objects.isNull(status)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        PageReqDTO pageReqDTO = new PageReqDTO();
-        BeanUtils.copyProperties(roleReqDTO, pageReqDTO);
-        PageHelper.startPage(roleReqDTO.getPage().intValue(), roleReqDTO.getSize().intValue());
-        return roleMapper.listRole(pageReqDTO.of(), roleReqDTO);
+        if (Objects.isNull(roleName)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        return roleMapper.listRole(pageReqDTO.of(), status,roleName);
     }
 
     @Override

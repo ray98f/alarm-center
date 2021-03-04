@@ -100,11 +100,15 @@
 
     <select id="listUser" resultType="com.zte.msg.alarmcenter.entity.User">
         select * from user where is_deleted=0
-        <if test="userReqDTO.status!=null">
-            and status=#{userReqDTO.status}
+        <if test="status!=null">
+            and status=#{status}
         </if>
-        <if test="userReqDTO.userRealName!=null">
-            and user_real_name is like "%"{userReqDTO.userRealName}"%"
+        <if test="userRealName!=null">
+            and user_real_name is like "%"{userRealName}"%"
         </if>
+    </select>
+
+    <select id="selectUserId" resultType="java.lang.Long">
+        select id from user where user_name=#{userName} and is_deleted=0
     </select>
 </mapper>

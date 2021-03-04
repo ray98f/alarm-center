@@ -7,10 +7,10 @@
 
     <select id="listRole" resultType="com.zte.msg.alarmcenter.entity.Role">
         select * from role where is_deleted=0
-        <if test="roleReqDTO.status!=''">
+        <if test="status!=''">
             and status=#{roleReqDTO.status}
         </if>
-        <if test="roleReqDTO.roleName!=''">
+        <if test="roleName!=''">
             and role_name is like "%"#{roleReqDTO.roleName}"%"
         </if>
         ORDER BY updated_at DESC

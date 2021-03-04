@@ -2,6 +2,7 @@ package com.zte.msg.alarmcenter.controller;
 
 import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.req.PasswordReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
@@ -9,6 +10,7 @@ import com.zte.msg.alarmcenter.entity.User;
 import com.zte.msg.alarmcenter.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -107,7 +110,7 @@ public class UserController {
     /**
      * 获取所有用户
      */
-    @GetMapping
+    @GetMapping("/all")
     @ApiOperation(value = "获取所有用户")
     public DataResponse<List<User>> listAllUser(){
         return DataResponse.of(userService.listAllUser());
@@ -115,13 +118,19 @@ public class UserController {
 
     /**
      * 分页查询用户列表
-     * @param userReqDTO 查询用户信息
+     * @param status
+     * @param userRealName
+     * @param pageReqDTO
      * @return
      */
     @PermissionCheck(permissionName = {"system:user:list"})
-    @PostMapping("/list")
+    @GetMapping
     @ApiOperation(value = "分页查询用户列表")
-    public PageResponse<User> listUser(@Valid @RequestBody UserReqDTO userReqDTO){
-        return PageResponse.of(userService.listUser(userReqDTO));
+    public PageResponse<User> listUser(@RequestParam(required = false)
+                                           @ApiParam("状态") Integer status,
+                                       @RequestParam(required = false)
+                                           @ApiParam("姓名") String userRealName,
+                                       @Valid PageReqDTO pageReqDTO){
+        return PageResponse.of(userService.listUser(status, userRealName, pageReqDTO));
     }
 }

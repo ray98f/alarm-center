@@ -3,12 +3,14 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.req.RoleReqDTO;
 import com.zte.msg.alarmcenter.entity.Role;
 import com.zte.msg.alarmcenter.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +41,7 @@ public class RoleController {
      *
      * @return List<Role>
      */
-    @GetMapping
+    @GetMapping("/all")
     @ApiOperation(value = "获取所有角色信息")
     public DataResponse<List<Role>> listAllRole() {
         return DataResponse.of(roleService.listAllRole());
@@ -47,16 +49,21 @@ public class RoleController {
 
     /**
      * 分页获取角色信息
-     *
-     * @param roleReqDTO 角色分页信息
-     * @return PageInfo<Role>
+     * @param status
+     * @param roleName
+     * @param pageReqDTO
+     * @return
      */
     @PermissionCheck(permissionName = {"system:role:list"})
 //    @LogMaker(value = "分页获取角色信息")
-    @PostMapping("/list")
+    @GetMapping
     @ApiOperation(value = "分页获取角色信息")
-    public PageResponse<Role> listRole(@Valid @RequestBody RoleReqDTO roleReqDTO) {
-        return PageResponse.of(roleService.listRole(roleReqDTO));
+    public PageResponse<Role> listRole(@RequestParam(required = false)
+                                           @ApiParam("状态") Integer status,
+                                       @RequestParam(required = false)
+                                           @ApiParam("角色名称") String roleName,
+                                       @Valid PageReqDTO pageReqDTO) {
+        return PageResponse.of(roleService.listRole(status, roleName, pageReqDTO));
     }
 
     /**
