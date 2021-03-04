@@ -4,7 +4,7 @@
     <select id="listSystemParam" resultType="com.zte.msg.alarmcenter.entity.SystemParameter">
         SELECT * FROM system_parameter WHERE is_deleted=0
         <if test="parameter!=null">
-            and parameter is like "%"#{parameter}"%"
+            and parameter like "%"#{parameter}"%"
         </if>
     </select>
 

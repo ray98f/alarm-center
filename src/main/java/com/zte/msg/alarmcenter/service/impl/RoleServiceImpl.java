@@ -43,12 +43,6 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Page<Role> listRole(Integer status,String roleName,PageReqDTO pageReqDTO) {
-        if (Objects.isNull(status)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
-        if (Objects.isNull(roleName)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return roleMapper.listRole(pageReqDTO.of(), status,roleName);
     }

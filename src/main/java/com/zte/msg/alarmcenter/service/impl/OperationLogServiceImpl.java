@@ -45,18 +45,6 @@ public class OperationLogServiceImpl implements OperationLogService {
                                                Timestamp startTime,
                                                Timestamp endTime,
                                                PageReqDTO pageReqDTO){
-        if (Objects.isNull(userName)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
-        if (Objects.isNull(operationType)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
-        if (Objects.isNull(startTime)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
-        if (Objects.isNull(endTime)) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return operationLogMapper.listOperationLog(pageReqDTO.of(), userName, operationType, startTime, endTime);
     }

@@ -81,7 +81,7 @@
             </if>
             updated_by=#{updateBy}
         </set>
-        where id=#{userReqDTO.userId}
+        where id=#{userReqDTO.id}
     </update>
 
     <update id="deleteUserRole">
@@ -103,8 +103,8 @@
         <if test="status!=null">
             and status=#{status}
         </if>
-        <if test="userRealName!=null">
-            and user_real_name is like "%"{userRealName}"%"
+        <if test="userRealName!=null and userRealName!=''">
+            and user_real_name like '%${userRealName}%'
         </if>
     </select>
 
