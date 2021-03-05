@@ -26,7 +26,7 @@ public class ChildSystemServiceImpl implements ChildSystemService {
      * @return
      */
     @Override
-    public Page<ChildSystemConfigResDTO> getChildSystemConfigs(int current, int pageSize) {
+    public Page<ChildSystemConfigResDTO> getChildSystemConfigs(Long current, Long pageSize) {
         List<ChildSystemConfigResDTO> childSystemList = null;
         int count = myChildSystemMapper.getChildSystemConfigsCount();
         Page<ChildSystemConfigResDTO> page = new Page<>();

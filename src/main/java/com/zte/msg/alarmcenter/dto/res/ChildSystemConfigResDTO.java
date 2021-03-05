@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * description:
  *
@@ -37,4 +39,7 @@ public class ChildSystemConfigResDTO {
 
     @ApiModelProperty(value = "状态, 0-离线，1-在线")
     private Integer isOnline;
+
+    @ApiModelProperty(value = "数据子集")
+    private List<ChildSystemConfigResDTO> children;
 }

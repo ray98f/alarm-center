@@ -26,7 +26,7 @@ public interface ChildSystemMapper {
      * @param current
      * @param pageSize
      */
-    List<ChildSystemConfigResDTO> getChildSystemConfigs(@Param("current") int current, @Param("pageSize") int pageSize);
+    List<ChildSystemConfigResDTO> getChildSystemConfigs(@Param("current") Long current, @Param("pageSize") Long pageSize);
 
     /**
      * 新增子系统

@@ -2,6 +2,7 @@ package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.DataResponse;
+import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.dto.req.ChildSystemConfigReqDTO;
@@ -36,10 +37,9 @@ public class ChildSystemController {
 
     @GetMapping("/list")
     @ApiOperation(value = "子系统列表")
-    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(
-            @RequestParam("page") int page, @RequestParam("size") int size) {
-        Page<ChildSystemConfigResDTO> childSystemConfigs = myChildSystemService.getChildSystemConfigs(page, size);
-        return PageResponse.of(childSystemConfigs, page, size);
+    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(@RequestBody PageReqDTO page) {
+        Page<ChildSystemConfigResDTO> childSystemConfigs = myChildSystemService.getChildSystemConfigs(page.getPage(), page.getSize());
+        return PageResponse.of(childSystemConfigs, page.getPage(), page.getSize());
     }
 
     @PostMapping("/add")

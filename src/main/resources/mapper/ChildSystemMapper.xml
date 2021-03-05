@@ -61,10 +61,10 @@
     <select id="getChildSystemConfigsCount" resultType="java.lang.Integer">
         SELECT count(1)
         FROM subsystem
-        WHERE is_deleted = 0
+        WHERE is_deleted = 0 and pid = 0
     </select>
     <!--查询子系统list-->
-    <select id="getChildSystemConfigs" resultType="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO">
+    <select id="getChildSystemConfigs"  resultMap="BaseResultMap">
         SELECT id,
                pid,
                `name`,
@@ -74,9 +74,36 @@
                icon,
                is_online
         FROM subsystem
-        WHERE is_deleted = 0
+        WHERE is_deleted = 0 and pid = 0
             limit #{current},#{pageSize}
     </select>
 
+
+    <select id="selectByPid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+            id,
+            pid,
+            `name`,
+            sid,
+            server_ip,
+            server_port,
+            icon,
+            is_online
+        from subsystem
+        WHERE is_deleted = 0 and pid = #{id}
+    </select>
+
+    <resultMap id="BaseResultMap" type="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="pid" jdbcType="BIGINT" property="pid" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="sid" jdbcType="INTEGER" property="sid" />
+        <result column="server_ip" jdbcType="VARCHAR" property="serverIp" />
+        <result column="server_port" jdbcType="INTEGER" property="serverPort" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="is_online" jdbcType="INTEGER" property="isOnline" />
+        <collection property="children" column="id"
+                    ofType="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO" select="selectByPid" />
+    </resultMap>
 
 </mapper>

@@ -12,7 +12,7 @@ public interface ChildSystemService {
      * @param current
      * @param pageSize
      */
-    Page<ChildSystemConfigResDTO> getChildSystemConfigs(int current, int pageSize);
+    Page<ChildSystemConfigResDTO> getChildSystemConfigs(Long current, Long pageSize);
 
     /**
      * 新增子系统
