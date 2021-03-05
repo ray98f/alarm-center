@@ -62,9 +62,9 @@
         select
             count(1)
         from `position`
-        where is_deleted = 0 and p_id is null
+        where is_deleted = 0 and p_id = 0
     </select>
-    <select id="getPositions" resultType="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
+    <select id="getPositions"  resultMap="BaseResultMap">
         select
             id,
             p_id,
@@ -75,16 +75,11 @@
             `type`,
             coordinate
         from `position`
-        where is_deleted = 0 and p_id is null
+        where is_deleted = 0 and p_id = 0
         limit #{page}, #{size}
     </select>
-    <select id="getPositionsByIdCount" resultType="java.lang.Integer">
-        select
-            count(1)
-        from `position`
-        where is_deleted = 0 and p_id = #{pId}
-    </select>
-    <select id="getPositionsById" resultType="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
+
+    <select id="selectByPid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
             id,
             p_id,
@@ -95,7 +90,40 @@
             `type`,
             coordinate
         from `position`
-        where is_deleted = 0 and p_id = #{pId}
-        limit #{pageReqDTO.page}, #{pageReqDTO.size}
+        WHERE is_deleted = 0 and p_id = #{id}
     </select>
+
+    <resultMap id="BaseResultMap" type="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="p_id" jdbcType="BIGINT" property="pId" />
+        <result column="position_code" jdbcType="VARCHAR" property="code" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="icon" jdbcType="VARCHAR" property="icon" />
+        <result column="topographic" jdbcType="VARCHAR" property="topographic" />
+        <result column="type" jdbcType="INTEGER" property="type" />
+        <result column="coordinate" jdbcType="VARCHAR" property="controlArea" />
+        <collection property="children" column="id"
+                    ofType="com.zte.msg.alarmcenter.dto.res.PositionResDTO" select="selectByPid" />
+    </resultMap>
+
+<!--    <select id="getPositionsByIdCount" resultType="java.lang.Integer">-->
+<!--        select-->
+<!--            count(1)-->
+<!--        from `position`-->
+<!--        where is_deleted = 0 and p_id = #{pId}-->
+<!--    </select>-->
+<!--    <select id="getPositionsById" resultType="com.zte.msg.alarmcenter.dto.res.PositionResDTO">-->
+<!--        select-->
+<!--            id,-->
+<!--            p_id,-->
+<!--            position_code as code,-->
+<!--            `name`,-->
+<!--            icon,-->
+<!--            topographic,-->
+<!--            `type`,-->
+<!--            coordinate-->
+<!--        from `position`-->
+<!--        where is_deleted = 0 and p_id = #{pId}-->
+<!--        limit #{pageReqDTO.page}, #{pageReqDTO.size}-->
+<!--    </select>-->
 </mapper>

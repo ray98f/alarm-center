@@ -22,8 +22,8 @@ public interface PositionMapper {
     Integer getPositionsCount();
 
     List<PositionResDTO> getPositions(PageReqDTO pageReqDTO);
-
-    Integer getPositionsByIdCount(@Param("pId")Long pId);
-
-    List<PositionResDTO> getPositionsById(@Param("pId") Long pId,@Param("pageReqDTO") PageReqDTO pageReqDTO);
+//
+//    Integer getPositionsByIdCount(@Param("pId")Long pId);
+//
+//    List<PositionResDTO> getPositionsById(@Param("pId") Long pId,@Param("pageReqDTO") PageReqDTO pageReqDTO);
 }

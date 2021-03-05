@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * description:
  *
@@ -39,4 +41,6 @@ public class PositionResDTO {
     @ApiModelProperty(value = "控制区")
     private String controlArea;
 
+    @ApiModelProperty(value = "数据子集")
+    private List<PositionResDTO> children;
 }

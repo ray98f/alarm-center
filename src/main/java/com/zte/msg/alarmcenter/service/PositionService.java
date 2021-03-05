@@ -15,5 +15,5 @@ public interface PositionService {
 
     Page<PositionResDTO> getPositions(PageReqDTO pageReqDTO);
 
-    Page<PositionResDTO> getPositionsById(Long pId, PageReqDTO pageReqDTO);
+//    Page<PositionResDTO> getPositionsById(Long pId, PageReqDTO pageReqDTO);
 }

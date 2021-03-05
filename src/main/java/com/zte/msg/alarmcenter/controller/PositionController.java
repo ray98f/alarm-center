@@ -42,14 +42,14 @@ public class PositionController {
         Page<PositionResDTO> resDTOPage = myPositionService.getPositions(pageReqDTO);
         return PageResponse.of(resDTOPage, pageReqDTO.getPage(), pageReqDTO.getSize());
     }
-
-    @GetMapping("list/{pId}")
-    @ApiOperation(value = "位置信息-分页查询")
-    public PageResponse<PositionResDTO> getPositionsById(@Valid @RequestBody PageReqDTO pageReqDTO,
-                                                     @PathVariable @ApiParam(value = "线路id") Long pId) {
-        Page<PositionResDTO> resDTOPageById = myPositionService.getPositionsById(pId,pageReqDTO);
-        return PageResponse.of(resDTOPageById, pageReqDTO.getPage(), pageReqDTO.getSize());
-    }
+//
+//    @GetMapping("list/{pId}")
+//    @ApiOperation(value = "位置信息-分页查询")
+//    public PageResponse<PositionResDTO> getPositionsById(@Valid @RequestBody PageReqDTO pageReqDTO,
+//                                                     @PathVariable @ApiParam(value = "线路id") Long pId) {
+//        Page<PositionResDTO> resDTOPageById = myPositionService.getPositionsById(pId,pageReqDTO);
+//        return PageResponse.of(resDTOPageById, pageReqDTO.getPage(), pageReqDTO.getSize());
+//    }
 
     @PostMapping("/add")
     @ApiOperation(value = "新增位置")
