@@ -3,6 +3,8 @@ package com.zte.msg.alarmcenter.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
+import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
+import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO;
 import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
 import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
@@ -51,16 +53,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 按线路统计
-     *
-     * @param siteIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
     @Override
-    public List<StatisticsByAnyResDTO> statisticsByLine(List<Long> siteIds, List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByLine(siteIds, alarmLevels, startTime, endTime);
+    public List<StatisticsByAnyResDTO> statisticsByLine(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByLine(statisticsByAnyReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -69,16 +67,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 按系统统计
-     *
-     * @param systemIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
     @Override
-    public List<StatisticsByAnyResDTO> statisticsBySystem(List<Long> systemIds, List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsBySystem(systemIds, alarmLevels, startTime, endTime);
+    public List<StatisticsByAnyResDTO> statisticsBySystem(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsBySystem(statisticsByAnyReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -87,15 +81,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 按告警级别统计
-     *
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
     @Override
-    public List<StatisticsByAnyResDTO> statisticsByAlarmLevel(List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByAlarmLevel(alarmLevels, startTime, endTime);
+    public List<StatisticsByAnyResDTO> statisticsByAlarmLevel(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByAlarmLevel(statisticsByAnyReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -104,17 +95,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 线路告警趋势
-     *
-     * @param siteId
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
     @Override
-    public List<AnyAlarmTrendResDTO> lineAlarmTrend(Long siteId, List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.lineAlarmTrend(siteId, alarmLevels, statisticsCycle, startTime, endTime);
+    public List<AnyAlarmTrendResDTO> lineAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.lineAlarmTrend(anyAlarmTrendReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -123,16 +109,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 级别告警趋势
-     *
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
     @Override
-    public List<AnyAlarmTrendResDTO> levelAlarmTrend(List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.levelAlarmTrend(alarmLevels, statisticsCycle, startTime, endTime);
+    public List<AnyAlarmTrendResDTO> levelAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.levelAlarmTrend(anyAlarmTrendReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -141,17 +123,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 系统告警趋势
-     *
-     * @param systemId
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
     @Override
-    public List<AnyAlarmTrendResDTO> systemAlarmTrend(Long systemId, List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.systemAlarmTrend(systemId, alarmLevels, statisticsCycle, startTime, endTime);
+    public List<AnyAlarmTrendResDTO> systemAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.systemAlarmTrend(anyAlarmTrendReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }
@@ -160,16 +137,12 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 告警解决效率
-     *
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
     @Override
-    public List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime) {
-        List<AlarmResolutionEfficiencyResDTO> list = alarmStatisticsMapper.alarmResolutionEfficiency(alarmLevels, statisticsCycle, startTime, endTime);
+    public List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        List<AlarmResolutionEfficiencyResDTO> list = alarmStatisticsMapper.alarmResolutionEfficiency(anyAlarmTrendReqDTO);
         if (null == list || list.isEmpty()) {
             log.warn("告警记录为空");
         }

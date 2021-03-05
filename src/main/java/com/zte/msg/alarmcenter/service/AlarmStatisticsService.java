@@ -2,6 +2,8 @@ package com.zte.msg.alarmcenter.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
+import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
+import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO;
 import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
 import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
@@ -33,80 +35,51 @@ public interface AlarmStatisticsService {
 
     /**
      * 按线路统计
-     *
-     * @param siteIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
-    List<StatisticsByAnyResDTO> statisticsByLine(List<Long> siteIds, List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime);
+    List<StatisticsByAnyResDTO> statisticsByLine(StatisticsByAnyReqDTO statisticsByAnyReqDTO);
 
     /**
      * 按系统统计
-     *
-     * @param systemIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
-    List<StatisticsByAnyResDTO> statisticsBySystem(List<Long> systemIds, List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime);
+    List<StatisticsByAnyResDTO> statisticsBySystem(StatisticsByAnyReqDTO statisticsByAnyReqDTO);
 
     /**
      * 按告警级别统计
-     *
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
-    List<StatisticsByAnyResDTO> statisticsByAlarmLevel(List<Integer> alarmLevels, Timestamp startTime, Timestamp endTime);
+    List<StatisticsByAnyResDTO> statisticsByAlarmLevel(StatisticsByAnyReqDTO statisticsByAnyReqDTO);
 
     /**
      * 线路告警趋势
-     *
-     * @param siteId
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
-    List<AnyAlarmTrendResDTO> lineAlarmTrend(Long siteId, List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime);
+    List<AnyAlarmTrendResDTO> lineAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO);
 
     /**
      * 级别告警趋势
-     *
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
-    List<AnyAlarmTrendResDTO> levelAlarmTrend(List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime);
+    List<AnyAlarmTrendResDTO> levelAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO);
 
     /**
      * 系统告警趋势
-     *
-     * @param systemId
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
-    List<AnyAlarmTrendResDTO> systemAlarmTrend(Long systemId, List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime);
+    List<AnyAlarmTrendResDTO> systemAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO);
 
     /**
-     * 告警解决效率
      *
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
-    List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(List<Integer> alarmLevels, Integer statisticsCycle, Timestamp startTime, Timestamp endTime);
+    List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO);
 
 }

@@ -3,6 +3,8 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
+import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
+import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO;
 import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
 import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
@@ -13,10 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -69,122 +68,78 @@ public class AlarmStatisticsController {
 
     /**
      * 按线路统计
-     *
-     * @param siteIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
-    @GetMapping("/line")
+    @PostMapping("/line")
     @ApiOperation(value = "按线路统计")
-    public DataResponse<List<StatisticsByAnyResDTO>> statisticsByLine(@RequestParam(required = false)
-                                                                          @ApiParam("站点") List<Long> siteIds,
-                                                                      @RequestParam(required = false)
-                                                                          @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                      @RequestParam(required = false)
-                                                                          @ApiParam("开始时间") Timestamp startTime,
-                                                                      @RequestParam(required = false)
-                                                                          @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.statisticsByLine(siteIds, alarmLevels, startTime, endTime));
+    public DataResponse<List<StatisticsByAnyResDTO>> statisticsByLine(@RequestBody @Valid StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        return DataResponse.of(alarmStatisticsService.statisticsByLine(statisticsByAnyReqDTO));
     }
 
     /**
      * 按系统统计
-     *
-     * @param systemIds
-     * @param alarmLevels
-     * @param startTime
-     * @param endTime
+     * @param statisticsByAnyReqDTO
      * @return
      */
-    @GetMapping("/system")
+    @PostMapping("/system")
     @ApiOperation(value = "按系统统计")
-    public DataResponse<List<StatisticsByAnyResDTO>> statisticsBySystem(@RequestParam(required = false)
-                                                                            @ApiParam("系统") List<Long> systemIds,
-                                                                        @RequestParam(required = false)
-                                                                            @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                        @RequestParam(required = false)
-                                                                            @ApiParam("开始时间") Timestamp startTime,
-                                                                        @RequestParam(required = false)
-                                                                            @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.statisticsBySystem(systemIds, alarmLevels, startTime, endTime));
+    public DataResponse<List<StatisticsByAnyResDTO>> statisticsBySystem(@RequestBody @Valid StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        return DataResponse.of(alarmStatisticsService.statisticsBySystem(statisticsByAnyReqDTO));
     }
 
-    @GetMapping("/level")
+    /**
+     * 按告警级别统计
+     * @param statisticsByAnyReqDTO
+     * @return
+     */
+    @PostMapping("/level")
     @ApiOperation(value = "按告警级别统计")
-    public DataResponse<List<StatisticsByAnyResDTO>> statisticsByAlarmLevel(@RequestParam(required = false)
-                                                                                @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                            @RequestParam(required = false)
-                                                                                @ApiParam("开始时间") Timestamp startTime,
-                                                                            @RequestParam(required = false)
-                                                                                @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.statisticsByAlarmLevel(alarmLevels, startTime, endTime));
+    public DataResponse<List<StatisticsByAnyResDTO>> statisticsByAlarmLevel(@RequestBody @Valid StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
+        return DataResponse.of(alarmStatisticsService.statisticsByAlarmLevel(statisticsByAnyReqDTO));
     }
 
     /**
      * 线路告警趋势
-     *
-     * @param siteId
-     * @param alarmLevels
-     * @param statisticsCycle
-     * @param startTime
-     * @param endTime
+     * @param anyAlarmTrendReqDTO
      * @return
      */
-    @GetMapping("/line/trend")
+    @PostMapping("/line/trend")
     @ApiOperation(value = "线路告警趋势")
-    public DataResponse<List<AnyAlarmTrendResDTO>> lineAlarmTrend(@RequestParam(required = false)
-                                                                      @ApiParam("站点") Long siteId,
-                                                                  @RequestParam(required = false)
-                                                                      @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                  @RequestParam(required = false)
-                                                                      @ApiParam("统计周期") Integer statisticsCycle,
-                                                                  @RequestParam(required = false)
-                                                                      @ApiParam("开始时间") Timestamp startTime,
-                                                                  @RequestParam(required = false)
-                                                                      @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.lineAlarmTrend(siteId, alarmLevels, statisticsCycle, startTime, endTime));
+    public DataResponse<List<AnyAlarmTrendResDTO>> lineAlarmTrend(@RequestBody @Valid AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        return DataResponse.of(alarmStatisticsService.lineAlarmTrend(anyAlarmTrendReqDTO));
     }
 
-    @GetMapping("/level/trend")
+    /**
+     * 级别告警趋势
+     * @param anyAlarmTrendReqDTO
+     * @return
+     */
+    @PostMapping("/level/trend")
     @ApiOperation(value = "级别告警趋势")
-    public DataResponse<List<AnyAlarmTrendResDTO>> levelAlarmTrend(@RequestParam(required = false)
-                                                                       @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("统计周期") Integer statisticsCycle,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("开始时间") Timestamp startTime,
-                                                                   @RequestParam(required = false)
-                                                                       @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.levelAlarmTrend(alarmLevels, statisticsCycle, startTime, endTime));
+    public DataResponse<List<AnyAlarmTrendResDTO>> levelAlarmTrend(@RequestBody @Valid AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        return DataResponse.of(alarmStatisticsService.levelAlarmTrend(anyAlarmTrendReqDTO));
     }
 
-    @GetMapping("/system/trend")
+    /**
+     * 系统告警趋势
+     * @param anyAlarmTrendReqDTO
+     * @return
+     */
+    @PostMapping("/system/trend")
     @ApiOperation(value = "系统告警趋势")
-    public DataResponse<List<AnyAlarmTrendResDTO>> systemAlarmTrend(@RequestParam(required = false)
-                                                                        @ApiParam("系统") Long systemId,
-                                                                    @RequestParam(required = false)
-                                                                        @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                    @RequestParam(required = false)
-                                                                        @ApiParam("统计周期") Integer statisticsCycle,
-                                                                    @RequestParam(required = false)
-                                                                        @ApiParam("开始时间") Timestamp startTime,
-                                                                    @RequestParam(required = false)
-                                                                        @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.systemAlarmTrend(systemId, alarmLevels, statisticsCycle, startTime, endTime));
+    public DataResponse<List<AnyAlarmTrendResDTO>> systemAlarmTrend(@RequestBody @Valid AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        return DataResponse.of(alarmStatisticsService.systemAlarmTrend(anyAlarmTrendReqDTO));
     }
 
-    @GetMapping("/efficiency")
+    /**
+     * 告警解决效率
+     * @param anyAlarmTrendReqDTO
+     * @return
+     */
+    @PostMapping("/efficiency")
     @ApiOperation(value = "告警解决效率")
-    public DataResponse<List<AlarmResolutionEfficiencyResDTO>> alarmResolutionEfficiency(@RequestParam(required = false)
-                                                                                             @ApiParam("告警级别") List<Integer> alarmLevels,
-                                                                                         @RequestParam(required = false)
-                                                                                             @ApiParam("统计周期") Integer statisticsCycle,
-                                                                                         @RequestParam(required = false)
-                                                                                             @ApiParam("开始时间") Timestamp startTime,
-                                                                                         @RequestParam(required = false)
-                                                                                             @ApiParam("结束时间") Timestamp endTime) {
-        return DataResponse.of(alarmStatisticsService.alarmResolutionEfficiency(alarmLevels, statisticsCycle, startTime, endTime));
+    public DataResponse<List<AlarmResolutionEfficiencyResDTO>> alarmResolutionEfficiency(@RequestBody @Valid AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
+        return DataResponse.of(alarmStatisticsService.alarmResolutionEfficiency(anyAlarmTrendReqDTO));
     }
 }
