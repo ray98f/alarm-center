@@ -1,31 +1,41 @@
-package com.zte.msg.alarmcenter.entity;
+package com.zte.msg.alarmcenter.dto.res;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.sql.Timestamp;
 
 /**
  * @author frp
  */
-@EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class AlarmHistory extends BaseEntity{
+public class AlarmHistoryResDTO {
+
+    @ApiModelProperty(value = "id")
+    private Long id;
 
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
 
+    @ApiModelProperty(value = "子系统名称")
+    private String subsystemName;
+
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;
 
-    @ApiModelProperty(value = "站点")
+    @ApiModelProperty(value = "站点id")
     private Long siteId;
 
-    @ApiModelProperty(value = "设备")
+    @ApiModelProperty(value = "站点名称")
+    private String siteName;
+
+    @ApiModelProperty(value = "设备id")
     private Long deviceId;
+
+    @ApiModelProperty(value = "设备名称")
+    private String deviceName;
 
     @ApiModelProperty(value = "槽位")
     private String slotPosition;
