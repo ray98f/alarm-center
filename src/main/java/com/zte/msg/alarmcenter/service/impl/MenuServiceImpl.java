@@ -1,6 +1,9 @@
 package com.zte.msg.alarmcenter.service.impl;
 
+import com.zte.msg.alarmcenter.dto.req.MenuReqDTO;
 import com.zte.msg.alarmcenter.dto.res.MenuResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
+import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.MenuMapper;
 import com.zte.msg.alarmcenter.mapper.RoleMapper;
 import com.zte.msg.alarmcenter.mapper.UserMapper;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * description:
@@ -80,4 +84,36 @@ public class MenuServiceImpl implements MenuService {
         return list;
     }
 
+    /**
+     * 获取菜单列表
+     * @param menuReqDTO
+     * @return
+     */
+    @Override
+    public List<MenuResDTO> listMenu(MenuReqDTO menuReqDTO) {
+        if (Objects.isNull(menuReqDTO)) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        List<MenuResDTO> list;
+        List<MenuResDTO.MenuInfo> menuInfoList;
+        List<MenuResDTO.MenuInfo.ButtonInfo> buttonInfoList;
+        list = menuMapper.listCatalog(menuReqDTO, null);
+        if (list.isEmpty()) {
+            log.warn("根目录无下级");
+        } else {
+            for (MenuResDTO menuResDTO : list) {
+                menuInfoList = menuMapper.listMenu(menuResDTO.getId(), menuReqDTO, null);
+                if (menuInfoList.isEmpty()) {
+                    log.warn(menuResDTO.getMenuId() + "目录无下级");
+                } else {
+                    for (MenuResDTO.MenuInfo menuInfo : menuInfoList) {
+                        buttonInfoList = menuMapper.listButton(menuInfo.getId(), menuReqDTO, null);
+                        menuInfo.setChildren(buttonInfoList);
+                    }
+                }
+                menuResDTO.setChildren(menuInfoList);
+            }
+        }
+        return list;
+    }
 }

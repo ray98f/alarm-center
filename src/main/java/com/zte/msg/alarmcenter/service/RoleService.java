@@ -51,4 +51,11 @@ public interface RoleService {
      * @param role
      */
     void updateRole(RoleReqDTO role);
+
+    /**
+     * 获取角色对应菜单ids
+     * @param roleId
+     * @return
+     */
+    List<Long> selectMenuIds(Long roleId);
 }

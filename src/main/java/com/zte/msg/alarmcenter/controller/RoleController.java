@@ -5,8 +5,11 @@ import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
+import com.zte.msg.alarmcenter.dto.req.MenuReqDTO;
 import com.zte.msg.alarmcenter.dto.req.RoleReqDTO;
+import com.zte.msg.alarmcenter.dto.res.MenuResDTO;
 import com.zte.msg.alarmcenter.entity.Role;
+import com.zte.msg.alarmcenter.service.MenuService;
 import com.zte.msg.alarmcenter.service.RoleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -35,6 +40,9 @@ public class RoleController {
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private MenuService menuService;
 
     /**
      * 获取所有角色信息
@@ -106,5 +114,32 @@ public class RoleController {
     public <T> DataResponse<T> updateRole(@Valid @RequestBody RoleReqDTO roleReqDTO){
         roleService.updateRole(roleReqDTO);
         return DataResponse.success();
+    }
+
+    /**
+     * 查询菜单信息
+     *
+     * @param menuReqDTO 查询信息
+     * @return List<MenuResDTO>
+     */
+    @PermissionCheck(permissionName = {"system:tab:list"})
+    @GetMapping("/menu")
+    @ApiOperation(value = "查询菜单信息")
+    public DataResponse<List<MenuResDTO>> listMenu(@Valid MenuReqDTO menuReqDTO) {
+        return DataResponse.of(menuService.listMenu(menuReqDTO));
+    }
+
+    /**
+     * 获取角色对应菜单id
+     *
+     * @param roleId 角色id
+     * @return Map<String, Object>
+     */
+    @GetMapping("/{roleId}")
+    @ApiOperation(value = "获取角色对应菜单id")
+    public DataResponse<Map<String, Object>> detailRoleMenu(@PathVariable Long roleId) {
+        Map<String, Object> data = new HashMap<>(16);
+        data.put("menuIds", roleService.selectMenuIds(roleId));
+        return DataResponse.of(data);
     }
 }

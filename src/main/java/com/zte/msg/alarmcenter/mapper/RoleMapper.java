@@ -26,6 +26,7 @@ public interface RoleMapper extends BaseMapper<Role> {
 
     /**
      * 查询角色列表
+     *
      * @param page
      * @param status
      * @param roleName
@@ -58,6 +59,14 @@ public interface RoleMapper extends BaseMapper<Role> {
     int updateRole(RoleReqDTO role);
 
     /**
+     * 获取角色对应菜单ids
+     *
+     * @param roleId
+     * @return
+     */
+    List<Long> selectRoleMenuIds(Long roleId);
+
+    /**
      * 搜索角色对应菜单ids
      *
      * @param roleIds
@@ -65,4 +74,20 @@ public interface RoleMapper extends BaseMapper<Role> {
      */
     List<Long> selectMenuIds(List<Long> roleIds);
 
+    /**
+     * 新增角色菜单关联
+     *
+     * @param roleId
+     * @param menuIds
+     * @param doName
+     * @return
+     */
+    int insertRoleMenu(Long roleId, List<Long> menuIds, String doName);
+
+    /**
+     * 清空角色修改关联
+     *
+     * @param roleId
+     */
+    void deleteRoleMenus(Long roleId);
 }

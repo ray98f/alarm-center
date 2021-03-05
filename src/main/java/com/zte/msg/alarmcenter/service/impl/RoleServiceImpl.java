@@ -83,6 +83,30 @@ public class RoleServiceImpl implements RoleService {
         if (updateRole <= 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
+        roleMapper.deleteRoleMenus(role.getId());
+        if (null == role.getMenuIds() || role.getMenuIds().isEmpty()) {
+            log.warn("没有需要修改的角色权限信息");
+            return;
+        }
+        int insertRoleMenu = roleMapper.insertRoleMenu(role.getId(), role.getMenuIds(), role.getCreatedBy());
+        if (insertRoleMenu <= 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
         log.info("修改角色成功");
+    }
+
+    @Override
+    public List<Long> selectMenuIds(Long roleId) {
+        if (null == roleId || roleId < 0) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        List<Long> list = roleMapper.selectRoleMenuIds(roleId);
+        if (null == list || list.isEmpty()) {
+            log.warn("该角色无菜单信息");
+            return null;
+        } else {
+            log.info("角色菜单权限返回成功");
+            return list;
+        }
     }
 }

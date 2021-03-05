@@ -33,4 +33,7 @@ public class User extends BaseEntity{
 
     @ApiModelProperty(value = "备注")
     private String remark;
+
+    @ApiModelProperty(value = "用户权限")
+    private String userRoles;
 }

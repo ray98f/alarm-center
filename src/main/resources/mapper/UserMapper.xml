@@ -99,13 +99,15 @@
     </select>
 
     <select id="listUser" resultType="com.zte.msg.alarmcenter.entity.User">
-        select * from user where is_deleted=0
+        select u.*,GROUP_CONCAT(ur.role_id) as user_roles from user as u left join user_role as ur on u.id=ur.user_id and ur.is_deleted=0
+        where u.is_deleted=0
         <if test="status!=null">
-            and status=#{status}
+            and u.status=#{status}
         </if>
         <if test="userRealName!=null and userRealName!=''">
-            and user_real_name like '%${userRealName}%'
+            and u.user_real_name like '%${userRealName}%'
         </if>
+        group by u.id
     </select>
 
     <select id="selectUserId" resultType="java.lang.Long">

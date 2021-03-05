@@ -7,11 +7,11 @@
 
     <select id="listRole" resultType="com.zte.msg.alarmcenter.entity.Role">
         select * from role where is_deleted=0
-        <if test="status!=''">
-            and status=#{roleReqDTO.status}
+        <if test="status!=null">
+            and status=#{status}
         </if>
-        <if test="roleName!=''">
-            and role_name like "%"#{roleReqDTO.roleName}"%"
+        <if test="roleName!=null and roleName!=''">
+            and role_name like "%"#{roleName}"%"
         </if>
         ORDER BY updated_at DESC
     </select>
@@ -88,6 +88,10 @@
         WHERE id=#{id}
     </update>
 
+    <select id="selectRoleMenuIds" resultType="java.lang.String">
+        SELECT DISTINCT menu_id FROM role_menu WHERE role_id=#{roleId} AND is_deleted=0;
+    </select>
+
     <select id="selectMenuIds" resultType="java.lang.String">
         SELECT DISTINCT menu_id FROM role_menu WHERE role_id in (
         <foreach collection="list" index="index" item="roleId" separator=",">
@@ -95,4 +99,33 @@
         </foreach>
         ) AND is_deleted=0;
     </select>
+
+    <insert id="insertRoleMenu">
+        insert into role_menu
+        <trim prefix="(" suffix=")">
+            <if test="roleId!=null" >
+                role_id,
+            </if>
+            <if test="menuIds!=null" >
+                menu_id,
+            </if>
+            created_by,updated_by
+        </trim>
+        values
+        <foreach collection="menuIds" index="index" item="menuId" separator=",">
+            <trim prefix="(" suffix=")">
+                <if test="roleId!=null" >
+                    #{roleId},
+                </if>
+                <if test="menuId!=null" >
+                    #{menuId},
+                </if>
+                #{doName},#{doName}
+            </trim>
+        </foreach>
+    </insert>
+
+    <delete id="deleteRoleMenus">
+        UPDATE role_menu SET is_deleted=1 WHERE role_id=#{roleId} AND is_deleted=0;
+    </delete>
 </mapper>

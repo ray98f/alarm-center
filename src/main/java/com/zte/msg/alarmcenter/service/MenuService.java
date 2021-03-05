@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.service;
 
+import com.zte.msg.alarmcenter.dto.req.MenuReqDTO;
 import com.zte.msg.alarmcenter.dto.res.MenuResDTO;
 
 import java.util.List;
@@ -25,4 +26,11 @@ public interface MenuService {
      * @return
      */
     List<MenuResDTO> listMenu(List<Long> roleIds);
+
+    /**
+     * 获取菜单列表
+     * @param menuReqDTO
+     * @return
+     */
+    List<MenuResDTO> listMenu(MenuReqDTO menuReqDTO);
 }
