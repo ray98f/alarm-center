@@ -22,6 +22,7 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
 
     /**
      * 分页查询操作日志列表
+     *
      * @param page
      * @param userName
      * @param operationType
@@ -37,9 +38,17 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
 
     /**
      * 添加操作记录
+     *
      * @param operationLog
      * @return
      */
     int addOperationLog(OperationLog operationLog);
+
+    /**
+     * 获取所有操作类型
+     *
+     * @return
+     */
+    List<String> getOperationType();
 
 }

@@ -62,4 +62,8 @@
             </if>
         </trim>
     </insert>
+
+    <select id="getOperationType" resultType="java.lang.String">
+        SELECT DISTINCT operation_type FROM operation_log WHERE is_deleted=0
+    </select>
 </mapper>

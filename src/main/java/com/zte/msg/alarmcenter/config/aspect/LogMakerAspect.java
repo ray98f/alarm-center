@@ -1,13 +1,17 @@
 package com.zte.msg.alarmcenter.config.aspect;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zte.msg.alarmcenter.annotation.LogMaker;
+import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.entity.OperationLog;
 import com.zte.msg.alarmcenter.mapper.OperationLogMapper;
-import com.zte.msg.alarmcenter.mapper.RoleMapper;
 import com.zte.msg.alarmcenter.utils.IpUtils;
 import com.zte.msg.alarmcenter.utils.JSONUtils;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -18,8 +22,16 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -45,44 +57,55 @@ public class LogMakerAspect {
     /**
      * 使用环绕通知
      */
-    @Around("logPointCut()")
-    public Object around(ProceedingJoinPoint point) throws Throwable {
+    @AfterReturning(value = "logPointCut()", returning = "result")
+    public void afterReturning(JoinPoint point, DataResponse result) throws Throwable {
         long beginTime = System.currentTimeMillis();
-        Object result = point.proceed();
         //执行时长(毫秒)
-        long time = System.currentTimeMillis() - beginTime;
+        Long time = System.currentTimeMillis() - beginTime;
         //异步保存日志
-        saveLog(point, time);
-        return result;
+        saveLog(point, time, result);
     }
 
-    void saveLog(ProceedingJoinPoint joinPoint, long time) {
+    void saveLog(JoinPoint joinPoint, Long time, DataResponse result) {
+        final List<Object> params = new ArrayList<>();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         OperationLog operationLog = new OperationLog();
+        //获取request
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
+        Object[] args = joinPoint.getArgs();
+        for (Object object : args) {
+            if (object instanceof HttpServletResponse) {
+                continue;
+            }
+            if (object instanceof HttpServletRequest) {
+                continue;
+            }
+            params.add(object);
+        }
+        //设置IP地址
+        operationLog.setHostIp(IpUtils.getIpAddr(request));
         //获取方法上的自定义注解
         LogMaker syslog = method.getAnnotation(LogMaker.class);
         if (syslog != null) {
             // 注解上的描述
             operationLog.setOperationType(syslog.value());
+            //请求的参数
+            if (result.getCode().equals(0)){
+                operationLog.setParams(syslog.value() + "成功," + "参数=" + JSONObject.toJSONString(params));
+            }else {
+                operationLog.setParams(syslog.value() + "失败," + "参数=" + JSONObject.toJSONString(params));
+            }
         }
-        //获取request
-        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = Objects.requireNonNull(attributes).getRequest();
-        //请求的参数
-        operationLog.setParams(JSONUtils.beanToJsonString(request.getParameterMap()));
-        //设置IP地址
-        operationLog.setHostIp(IpUtils.getIpAddr(request));
         //用户名
-        if (null == TokenUtil.getCurrentUserName()) {
-            operationLog.setUserName("获取用户信息为空");
-        } else {
+        if (null != TokenUtil.getCurrentUserName()) {
             operationLog.setUserName(TokenUtil.getCurrentUserName());
         }
-        //用时
-        operationLog.setOperationTime(new Timestamp(time));
         //系统当前时间
-        operationLog.setUseTime(System.currentTimeMillis());
+        operationLog.setOperationTime(new Timestamp(System.currentTimeMillis()));
+        //用时
+        operationLog.setUseTime(time);
         //保存系统日志
         operationLogMapper.addOperationLog(operationLog);
     }

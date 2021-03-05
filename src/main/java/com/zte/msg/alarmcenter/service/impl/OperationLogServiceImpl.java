@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -32,6 +33,7 @@ public class OperationLogServiceImpl implements OperationLogService {
 
     /**
      * 分页查询操作日志列表
+     *
      * @param userName
      * @param operationType
      * @param startTime
@@ -44,10 +46,23 @@ public class OperationLogServiceImpl implements OperationLogService {
                                                String operationType,
                                                Timestamp startTime,
                                                Timestamp endTime,
-                                               PageReqDTO pageReqDTO){
+                                               PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return operationLogMapper.listOperationLog(pageReqDTO.of(), userName, operationType, startTime, endTime);
     }
 
-
+    /**
+     * 获取所有操作类型
+     *
+     * @return
+     */
+    @Override
+    public List<String> getOperationType() {
+        List<String> list = operationLogMapper.getOperationType();
+        if (null == list || list.isEmpty()) {
+            log.warn("操作类型为空");
+            return null;
+        }
+        return list;
+    }
 }

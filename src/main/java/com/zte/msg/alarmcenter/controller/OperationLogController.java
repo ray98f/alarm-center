@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.entity.OperationLog;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * description:
@@ -43,15 +45,26 @@ public class OperationLogController {
      */
     @GetMapping
     @ApiOperation(value = "分页查询操作日志列表")
-    public PageResponse<OperationLog> pageSystemParam(@RequestParam(required = false)
-                                                         @ApiParam("操作员") String userName,
-                                                      @RequestParam(required = false)
-                                                         @ApiParam("操作类型") String operationType,
-                                                      @RequestParam(required = false)
-                                                         @ApiParam("开始时间") Timestamp startTime,
-                                                      @RequestParam(required = false)
-                                                         @ApiParam("结束时间") Timestamp endTime,
-                                                      @Valid PageReqDTO pageReqDTO) {
+    public PageResponse<OperationLog> pageOperationLog(@RequestParam(required = false)
+                                                           @ApiParam("操作员") String userName,
+                                                       @RequestParam(required = false)
+                                                           @ApiParam("操作类型") String operationType,
+                                                       @RequestParam(required = false)
+                                                           @ApiParam("开始时间") Timestamp startTime,
+                                                       @RequestParam(required = false)
+                                                           @ApiParam("结束时间") Timestamp endTime,
+                                                       @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(operationLogService.listOperationLog(userName, operationType, startTime, endTime, pageReqDTO));
+    }
+
+    /**
+     * 获取所有操作类型
+     *
+     * @return
+     */
+    @GetMapping("/type")
+    @ApiOperation(value = "获取所有操作类型")
+    public DataResponse<List<String>> getOperationType() {
+        return DataResponse.of(operationLogService.getOperationType());
     }
 }

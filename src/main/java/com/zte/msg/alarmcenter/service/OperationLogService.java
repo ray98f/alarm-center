@@ -5,6 +5,7 @@ import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.entity.OperationLog;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * description:
@@ -25,5 +26,10 @@ public interface OperationLogService {
      */
     Page<OperationLog> listOperationLog(String userName, String operationType, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
 
-
+    /**
+     * 获取所有操作类型
+     *
+     * @return
+     */
+    List<String> getOperationType();
 }

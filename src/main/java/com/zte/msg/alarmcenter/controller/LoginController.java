@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.req.LoginReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
@@ -57,6 +58,7 @@ public class LoginController {
      */
     @PostMapping("/login")
     @ApiOperation(value = "管理平台登录")
+    @LogMaker(value = "管理平台登录")
     public DataResponse<Map<String, Object>> login(@RequestBody @Valid LoginReqDTO loginReqDTO) throws Exception {
         UserReqDTO userInfo = userService.selectUserInfo(loginReqDTO);
         String token = createSimpleToken(userInfo);
@@ -79,6 +81,7 @@ public class LoginController {
      */
     @PostMapping("/logout")
     @ApiOperation(value = "管理平台登出")
+    @LogMaker(value = "管理平台登出")
     public <T> DataResponse<T> exit() {
         String userName = TokenUtil.getCurrentUserName();
         ChangeShifts changeShifts = new ChangeShifts();

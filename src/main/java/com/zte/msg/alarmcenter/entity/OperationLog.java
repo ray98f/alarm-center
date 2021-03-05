@@ -27,7 +27,7 @@ public class OperationLog extends BaseEntity {
     @ApiModelProperty(value = "用时")
     private Long useTime;
 
-    @ApiModelProperty(value = "参数")
+    @ApiModelProperty(value = "描述")
     private String params;
 
     @ApiModelProperty(value = "主机IP")
