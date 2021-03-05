@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.DeviceSlotMapper">
+    <insert id="importDevice">
+        insert into device_slot
+        (
+            id,
+            slot_code,
+            `name`,
+            device_id,
+            created_at,
+            created_by
+        )
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (
+            null,
+            #{item.slotCode},
+            #{item.slotName},
+            (
+            select
+                t.id
+            from device t
+            inner join (
+                select
+                       id
+                from  alarm_center.`position` t1
+                where position_code = #{item.stationCode}
+                  and type = 3
+                  and exists (
+                      select
+                          id
+                      from alarm_center.`position` t2
+                      where position_code = #{item.LineCode}
+                        and type =1
+                        and t1.p_id = t2.id)
+            ) as t1 on t.position_id = t1.id
+            inner join subsystem t2 on t.system_id = t2.id
+            ),
+            NOW(),
+            #{userId}
+            )
+        </foreach>
+    </insert>
+    <insert id="addDeviceSlot">
+        insert into device_slot
+        (
+            id,
+            slot_code,
+            `name`,
+            device_id,
+            created_at,
+            created_by
+        )
+        values
+        (
+            null,
+            #{deviceSlotReqDTO.slotCode},
+            #{deviceSlotReqDTO.slotName},
+            #{deviceSlotReqDTO.deviceId},
+            NOW(),
+            #{userId}
+        )
+    </insert>
+    <update id="deleteDevice">
+        updata device_slot
+        set is_deleted = 1
+        where id = #{id}
+    </update>
+    <update id="modifyDevice">
+        update device_slot
+        set
+            slot_code = #{deviceSlotReqDTO.slotCode},
+            `name` = #{deviceSlotReqDTO.slotName},
+            device_id = #{deviceSlotReqDTO.deviceId},
+            updated_at = NOW(),
+            updated_by = #{userId}
+        where id = #{id}
+    </update>
+
+    <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.DeviceSlotResDTO">
+        select
+            t.id,
+            t.slot_code as slotCode,
+            t.`name` as slotName,
+            t1.device_code,
+            t1.`name` as deviceName,
+            t2.`name` as positionName,
+            t3.`name` as systemName
+        from device_slot t
+        left join device t1 on t.device_id = t1.id
+        left join `position` t2 on t1.position_id = t2.id
+        left join subsystem t3 on t1.system_id = t3.id
+        where t.is_deleted = 0
+        <if test="slotName!=null and slotName!=''">
+            and t.`name` = #{slotName}
+        </if>
+        <if test="deviceName!=null and deviceName!=''">
+            and t1.`name` = #{deviceName}
+        </if>
+        <if test="deviceCode!=null and deviceCode!=''">
+            and t1.device_code = #{deviceCode}
+        </if>
+        <if test="systemId!=null">
+            and t3.id = #{systemId}
+        </if>
+        <if test="positionId!=null">
+            and t2.id = #{positionId}
+        </if>
+        <if test="pageReq!=null">
+            limit #{pageReq.page},#{pageReq.size}
+        </if>
+    </select>
+    <select id="getDevicesSlotCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from device_slot t
+        left join device t1 on t.device_id = t1.id
+        left join `position` t2 on t1.position_id = t2.id
+        left join subsystem t3 on t1.system_id = t3.id
+        where t.is_deleted = 0
+        <if test="slotName!=null and slotName!=''">
+            and t.`name` = #{slotName}
+        </if>
+        <if test="deviceName!=null and deviceName!=''">
+            and t1.`name` = #{deviceName}
+        </if>
+        <if test="deviceCode!=null and deviceCode!=''">
+            and t1.device_code = #{deviceCode}
+        </if>
+        <if test="systemId!=null">
+            and t3.id = #{systemId}
+        </if>
+        <if test="positionId!=null">
+            and t2.id = #{positionId}
+        </if>
+    </select>
+</mapper>
