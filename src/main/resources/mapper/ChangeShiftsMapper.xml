@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.ChangeShiftsMapper">
     <insert id="addChangeShifts" parameterType="com.zte.msg.alarmcenter.entity.ChangeShifts">
-        insert into change_shifts(type,user_name,created_by,updated_by)
-        value(#{type},#{userName},#{userName},#{userName})
+        insert into change_shifts(by_user_name,to_user_name,created_by,updated_by)
+        value(#{byUserName},#{toUserName},#{userName},#{userName})
     </insert>
 </mapper>
