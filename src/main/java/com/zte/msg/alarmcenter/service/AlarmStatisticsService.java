@@ -31,7 +31,7 @@ public interface AlarmStatisticsService {
      * @param pageReqDTO
      * @return
      */
-    Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
+    Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, PageReqDTO pageReqDTO);
 
     /**
      * 按线路统计

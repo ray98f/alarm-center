@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * description:
@@ -46,7 +48,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      * @return
      */
     @Override
-    public Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO) {
+    public Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return alarmStatisticsMapper.totalAlarmData(pageReqDTO.of(), systemId, siteId, alarmReason, startTime, endTime);
     }
@@ -58,9 +60,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<StatisticsByAnyResDTO> statisticsByLine(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByLine(statisticsByAnyReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsByLine(statisticsByAnyReqDTO);
+        if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<StatisticsByAnyResDTO> list = new ArrayList<>();
+        List<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSiteName).collect(Collectors.toList());
+        for (String name : names) {
+            StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
+            data.setSiteName(name);
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
+                if (statisticsByAnyResDTO.getSiteName().equals(name)) {
+                    if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
+                        data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
+                        data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    } else {
+                        data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }
@@ -72,9 +96,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<StatisticsByAnyResDTO> statisticsBySystem(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsBySystem(statisticsByAnyReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsBySystem(statisticsByAnyReqDTO);
+        if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<StatisticsByAnyResDTO> list = new ArrayList<>();
+        List<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSubsystemName).collect(Collectors.toList());
+        for (String name : names) {
+            StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
+            data.setSiteName(name);
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
+                if (statisticsByAnyResDTO.getSubsystemName().equals(name)) {
+                    if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
+                        data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
+                        data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    } else {
+                        data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }
@@ -86,10 +132,26 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<StatisticsByAnyResDTO> statisticsByAlarmLevel(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
-        List<StatisticsByAnyResDTO> list = alarmStatisticsMapper.statisticsByAlarmLevel(statisticsByAnyReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsByAlarmLevel(statisticsByAnyReqDTO);
+        if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
         }
+        List<StatisticsByAnyResDTO> list = new ArrayList<>();
+        StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
+        for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList){
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
+                data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+            } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
+                data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+            } else {
+                data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
+            }
+        }
+        list.add(data);
         return list;
     }
 
@@ -100,9 +162,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<AnyAlarmTrendResDTO> lineAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.lineAlarmTrend(anyAlarmTrendReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.lineAlarmTrend(anyAlarmTrendReqDTO);
+        if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<AnyAlarmTrendResDTO> list = new ArrayList<>();
+        List<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toList());
+        for (String name : names) {
+            AnyAlarmTrendResDTO data = new AnyAlarmTrendResDTO();
+            data.setStatisticsDate(name);
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            for (AnyAlarmTrendResDTO anyAlarmTrendResDTO : anyAlarmTrendResDTOList) {
+                if (anyAlarmTrendResDTO.getStatisticsDate().equals(name)) {
+                    if (1 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else {
+                        data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }
@@ -114,9 +198,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<AnyAlarmTrendResDTO> levelAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.levelAlarmTrend(anyAlarmTrendReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.levelAlarmTrend(anyAlarmTrendReqDTO);
+        if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<AnyAlarmTrendResDTO> list = new ArrayList<>();
+        List<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toList());
+        for (String name : names) {
+            AnyAlarmTrendResDTO data = new AnyAlarmTrendResDTO();
+            data.setStatisticsDate(name);
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            for (AnyAlarmTrendResDTO anyAlarmTrendResDTO : anyAlarmTrendResDTOList) {
+                if (anyAlarmTrendResDTO.getStatisticsDate().equals(name)) {
+                    if (1 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else {
+                        data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }
@@ -128,9 +234,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<AnyAlarmTrendResDTO> systemAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
-        List<AnyAlarmTrendResDTO> list = alarmStatisticsMapper.systemAlarmTrend(anyAlarmTrendReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.systemAlarmTrend(anyAlarmTrendReqDTO);
+        if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<AnyAlarmTrendResDTO> list = new ArrayList<>();
+        List<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toList());
+        for (String name : names) {
+            AnyAlarmTrendResDTO data = new AnyAlarmTrendResDTO();
+            data.setStatisticsDate(name);
+            data.setEmergencyAlarmNum(0L);
+            data.setGeneralAlarmNum(0L);
+            data.setSeriousAlarmNum(0L);
+            for (AnyAlarmTrendResDTO anyAlarmTrendResDTO : anyAlarmTrendResDTOList) {
+                if (anyAlarmTrendResDTO.getStatisticsDate().equals(name)) {
+                    if (1 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
+                        data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    } else {
+                        data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }
@@ -142,9 +270,31 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
-        List<AlarmResolutionEfficiencyResDTO> list = alarmStatisticsMapper.alarmResolutionEfficiency(anyAlarmTrendReqDTO);
-        if (null == list || list.isEmpty()) {
+        List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiencyResDTOList = alarmStatisticsMapper.alarmResolutionEfficiency(anyAlarmTrendReqDTO);
+        if (null == alarmResolutionEfficiencyResDTOList || alarmResolutionEfficiencyResDTOList.isEmpty()) {
             log.warn("告警记录为空");
+            return null;
+        }
+        List<AlarmResolutionEfficiencyResDTO> list = new ArrayList<>();
+        List<String> names = alarmResolutionEfficiencyResDTOList.stream().map(AlarmResolutionEfficiencyResDTO::getStatisticsDate).collect(Collectors.toList());
+        for (String name : names) {
+            AlarmResolutionEfficiencyResDTO data = new AlarmResolutionEfficiencyResDTO();
+            data.setStatisticsDate(name);
+            data.setEmergencyDisposalTime(0L);
+            data.setGeneralDisposalTime(0L);
+            data.setSeriousDisposalTime(0L);
+            for (AlarmResolutionEfficiencyResDTO alarmResolutionEfficiencyResDTO : alarmResolutionEfficiencyResDTOList) {
+                if (alarmResolutionEfficiencyResDTO.getStatisticsDate().equals(name)) {
+                    if (1 == alarmResolutionEfficiencyResDTO.getAlarmLevel()) {
+                        data.setEmergencyDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
+                    } else if (2 == alarmResolutionEfficiencyResDTO.getAlarmLevel()) {
+                        data.setGeneralDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
+                    } else {
+                        data.setSeriousDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
+                    }
+                }
+            }
+            list.add(data);
         }
         return list;
     }

@@ -29,14 +29,14 @@
         ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
         left join position as p on p.id=ah.site_id
         where ah.is_deleted=0
-        <if test="siteIds!=null">
+        <if test="siteIds!=null and siteIds.size()>0">
             and p.id in(
             <foreach collection="siteIds" index="index" item="siteId" separator=",">
                 #{siteId}
             </foreach>
             )
         </if>
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -57,14 +57,14 @@
         ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
         left join subsystem as cs on ah.subsystem_id=cs.id
         where ah.is_deleted=0
-        <if test="systemIds!=null">
+        <if test="systemIds!=null and systemIds.size()>0">
             and cs.id in(
             <foreach collection="systemIds" index="index" item="systemId" separator=",">
                 #{systemId}
             </foreach>
             )
         </if>
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -83,7 +83,7 @@
     <select id="statisticsByAlarmLevel" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
         select ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
         where ah.is_deleted=0
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -116,7 +116,7 @@
         <if test="siteId!=null">
             and p.id=#{siteId}
         </if>
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -145,7 +145,7 @@
         </if>
         ) as statistics_date from alarm_history as ah
         where ah.is_deleted=0
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -178,7 +178,7 @@
         <if test="systemId!=null">
             and cs.id=#{systemId}
         </if>
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}
@@ -207,7 +207,7 @@
         </if>
         ) as statistics_date from alarm_history as ah
         where ah.is_deleted=0
-        <if test="alarmLevels!=null">
+        <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
                 #{level}

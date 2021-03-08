@@ -34,7 +34,7 @@ public interface AlarmStatisticsMapper {
      * @param endTime
      * @return
      */
-    Page<TotalAlarmDataResDTO> totalAlarmData(Page<TotalAlarmDataResDTO> page, Long systemId, Long siteId, String alarmReason, Timestamp startTime, Timestamp endTime);
+    Page<TotalAlarmDataResDTO> totalAlarmData(Page<TotalAlarmDataResDTO> page, Long systemId, Long siteId, String alarmReason, String startTime, String endTime);
 
     /**
      * 按线路统计

@@ -26,8 +26,8 @@ public class AnyAlarmTrendReqDTO {
     private Integer statisticsCycle;
 
     @ApiModelProperty(value = "开始时间")
-    private Timestamp startTime;
+    private String startTime;
 
     @ApiModelProperty(value = "结束时间")
-    private Timestamp endTime;
+    private String endTime;
 }

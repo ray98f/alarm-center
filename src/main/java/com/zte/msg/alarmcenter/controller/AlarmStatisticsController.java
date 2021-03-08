@@ -59,9 +59,9 @@ public class AlarmStatisticsController {
                                                              @RequestParam(required = false)
                                                                  @ApiParam("告警原因") String alarmReason,
                                                              @RequestParam(required = false)
-                                                                 @ApiParam("开始时间") Timestamp startTime,
+                                                                 @ApiParam("开始时间") String startTime,
                                                              @RequestParam(required = false)
-                                                                 @ApiParam("结束时间") Timestamp endTime,
+                                                                 @ApiParam("结束时间") String endTime,
                                                              @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, pageReqDTO));
     }

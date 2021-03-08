@@ -24,8 +24,8 @@ public class StatisticsByAnyReqDTO {
     private List<Integer> alarmLevels;
 
     @ApiModelProperty(value = "开始时间")
-    private Timestamp startTime;
+    private String startTime;
 
     @ApiModelProperty(value = "结束时间")
-    private Timestamp endTime;
+    private String endTime;
 }

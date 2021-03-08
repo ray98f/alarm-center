@@ -21,4 +21,13 @@ public class AlarmResolutionEfficiencyResDTO {
 
     @ApiModelProperty(value = "处置时间")
     private Long disposalTime;
+
+    @ApiModelProperty(value = "严重告警处置时间")
+    private Long seriousDisposalTime;
+
+    @ApiModelProperty(value = "紧急告警处置时间")
+    private Long emergencyDisposalTime;
+
+    @ApiModelProperty(value = "一般告警处置时间")
+    private Long generalDisposalTime;
 }
