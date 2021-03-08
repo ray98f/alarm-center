@@ -18,8 +18,8 @@
         <if test="alarmLevel!=null">
             and ah.device_id=#{alarmLevel}
         </if>
-        <if test="alarmState!=null">
-            and ah.alarm_state=#{alarmState}
+        <if test="alarmCode!=null">
+            and ah.alarm_code=#{alarmCode}
         </if>
         <if test="startTime!=null">
             and ah.first_time >= #{startTime}

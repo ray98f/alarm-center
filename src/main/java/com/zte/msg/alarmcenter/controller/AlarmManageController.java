@@ -49,13 +49,13 @@ public class AlarmManageController {
                                                              @RequestParam(required = false)
                                                                  @ApiParam("站点") Integer alarmLevel,
                                                              @RequestParam(required = false)
-                                                                 @ApiParam("站点") Integer alarmState,
+                                                                 @ApiParam("告警码") Integer alarmCode,
                                                              @RequestParam(required = false)
                                                                  @ApiParam("开始时间") Timestamp startTime,
                                                              @RequestParam(required = false)
                                                                  @ApiParam("结束时间") Timestamp endTime,
                                                              @Valid PageReqDTO pageReqDTO) {
-        return PageResponse.of(alarmManageService.pageAlarmHistory(subsystemId, siteId, alarmLevel, alarmState, startTime, endTime, pageReqDTO));
+        return PageResponse.of(alarmManageService.pageAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime, pageReqDTO));
     }
 
 }

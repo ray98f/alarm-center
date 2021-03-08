@@ -37,16 +37,16 @@ public class AlarmManageServiceImpl implements AlarmManageService {
      * @param subsystemId
      * @param siteId
      * @param alarmLevel
-     * @param alarmState
+     * @param alarmCode
      * @param startTime
      * @param endTime
      * @param pageReqDTO
      * @return
      */
     @Override
-    public Page<AlarmHistoryResDTO> pageAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmState, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO) {
+    public Page<AlarmHistoryResDTO> pageAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
-        return alarmManageMapper.pageAlarmHistory(pageReqDTO.of(), subsystemId, siteId, alarmLevel, alarmState, startTime, endTime);
+        return alarmManageMapper.pageAlarmHistory(pageReqDTO.of(), subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime);
     }
 
 }
