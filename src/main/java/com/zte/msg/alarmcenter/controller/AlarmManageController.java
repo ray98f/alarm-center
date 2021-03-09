@@ -58,4 +58,12 @@ public class AlarmManageController {
         return PageResponse.of(alarmManageService.pageAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime, pageReqDTO));
     }
 
+    @PostMapping("/history/{id}")
+    @ApiOperation("告警历史-添加备注")
+    public <T> DataResponse<T> editRemark(@ApiParam(value = "告警历史id", required = true) @PathVariable(value = "id") Long id,
+                                          @RequestBody String alarmRemark) {
+        alarmManageService.editRemark(alarmRemark, id);
+        return DataResponse.success();
+    }
+
 }

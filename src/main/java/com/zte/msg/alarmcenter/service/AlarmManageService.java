@@ -31,4 +31,11 @@ public interface AlarmManageService {
      */
     Page<AlarmHistoryResDTO> pageAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
 
+    /**
+     * 添加备注
+     *
+     * @param alarmRemark
+     * @param id
+     */
+    void editRemark(String alarmRemark, Long id);
 }

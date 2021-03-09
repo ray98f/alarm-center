@@ -26,4 +26,12 @@ public interface AlarmManageMapper {
      * @return
      */
     Page<AlarmHistoryResDTO> pageAlarmHistory(Page<AlarmHistoryResDTO> page, Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime);
+
+    /**
+     * 添加备注
+     * @param alarmRemark
+     * @param id
+     * @return
+     */
+    int editRemark(String alarmRemark, Long id);
 }

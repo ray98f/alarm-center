@@ -6,6 +6,8 @@ import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
 import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
+import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
 import com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper;
 import com.zte.msg.alarmcenter.service.AlarmManageService;
@@ -49,4 +51,17 @@ public class AlarmManageServiceImpl implements AlarmManageService {
         return alarmManageMapper.pageAlarmHistory(pageReqDTO.of(), subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime);
     }
 
+    /**
+     * 添加备注
+     *
+     * @param alarmRemark
+     * @param id
+     */
+    @Override
+    public void editRemark(String alarmRemark, Long id) {
+        int result = alarmManageMapper.editRemark(alarmRemark, id);
+        if (result <= 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
 }
