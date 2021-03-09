@@ -16,15 +16,24 @@ import lombok.Data;
 public class SnmpSlotReqDTO {
 
     @ApiModelProperty(value = "SNMP槽位名称")
-    private String name;
-
-    @ApiModelProperty(value = "槽位id")
-    private Long slotId;
+    private String snmpSlotName;
 
     @ApiModelProperty(value = "子系统id")
     private Long systemId;
 
+    @ApiModelProperty(value = "线路编号")
+    private String LineCode;
+
+    @ApiModelProperty(value = "站点编号")
+    private String siteCode;
+
+    @ApiModelProperty(value = "设备编号")
+    private String deviceCode;
+
+    @ApiModelProperty(value = "槽位编号")
+    private String slotCode;
+
     @ApiModelProperty(value = "位置id")
-    private Long positionId;
+    private String slotName;
 
 }

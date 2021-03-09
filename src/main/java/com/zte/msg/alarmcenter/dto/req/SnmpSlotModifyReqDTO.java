@@ -15,8 +15,6 @@ import lombok.Data;
 @ApiModel
 public class SnmpSlotModifyReqDTO {
 
-    private Long idl;
-
     @ApiModelProperty(value = "SNMP槽位名称")
     private String name;
 

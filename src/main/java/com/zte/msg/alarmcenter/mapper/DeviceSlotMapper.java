@@ -21,6 +21,8 @@ public interface DeviceSlotMapper {
 
     Integer importDevice(@Param("list") List<DeviceSlotReqDTO> list, @Param("userId") String userId);
 
+    Integer importOneDevice(@Param("device") DeviceSlotReqDTO device, @Param("userId") String userId);
+
     Integer addDeviceSlot(@Param("deviceSlotReqDTO") DeviceSlotReqDTO deviceSlotReqDTO, @Param("userId") String userId);
 
     Integer modifyDevice(@Param("id") Long id, @Param("deviceSlotReqDTO") DeviceSlotReqDTO deviceSlotReqDTO, @Param("userId") String userId);

@@ -47,6 +47,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
                 reqDTO.setSystemCode(cells.getCell(0).getStringCellValue());
                 reqDTO.setLineCode(cells.getCell(1).getStringCellValue());
                 reqDTO.setStationCode(cells.getCell(2).getStringCellValue());
+                cells.getCell(3).setCellType(CellType.STRING);
                 reqDTO.setDeviceCode(cells.getCell(3).getStringCellValue());
                 reqDTO.setSlotCode(cells.getCell(4).getStringCellValue());
                 reqDTO.setSlotName(cells.getCell(5).getStringCellValue());
@@ -72,7 +73,6 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
         if (null != deviceSlotResList) {
             for (DeviceSlotResDTO deviceSlotResDTO : deviceSlotResList) {
                 Map<String, String> map = new HashMap<>();
-                HashMap<String, String> hashMap = new HashMap<String, String>();
                 map.put("设备名称（必填）", deviceSlotResDTO.getDeviceName());
                 map.put("所属系统（必填）", deviceSlotResDTO.getSystemName());
                 map.put("设备位置（必填）", deviceSlotResDTO.getPositionName());

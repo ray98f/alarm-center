@@ -17,25 +17,33 @@ public class SnmpSlotResDTO {
 
     private Long id;
 
-    @ApiModelProperty(value = "槽位名称")
-    private String name;
+    @ApiModelProperty(value = "snmp槽位名称")
+    private String snmpSlotName;
 
-    @ApiModelProperty(value = "snmp槽位")
-    private String SnmpSlot;
+    @ApiModelProperty(value = "系统id")
+    private String systemId;
 
-    @ApiModelProperty(value = "系统名称")
-    private String systemName;
+    @ApiModelProperty(value = "线路编号")
+    private String lineCode;
 
-    @ApiModelProperty(value = "站点")
-    private String position;
+    @ApiModelProperty(value = "站点编号")
+    private String siteCode;
 
-    @ApiModelProperty(value = "设备")
+    @ApiModelProperty(value = "设备编号")
     private String deviceCode;
 
-    @ApiModelProperty(value = "槽位")
+    @ApiModelProperty(value = "槽位编号")
     private String slotCode;
 
     @ApiModelProperty(value = "槽位名称")
     private String slotName;
 
+    @ApiModelProperty(value = "系统名称")
+    private String systemName;
+
+    @ApiModelProperty(value = "站点名称")
+    private String siteName;
+
+    @ApiModelProperty(value = "设备名称")
+    private String deviceName;
 }

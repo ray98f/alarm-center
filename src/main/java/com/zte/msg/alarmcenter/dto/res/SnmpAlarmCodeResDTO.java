@@ -15,8 +15,14 @@ import lombok.Data;
 @ApiModel
 public class SnmpAlarmCodeResDTO {
 
-    @ApiModelProperty(value = "系统名称")
-    private String systemName;
+    @ApiModelProperty(value = "系统id")
+    private String systemId;
+
+    @ApiModelProperty(value = "线路id")
+    private String positionId;
+
+    @ApiModelProperty(value = "告警码")
+    private String code;
 
     @ApiModelProperty(value = "网元类型")
     private String elementType;
@@ -24,9 +30,16 @@ public class SnmpAlarmCodeResDTO {
     @ApiModelProperty(value = "SNMP码")
     private String snmpCode;
 
-    @ApiModelProperty(value = "告警码")
-    private String code;
-
     @ApiModelProperty(value = "告警原因")
     private String reason;
+
+
+    @ApiModelProperty(value = "系统名称")
+    private String systemName;
+
+    @ApiModelProperty(value = "线路名称")
+    private String positionName;
+
+
+
 }

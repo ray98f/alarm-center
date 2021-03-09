@@ -25,23 +25,77 @@
                 select
                        id
                 from  alarm_center.`position` t1
-                where position_code = #{item.stationCode}
-                  and type = 3
+                where position_code = #{item.LineCode}
+                  and type = 1
                   and exists (
                       select
                           id
                       from alarm_center.`position` t2
-                      where position_code = #{item.LineCode}
-                        and type =1
+                      where position_code = #{item.stationCode}
+                        and type = 3
                         and t1.p_id = t2.id)
             ) as t1 on t.position_id = t1.id
-            inner join subsystem t2 on t.system_id = t2.id
+            inner join (
+                select
+                    id
+                from alarm_center.subsystem
+                where sid = #{item.systemCode}
+            ) as t2 on t.system_id = t2.id
+            where t.device_code = #{item.deviceCode}
             ),
             NOW(),
             #{userId}
             )
         </foreach>
     </insert>
+
+    <insert id="importOneDevice" useGeneratedKeys="true" keyProperty="device.id" parameterType="com.zte.msg.alarmcenter.dto.req.DeviceSlotReqDTO">
+        insert into device_slot
+        (
+            id,
+            slot_code,
+            `name`,
+            device_id,
+            created_at,
+            created_by
+        )
+        values
+        (
+            null,
+            #{device.slotCode},
+            #{device.slotName},
+            (
+                select
+                    t.id
+                from device t
+                inner join (
+                    select
+                        id
+                    from  alarm_center.`position` t1
+                    where position_code = #{device.LineCode}
+                    and type = 1
+                    and exists (
+                        select
+                            id
+                        from alarm_center.`position` t2
+                        where position_code = #{device.stationCode}
+                        and type = 3
+                        and t1.p_id = t2.id)
+                ) as t1 on t.position_id = t1.id
+                inner join (
+                    select
+                        id
+                    from alarm_center.subsystem
+                    where sid = #{device.systemCode}
+                ) as t2 on t.system_id = t2.id
+                where t.device_code = #{device.deviceCode}
+            ),
+            NOW(),
+            #{userId}
+        );
+        select @@IDENTITY as id;
+    </insert>
+
     <insert id="addDeviceSlot">
         insert into device_slot
         (

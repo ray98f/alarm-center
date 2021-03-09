@@ -18,6 +18,9 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class DeviceSlotReqDTO {
 
+    @ApiModelProperty(value = "id")
+    private String id;
+
     @ApiModelProperty(value = "设备id")
     @NotBlank(message = "32000006")
     private String deviceId;
