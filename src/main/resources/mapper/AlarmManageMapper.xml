@@ -3,12 +3,43 @@
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmManageMapper">
     <select id="pageAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
         SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
-        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_position,ah.alarm_code,ah.alarm_name,ah.alarm_reason,
-        ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
+        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
+        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
         FROM alarm_center.alarm_history as ah
         left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
         left join position as p on p.id=ah.site_id and p.is_deleted=0
-        left join device as d on d.id=ah.device_id and d.is_deleted=0 where ah.is_deleted=0
+        left join device as d on d.id=ah.device_id and d.is_deleted=0
+        left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
+        <if test="subsystemId!=null">
+            and ah.subsystem_id=#{subsystemId}
+        </if>
+        <if test="siteId!=null">
+            and ah.site_id=#{siteId}
+        </if>
+        <if test="alarmLevel!=null">
+            and ah.device_id=#{alarmLevel}
+        </if>
+        <if test="alarmCode!=null">
+            and ah.alarm_code=#{alarmCode}
+        </if>
+        <if test="startTime!=null">
+            and ah.first_time >= #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime} >= ah.first_time
+        </if>
+        ORDER BY ah.updated_at DESC
+    </select>
+
+    <select id="exportAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
+        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
+        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
+        FROM alarm_center.alarm_history as ah
+        left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
+        left join position as p on p.id=ah.site_id and p.is_deleted=0
+        left join device as d on d.id=ah.device_id and d.is_deleted=0
+        left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
         <if test="subsystemId!=null">
             and ah.subsystem_id=#{subsystemId}
         </if>

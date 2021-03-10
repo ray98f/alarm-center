@@ -37,7 +37,20 @@ public interface AlarmStatisticsMapper {
     Page<TotalAlarmDataResDTO> totalAlarmData(Page<TotalAlarmDataResDTO> page, Long systemId, Long siteId, String alarmReason, String startTime, String endTime);
 
     /**
+     * 导出告警数据
+     *
+     * @param systemId
+     * @param siteId
+     * @param alarmReason
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<TotalAlarmDataResDTO> exportTotalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime);
+
+    /**
      * 按线路统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -45,6 +58,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 按系统统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -52,6 +66,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 按告警级别统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -59,6 +74,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 线路告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -66,6 +82,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 级别告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -73,6 +90,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 系统告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -80,6 +98,7 @@ public interface AlarmStatisticsMapper {
 
     /**
      * 告警解决效率
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */

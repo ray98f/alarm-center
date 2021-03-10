@@ -5,21 +5,20 @@ import com.github.pagehelper.PageHelper;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
 import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO;
-import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
-import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
-import com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO;
+import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper;
 import com.zte.msg.alarmcenter.service.AlarmStatisticsService;
+import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +53,38 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     }
 
     /**
+     * 导出告警数据
+     *
+     * @param systemId
+     * @param siteId
+     * @param alarmReason
+     * @param startTime
+     * @param endTime
+     * @param response
+     */
+    @Override
+    public void totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, HttpServletResponse response) {
+        List<String> listName = Arrays.asList("系统", "站点", "告警名称", "告警原因", "告警数据量");
+        List<TotalAlarmDataResDTO> totalAlarmData = alarmStatisticsMapper.exportTotalAlarmData(systemId, siteId, alarmReason, startTime, endTime);
+        List<Map<String, String>> list = new ArrayList<>();
+        if (null != totalAlarmData) {
+            for (TotalAlarmDataResDTO totalAlarmDataResDTO : totalAlarmData) {
+                Map<String, String> map = new HashMap<>(16);
+                map.put("系统", totalAlarmDataResDTO.getSubsystemName());
+                map.put("站点", totalAlarmDataResDTO.getSiteName());
+                map.put("告警名称", totalAlarmDataResDTO.getAlarmName());
+                map.put("告警原因", totalAlarmDataResDTO.getAlarmReason());
+                map.put("告警数据量", totalAlarmDataResDTO.getAlarmNum().toString());
+                list.add(map);
+            }
+        }
+        ExcelPortUtil.excelPort("告警数据总计", listName, list, null, response);
+    }
+
+
+    /**
      * 按线路统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -91,6 +121,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 按系统统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -127,6 +158,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 按告警级别统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -139,7 +171,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
         StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
-        for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList){
+        for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
             data.setEmergencyAlarmNum(0L);
             data.setGeneralAlarmNum(0L);
             data.setSeriousAlarmNum(0L);
@@ -157,6 +189,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 线路告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -193,6 +226,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 级别告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -229,6 +263,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 系统告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -265,6 +300,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
 
     /**
      * 告警解决效率
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */

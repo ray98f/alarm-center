@@ -21,14 +21,14 @@ public class AlarmHistory extends BaseEntity{
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;
 
-    @ApiModelProperty(value = "站点")
+    @ApiModelProperty(value = "站点id")
     private Long siteId;
 
-    @ApiModelProperty(value = "设备")
+    @ApiModelProperty(value = "设备id")
     private Long deviceId;
 
-    @ApiModelProperty(value = "槽位")
-    private String slotPosition;
+    @ApiModelProperty(value = "槽位id")
+    private Long slotId;
 
     @ApiModelProperty(value = "告警码")
     private String alarmCode;
@@ -45,6 +45,18 @@ public class AlarmHistory extends BaseEntity{
     @ApiModelProperty(value = "最后一次告警时间")
     private Timestamp finalTime;
 
+    @ApiModelProperty(value = "告警次数")
+    private Integer frequency;
+
+    @ApiModelProperty(value = "告警音量")
+    private String alarmVolume;
+
+    @ApiModelProperty(value = "告警升级")
+    private Integer isUpgrade;
+
+    @ApiModelProperty(value = "是否静音")
+    private Integer isMute;
+
     @ApiModelProperty(value = "告警状态")
     private String alarmState;
 
@@ -53,5 +65,8 @@ public class AlarmHistory extends BaseEntity{
 
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;
+
+    @ApiModelProperty(value = "是否处理")
+    private Integer isHandle;
 
 }

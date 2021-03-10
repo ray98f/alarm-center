@@ -6,6 +6,7 @@ import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
 import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -30,6 +31,18 @@ public interface AlarmManageService {
      * @return
      */
     Page<AlarmHistoryResDTO> pageAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
+
+    /**
+     * 告警历史-导出
+     * @param subsystemId
+     * @param siteId
+     * @param alarmLevel
+     * @param alarmCode
+     * @param startTime
+     * @param endTime
+     * @param response
+     */
+    void exportAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, HttpServletResponse response);
 
     /**
      * 添加备注

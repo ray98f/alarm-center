@@ -9,6 +9,7 @@ import com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO;
 import com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO;
 import com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -32,6 +33,18 @@ public interface AlarmStatisticsService {
      * @return
      */
     Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, PageReqDTO pageReqDTO);
+
+    /**
+     * 导出告警数据
+     * @param systemId
+     * @param siteId
+     * @param alarmReason
+     * @param startTime
+     * @param endTime
+     * @param response
+     */
+    void totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, HttpServletResponse response);
+
 
     /**
      * 按线路统计

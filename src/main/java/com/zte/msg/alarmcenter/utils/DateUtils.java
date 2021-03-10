@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.utils;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -43,7 +44,10 @@ public class DateUtils {
     }
 
     public static void main(String[] args) {
-        System.out.println(zeroClockOf(System.currentTimeMillis()));
-        System.out.println(sevenDayBefore(System.currentTimeMillis()));
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        System.out.println(sdf.format(timestamp));
+
     }
 }

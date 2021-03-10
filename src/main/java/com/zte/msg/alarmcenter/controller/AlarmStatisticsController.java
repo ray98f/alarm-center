@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.sql.Timestamp;
 import java.util.List;
@@ -67,7 +68,37 @@ public class AlarmStatisticsController {
     }
 
     /**
+     * 导出告警数据
+     *
+     * @param systemId
+     * @param siteId
+     * @param alarmReason
+     * @param startTime
+     * @param endTime
+     * @param response
+     * @param <T>
+     * @return
+     */
+    @GetMapping("/total/export")
+    @ApiOperation(value = "导出告警数据")
+    public <T> DataResponse<T> exportTotalAlarmData(@RequestParam(required = false)
+                                                        @ApiParam("系统") Long systemId,
+                                                    @RequestParam(required = false)
+                                                        @ApiParam("站点") Long siteId,
+                                                    @RequestParam(required = false)
+                                                        @ApiParam("告警原因") String alarmReason,
+                                                    @RequestParam(required = false)
+                                                        @ApiParam("开始时间") String startTime,
+                                                    @RequestParam(required = false)
+                                                        @ApiParam("结束时间") String endTime,
+                                                    HttpServletResponse response) {
+
+        return DataResponse.success();
+    }
+
+    /**
      * 按线路统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -79,6 +110,7 @@ public class AlarmStatisticsController {
 
     /**
      * 按系统统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -90,6 +122,7 @@ public class AlarmStatisticsController {
 
     /**
      * 按告警级别统计
+     *
      * @param statisticsByAnyReqDTO
      * @return
      */
@@ -101,6 +134,7 @@ public class AlarmStatisticsController {
 
     /**
      * 线路告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -112,6 +146,7 @@ public class AlarmStatisticsController {
 
     /**
      * 级别告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -123,6 +158,7 @@ public class AlarmStatisticsController {
 
     /**
      * 系统告警趋势
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
@@ -134,6 +170,7 @@ public class AlarmStatisticsController {
 
     /**
      * 告警解决效率
+     *
      * @param anyAlarmTrendReqDTO
      * @return
      */
