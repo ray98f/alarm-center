@@ -29,7 +29,7 @@ public interface SnmpMapper {
 
     Integer getSnmpSlotCount(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId, @Param("siteId") Long siteId);
 
-    List<SnmpSlotResDTO> getSnmpSlot(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId, @Param("siteId") Long siteId, @Param("pageReq") PageReqDTO pageReq);
+    List<SnmpSlotResDTO> getSnmpSlot(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId, @Param("siteId") Long siteId, @Param("page") Long page, @Param("size") Long size);
 
     Integer importSnmpAlarmCode(@Param("list") List<SnmpAlarmCodeReqDTO> list, @Param("userId") String userId);
 
@@ -43,5 +43,5 @@ public interface SnmpMapper {
 
     int getSnmpAlarmCodeCount(@Param("code") String code, @Param("systemId") Long systemId);
 
-    List<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@Param("code") String code, @Param("systemId") Long systemId, @Param("pageReq") PageReqDTO pageReq);
+    List<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@Param("code") String code, @Param("systemId") Long systemId, @Param("page") Long page, @Param("size") Long size);
 }

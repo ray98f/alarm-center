@@ -1,9 +1,7 @@
 package com.zte.msg.alarmcenter.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.*;
-import com.zte.msg.alarmcenter.dto.res.DeviceSlotResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO;
 import com.zte.msg.alarmcenter.exception.CommonException;
@@ -119,15 +117,15 @@ public class SnmpServiceImpl implements SnmpService {
     public void addSnmpSlot(SnmpSlotModifyReqDTO slotModifyReqDTO, String userId) {
         int integer = mySlotMapper.addSnmpSlot(slotModifyReqDTO, userId);
         if (integer < 0) {
-            throw new CommonException(4000,"新增失败！");
+            throw new CommonException(4000, "新增失败！");
         }
     }
 
     @Override
     public void modifySnmpSlot(SnmpSlotModifyReqDTO slotModifyReqDTO, Long id, String userId) {
-        int integer = mySlotMapper.modifySnmpSlot(slotModifyReqDTO, id,userId);
+        int integer = mySlotMapper.modifySnmpSlot(slotModifyReqDTO, id, userId);
         if (integer < 0) {
-            throw new CommonException(4000,"修改失败！");
+            throw new CommonException(4000, "修改失败！");
         }
     }
 
@@ -135,22 +133,23 @@ public class SnmpServiceImpl implements SnmpService {
     public void deleteSnmpSlot(Long id) {
         int integer = mySlotMapper.deleteSnmpSlot(id);
         if (integer < 0) {
-            throw new CommonException(4000,"删除失败！");
+            throw new CommonException(4000, "删除失败！");
         }
     }
 
     @Override
-    public Page<SnmpSlotResDTO> getSnmpSlot(String snmpSlotName, Long systemId, Long siteId, PageReqDTO pageReq) {
+    public Page<SnmpSlotResDTO> getSnmpSlot(String snmpSlotName, Long systemId, Long siteId, Long page, Long size) {
         List<SnmpSlotResDTO> snmpSlotResDTOList = null;
-        int count = mySlotMapper.getSnmpSlotCount(snmpSlotName,systemId,siteId);
-        Page<SnmpSlotResDTO> page = new Page<>();
-        page.setCurrent(pageReq.getPage()).setPages(pageReq.getSize()).setTotal(count);
+        int count = mySlotMapper.getSnmpSlotCount(snmpSlotName, systemId, siteId);
+        Page<SnmpSlotResDTO> pageBean = new Page<>();
+        pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
-            snmpSlotResDTOList = mySlotMapper.getSnmpSlot(snmpSlotName,systemId,siteId,pageReq);
-            page.setRecords(snmpSlotResDTOList);
+//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
+            page = (page - 1) * size;
+            snmpSlotResDTOList = mySlotMapper.getSnmpSlot(snmpSlotName, systemId, siteId, page, size);
+            pageBean.setRecords(snmpSlotResDTOList);
         }
-        return page;
+        return pageBean;
     }
 
     @Override
@@ -193,18 +192,18 @@ public class SnmpServiceImpl implements SnmpService {
     @Override
     public void exportSnmpAlarmCode(String alarmCode, Long systemId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("系统编号（必填）","线路编号（必填）","告警码（必填）","网元类型","SNMP码","SNMP告警码原因");
-        List<SnmpAlarmCodeResDTO> snmpAlarmCodeList = mySlotMapper.exportSnmpAlarmCode(alarmCode,systemId);
+        List<String> listName = Arrays.asList("系统编号（必填）", "线路编号（必填）", "告警码（必填）", "网元类型", "SNMP码", "SNMP告警码原因");
+        List<SnmpAlarmCodeResDTO> snmpAlarmCodeList = mySlotMapper.exportSnmpAlarmCode(alarmCode, systemId);
         List<Map<String, String>> list = new ArrayList<>();
-        if (null!=snmpAlarmCodeList) {
+        if (null != snmpAlarmCodeList) {
             for (SnmpAlarmCodeResDTO snmpAlarmCodeResDTO : snmpAlarmCodeList) {
                 HashMap<String, String> map = new HashMap<>();
-                map.put("系统编号（必填）",snmpAlarmCodeResDTO.getSystemId());
-                map.put("线路编号（必填）",snmpAlarmCodeResDTO.getPositionId());
-                map.put("告警码（必填）",snmpAlarmCodeResDTO.getCode());
-                map.put("网元类型",snmpAlarmCodeResDTO.getElementType());
-                map.put("SNMP码",snmpAlarmCodeResDTO.getSnmpCode());
-                map.put("SNMP告警码原因",snmpAlarmCodeResDTO.getReason());
+                map.put("系统编号（必填）", snmpAlarmCodeResDTO.getSystemId());
+                map.put("线路编号（必填）", snmpAlarmCodeResDTO.getPositionId());
+                map.put("告警码（必填）", snmpAlarmCodeResDTO.getCode());
+                map.put("网元类型", snmpAlarmCodeResDTO.getElementType());
+                map.put("SNMP码", snmpAlarmCodeResDTO.getSnmpCode());
+                map.put("SNMP告警码原因", snmpAlarmCodeResDTO.getReason());
                 list.add(map);
             }
         }
@@ -216,39 +215,40 @@ public class SnmpServiceImpl implements SnmpService {
 
     @Override
     public void addSSnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, String userId) {
-        int integer = mySlotMapper.addSSnmpAlarmCode(snmpAlarmCode,userId);
+        int integer = mySlotMapper.addSSnmpAlarmCode(snmpAlarmCode, userId);
         if (integer < 0) {
-            throw new CommonException(4000,"新增失败！");
+            throw new CommonException(4000, "新增失败！");
         }
     }
 
     @Override
     public void modifySnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, Long id, String userId) {
-        int integer = mySlotMapper.modifySnmpAlarmCode(snmpAlarmCode,id,userId);
+        int integer = mySlotMapper.modifySnmpAlarmCode(snmpAlarmCode, id, userId);
         if (integer < 0) {
-            throw new CommonException(4000,"编辑失败！");
+            throw new CommonException(4000, "编辑失败！");
         }
     }
 
     @Override
-    public Page<SnmpAlarmCodeResDTO> getSnmpAlarmCode(String code, Long systemId, PageReqDTO pageReq) {
+    public Page<SnmpAlarmCodeResDTO> getSnmpAlarmCode(String code, Long systemId, Long page, Long size) {
         List<SnmpAlarmCodeResDTO> snmpSlotResDTOList = null;
-        int count = mySlotMapper.getSnmpAlarmCodeCount(code,systemId);
-        Page<SnmpAlarmCodeResDTO> page = new Page<>();
-        page.setCurrent(pageReq.getPage()).setPages(pageReq.getSize()).setTotal(count);
+        int count = mySlotMapper.getSnmpAlarmCodeCount(code, systemId);
+        Page<SnmpAlarmCodeResDTO> pageBean = new Page<>();
+        pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
-            snmpSlotResDTOList = mySlotMapper.getSnmpAlarmCode(code,systemId,pageReq);
-            page.setRecords(snmpSlotResDTOList);
+//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
+            page = (page - 1) * size;
+            snmpSlotResDTOList = mySlotMapper.getSnmpAlarmCode(code, systemId, page, size);
+            pageBean.setRecords(snmpSlotResDTOList);
         }
-        return page;
+        return pageBean;
     }
 
     @Override
     public void deleteSnmpAlarmCode(Long id) {
         int integer = mySlotMapper.deleteSnmpAlarmCode(id);
         if (integer < 0) {
-            throw new CommonException(4000,"删除失败！");
+            throw new CommonException(4000, "删除失败！");
         }
     }
 }

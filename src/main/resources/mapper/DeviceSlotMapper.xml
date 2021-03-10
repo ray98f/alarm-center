@@ -161,8 +161,8 @@
         <if test="positionId!=null">
             and t2.id = #{positionId}
         </if>
-        <if test="pageReq!=null">
-            limit #{pageReq.page},#{pageReq.size}
+        <if test="page!=null and size!=null">
+            limit #{page},#{size}
         </if>
     </select>
     <select id="getDevicesSlotCount" resultType="java.lang.Integer">

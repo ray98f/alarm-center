@@ -67,7 +67,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     public void exportDevice(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
         List<String> listName = Arrays.asList("设备名称", "所属系统", "设备位置", "设备编号", "槽位编号", "槽位名称");
-        List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null);
+        List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null,null);
         // 列名 数据
         ArrayList<Map<String, String>> list = new ArrayList<>();
         if (null != deviceSlotResList) {
@@ -113,17 +113,18 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     }
 
     @Override
-    public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, PageReqDTO pageReq) {
+    public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page,Long size) {
         List<DeviceSlotResDTO> deviceReqDTOList = null;
-        int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceCode, deviceCode, systemId, positionId, pageReq);
-        Page<DeviceSlotResDTO> page = new Page<>();
-        page.setCurrent(pageReq.getPage()).setPages(pageReq.getSize()).setTotal(count);
+        int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceCode, deviceCode, systemId, positionId);
+        Page<DeviceSlotResDTO> pageBean = new Page<>();
+        pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
-            deviceReqDTOList = myDeviceSlotMapper.exportDevice(slotName, deviceCode, deviceCode, systemId, positionId, pageReq);
-            page.setRecords(deviceReqDTOList);
+//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
+            page = (page - 1) * size;
+            deviceReqDTOList = myDeviceSlotMapper.exportDevice(slotName, deviceCode, deviceCode, systemId, positionId, page,size);
+            pageBean.setRecords(deviceReqDTOList);
         }
-        return page;
+        return pageBean;
     }
 
 }

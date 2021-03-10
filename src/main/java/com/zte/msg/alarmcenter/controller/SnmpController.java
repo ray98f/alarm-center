@@ -82,12 +82,12 @@ public class SnmpController {
 
     @GetMapping("/slot/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<SnmpSlotResDTO> getSnmpSlot(@Valid @RequestBody PageReqDTO page,
+    public PageResponse<SnmpSlotResDTO> getSnmpSlot(@RequestParam("page") Long page,@RequestParam("size") Long size,
                                                    @RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
                                                    @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
                                                    @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long siteId) {
-        Page<SnmpSlotResDTO> dtoPage = mySlotService.getSnmpSlot(snmpSlotName, systemId, siteId, page);
-        return PageResponse.of(dtoPage, page.getPage(), page.getSize());
+        Page<SnmpSlotResDTO> dtoPage = mySlotService.getSnmpSlot(snmpSlotName, systemId, siteId, page,size);
+        return PageResponse.of(dtoPage, page, size);
     }
 
     @DeleteMapping("/slot/delete/{id}")
@@ -137,11 +137,11 @@ public class SnmpController {
 
     @GetMapping("/code/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@Valid @RequestBody PageReqDTO page,
+    public PageResponse<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@RequestParam("page") Long page,@RequestParam("size") Long size,
                                                               @RequestParam(required = false) @ApiParam(value = "告警码") Long systemId,
                                                               @RequestParam(required = false) @ApiParam(value = "设备编号查询") String code) {
-        Page<SnmpAlarmCodeResDTO> dtoPage = mySlotService.getSnmpAlarmCode(code, systemId, page);
-        return PageResponse.of(dtoPage, page.getPage(), page.getSize());
+        Page<SnmpAlarmCodeResDTO> dtoPage = mySlotService.getSnmpAlarmCode(code, systemId, page,size);
+        return PageResponse.of(dtoPage, page, size);
     }
 
     @DeleteMapping("/code/delete/{id}")

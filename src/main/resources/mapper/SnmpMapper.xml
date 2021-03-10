@@ -223,8 +223,8 @@
         <if test="siteId!=null">
             t.position_id = #{siteId}
         </if>
-        <if test="pageReq!=null">
-            limit #{pageReq.page},#{pageReq.size}
+        <if test="page!=null and size!=null">
+            limit #{page},#{size}
         </if>
     </select>
     <select id="exportSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
@@ -278,8 +278,8 @@
         <if test="systemId!=null">
             and t.system_id = #{systemId}
         </if>
-        <if test="pageReq!=null">
-            limit #{pageReq.page},#{pageReq.size}
+        <if test="page!=null and size!=null">
+            limit #{page},#{size}
         </if>
     </select>
 </mapper>

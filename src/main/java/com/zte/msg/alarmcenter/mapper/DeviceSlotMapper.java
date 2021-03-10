@@ -15,7 +15,7 @@ public interface DeviceSlotMapper {
 
     List<DeviceSlotResDTO> exportDevice(@Param("slotName") String slotName, @Param("deviceName") String deviceName,
                                         @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId,
-                                        @Param("positionId") Long positionId, @Param("pageReq") PageReqDTO pageReq);
+                                        @Param("positionId") Long positionId, @Param("page") Long page, @Param("size") Long size);
 
     Integer deleteDevice(@Param("id") Long id);
 
@@ -29,6 +29,6 @@ public interface DeviceSlotMapper {
 
     Integer getDevicesSlotCount(@Param("slotName") String slotName, @Param("deviceName") String deviceName,
                                 @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId,
-                                @Param("positionId") Long positionId, @Param("pageReq") PageReqDTO pageReq);
+                                @Param("positionId") Long positionId);
 
 }

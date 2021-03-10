@@ -19,5 +19,5 @@ public interface DeviceSlotService {
 
     void modifyDevice(Long id, DeviceSlotReqDTO deviceSlotReqDTO, String userId);
 
-    Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, PageReqDTO page);
+    Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page,Long size);
 }

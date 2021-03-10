@@ -22,7 +22,7 @@ public interface SnmpService {
 
     void deleteSnmpSlot(Long id);
 
-    Page<SnmpSlotResDTO> getSnmpSlot(String snmpSlotName, Long systemId, Long siteId, PageReqDTO page);
+    Page<SnmpSlotResDTO> getSnmpSlot(String snmpSlotName, Long systemId, Long siteId, Long page,Long size);
 
     void importSnmpAlarmCode(MultipartFile file, String userId);
 
@@ -32,7 +32,7 @@ public interface SnmpService {
 
     void modifySnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, Long id, String userId);
 
-    Page<SnmpAlarmCodeResDTO> getSnmpAlarmCode(String code, Long systemId, PageReqDTO page);
+    Page<SnmpAlarmCodeResDTO> getSnmpAlarmCode(String code, Long systemId, Long page,Long size);
 
     void deleteSnmpAlarmCode(Long id);
 }
