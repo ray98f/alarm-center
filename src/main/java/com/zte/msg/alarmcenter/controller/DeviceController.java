@@ -80,13 +80,13 @@ public class DeviceController {
 
     @GetMapping("/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<DeviceResDTO> getDevices(@Valid @RequestBody PageReqDTO page,
+    public PageResponse<DeviceResDTO> getDevices(@RequestParam("page") Long page,@RequestParam("size") Long size,
                                                  @RequestParam(required = false) @ApiParam(value = "设备名称模糊查询") String name,
                                                  @RequestParam(required = false) @ApiParam(value = "设备编号查询") String deviceCode,
                                                  @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
                                                  @RequestParam(required = false) @ApiParam(value = "位置id") Long positionId) {
-        Page<DeviceResDTO> dtoPage = myDevice.getDevices(name, deviceCode, systemId, positionId, page);
-        return PageResponse.of(dtoPage, page.getPage(), page.getSize());
+        Page<DeviceResDTO> dtoPage = myDevice.getDevices(name, deviceCode, systemId, positionId, page,size);
+        return PageResponse.of(dtoPage, page, size);
     }
 
     @DeleteMapping("/delete/{id}")

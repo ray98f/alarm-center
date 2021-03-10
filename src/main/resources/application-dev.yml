@@ -54,3 +54,5 @@ fdfs:
     max-wait-millis: 5000
   tracker-list:
     - 192.168.30.103:22122
+
+imagePath: "http://192.168.30.103:8889/"

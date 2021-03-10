@@ -37,10 +37,10 @@ public class PositionController {
     private PositionService myPositionService;
 
     @GetMapping("/list")
-    @ApiOperation(value = "获取线路站点信息列表")
-    public PageResponse<PositionResDTO> getPositions(@Valid @RequestBody PageReqDTO pageReqDTO) {
-        Page<PositionResDTO> resDTOPage = myPositionService.getPositions(pageReqDTO);
-        return PageResponse.of(resDTOPage, pageReqDTO.getPage(), pageReqDTO.getSize());
+    @ApiOperation(value = "位置信息-分页查询")
+    public PageResponse<PositionResDTO> getPositions(@RequestParam("page") Long page,@RequestParam("size") Long size) {
+        Page<PositionResDTO> resDTOPage = myPositionService.getPositions(page,size);
+        return PageResponse.of(resDTOPage, page, size);
     }
 //
 //    @GetMapping("list/{pId}")

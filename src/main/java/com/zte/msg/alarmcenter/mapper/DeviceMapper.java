@@ -15,7 +15,7 @@ import java.util.List;
 public interface DeviceMapper {
 
     List<DeviceResDTO> exportDevice(@Param("name") String name, @Param("deviceCode") String deviceCode,
-                                    @Param("systemId") Long systemId, @Param("positionId") Long positionId, @Param("pageReq") PageReqDTO pageReq);
+                                    @Param("systemId") Long systemId, @Param("positionId") Long positionId, @Param("page") Long page, @Param("size") Long size);
 
     Integer importDevice(@Param("list") List<DeviceReqDTO> list, @Param("userId") String userId);
 

@@ -68,7 +68,7 @@
         select
             id,
             p_id,
-            position_code as code,
+            position_code,
             `name`,
             icon,
             topographic,
@@ -83,7 +83,7 @@
         select
             id,
             p_id,
-            position_code as code,
+            position_code,
             `name`,
             icon,
             topographic,
@@ -96,7 +96,7 @@
     <resultMap id="BaseResultMap" type="com.zte.msg.alarmcenter.dto.res.PositionResDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="p_id" jdbcType="BIGINT" property="pId" />
-        <result column="position_code" jdbcType="VARCHAR" property="code" />
+        <result column="position_code" jdbcType="VARCHAR" property="positionCode" />
         <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="icon" jdbcType="VARCHAR" property="icon" />
         <result column="topographic" jdbcType="VARCHAR" property="topographic" />

@@ -67,8 +67,8 @@
         <if test="positionId!=null">
             and position_id = #{positionId}
         </if>
-        <if test="pageReq.page!=null and pageReq.size!=null">
-            limit #{pageReq.page},#{pageReq.size}
+        <if test="page!=null and size!=null">
+            limit #{page},#{size}
         </if>
     </select>
     <select id="getDevicesCount" resultType="java.lang.Integer">

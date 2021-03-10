@@ -37,9 +37,9 @@ public class ChildSystemController {
 
     @GetMapping("/list")
     @ApiOperation(value = "子系统列表")
-    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(@RequestBody PageReqDTO page) {
-        Page<ChildSystemConfigResDTO> childSystemConfigs = myChildSystemService.getChildSystemConfigs(page.getPage(), page.getSize());
-        return PageResponse.of(childSystemConfigs, page.getPage(), page.getSize());
+    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(@RequestParam("page") Long page,@RequestParam("size") Long size) {
+        Page<ChildSystemConfigResDTO> childSystemConfigs = myChildSystemService.getChildSystemConfigs(page, size);
+        return PageResponse.of(childSystemConfigs, page, size);
     }
 
     @PostMapping("/add")

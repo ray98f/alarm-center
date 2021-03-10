@@ -19,7 +19,7 @@ public interface DeviceService {
 
     void modifyDevice(DeviceReqModifyDTO reqModifyDTO, Long id, String userId);
 
-    Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, PageReqDTO page);
+    Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page,Long size);
 
     void deleteDevice(Long id);
 }

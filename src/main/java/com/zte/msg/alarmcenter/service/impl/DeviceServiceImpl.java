@@ -32,7 +32,7 @@ public class DeviceServiceImpl implements DeviceService {
     public void exportDevice(String name, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
         List<String> listName = Arrays.asList("设备名称", "所属系统id", "设备位置id", "设备编号", "品牌型号", "设备串号", "设备描述");
-        List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null);
+        List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null,null);
         // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
         if (null != deviceResList) {
@@ -138,17 +138,18 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, PageReqDTO pageReq) {
+    public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page,Long size) {
         List<DeviceResDTO> deviceReqDTOList = null;
         int count = myDeviceMapper.getDevicesCount(name, deviceCode, systemId, positionId);
-        Page<DeviceResDTO> page = new Page<>();
-        page.setCurrent(pageReq.getPage()).setPages(pageReq.getSize()).setTotal(count);
+        Page<DeviceResDTO> pageBean = new Page<>();
+        pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
-            deviceReqDTOList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, pageReq);
-            page.setRecords(deviceReqDTOList);
+//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
+            page = (page-1)*size;
+            deviceReqDTOList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, page,size);
+            pageBean.setRecords(deviceReqDTOList);
         }
-        return page;
+        return pageBean;
     }
 
     @Override

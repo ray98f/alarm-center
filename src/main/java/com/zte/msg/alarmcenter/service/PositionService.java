@@ -13,7 +13,7 @@ public interface PositionService {
 
     void deletePosition(Long id);
 
-    Page<PositionResDTO> getPositions(PageReqDTO pageReqDTO);
+    Page<PositionResDTO> getPositions(Long page,Long size);
 
 //    Page<PositionResDTO> getPositionsById(Long pId, PageReqDTO pageReqDTO);
 }

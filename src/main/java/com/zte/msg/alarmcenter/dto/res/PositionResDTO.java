@@ -24,7 +24,7 @@ public class PositionResDTO {
     private Long pId;
 
     @ApiModelProperty(value = "编号")
-    private String code;
+    private String positionCode;
 
     @ApiModelProperty(value = "节点名称")
     private String name;
