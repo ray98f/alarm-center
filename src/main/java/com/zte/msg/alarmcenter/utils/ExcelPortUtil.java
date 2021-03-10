@@ -170,12 +170,11 @@ public class ExcelPortUtil {
             // 输出Excel文件
             OutputStream output = response.getOutputStream();
             response.reset();
+            wb.write(output);
+            wb.close();
             // 设置文件头
             response.setHeader("Content-Disposition",
                     "attchement;filename=" + new String((sheetName + ".xls").getBytes("gb2312"), "ISO8859-1"));
-//            response.setContentType("application/msexcel");
-            wb.write(output);
-            wb.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

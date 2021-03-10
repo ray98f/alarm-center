@@ -44,18 +44,11 @@ public class FastDFSController {
     }
 
     @GetMapping("/downLoadImg")
-    public DataResponse<Void> downLoadFile(@RequestParam("imagePath") String imagePath){
-        try {
-            String[] split = imagePath.split("/");
-            String[] strings = imagePath.split(split[0]);
-            strings[1] = strings[1].substring(1);
-            byte[] bytes = storageClient.downloadFile(split[0], strings[1], new DownloadByteArray());
-            FileOutputStream stream = new FileOutputStream(imagePath);
-            stream.write(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return DataResponse.success();
+    public DataResponse<byte[]> downLoadFile(@RequestParam("imagePath") String imagePath){
+        String group = imagePath.substring(0, imagePath.indexOf("/"));
+        String path = imagePath.substring(imagePath.indexOf("/") + 1);
+        byte[] bytes = storageClient.downloadFile(group, path, new DownloadByteArray());
+        return DataResponse.of(bytes);
     }
 
     @GetMapping("/forwardImg")
