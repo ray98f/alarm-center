@@ -3,21 +3,20 @@ package com.zte.msg.alarmcenter.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.pagehelper.PageHelper;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
-import com.zte.msg.alarmcenter.dto.req.AnyAlarmTrendReqDTO;
-import com.zte.msg.alarmcenter.dto.req.StatisticsByAnyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
-import com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper;
 import com.zte.msg.alarmcenter.service.AlarmManageService;
-import com.zte.msg.alarmcenter.service.AlarmStatisticsService;
+import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * description:
@@ -49,6 +48,53 @@ public class AlarmManageServiceImpl implements AlarmManageService {
     public Page<AlarmHistoryResDTO> pageAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return alarmManageMapper.pageAlarmHistory(pageReqDTO.of(), subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime);
+    }
+
+    /**
+     * 告警历史-导出
+     *
+     * @param subsystemId
+     * @param siteId
+     * @param alarmLevel
+     * @param alarmCode
+     * @param startTime
+     * @param endTime
+     * @param response
+     */
+    @Override
+    public void exportAlarmHistory(Long subsystemId, Long siteId, Integer alarmLevel, Integer alarmCode, Timestamp startTime, Timestamp endTime, HttpServletResponse response) {
+        List<String> listName = Arrays.asList("系统", "告警等级", "站点", "设备", "槽位", "告警码", "告警名称", "告警原因", "第一次告警时间", "最后告警时间", "告警状态", "告警恢复时间", "备注");
+        List<AlarmHistoryResDTO> alarmHistory = alarmManageMapper.exportAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime);
+        List<Map<String, String>> list = new ArrayList<>();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+        if (null != alarmHistory) {
+            for (AlarmHistoryResDTO alarmHistoryResDTO : alarmHistory) {
+                Map<String, String> map = new HashMap<>(16);
+                String alarmLevelName;
+                if (alarmHistoryResDTO.getAlarmLevel() == 1) {
+                    alarmLevelName = "紧急告警";
+                } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
+                    alarmLevelName = "重要告警";
+                } else {
+                    alarmLevelName = "一般告警";
+                }
+                map.put("系统", alarmHistoryResDTO.getSubsystemName());
+                map.put("告警等级", alarmLevelName);
+                map.put("站点", alarmHistoryResDTO.getSiteName());
+                map.put("设备", alarmHistoryResDTO.getDeviceName());
+                map.put("槽位", alarmHistoryResDTO.getSlotPosition());
+                map.put("告警码", alarmHistoryResDTO.getAlarmCode());
+                map.put("告警名称", alarmHistoryResDTO.getAlarmName());
+                map.put("告警原因", alarmHistoryResDTO.getAlarmReason());
+                map.put("第一次告警时间", sdf.format(alarmHistoryResDTO.getFirstTime()));
+                map.put("最后告警时间", sdf.format(alarmHistoryResDTO.getFinalTime()));
+                map.put("告警状态", alarmHistoryResDTO.getAlarmState());
+                map.put("告警恢复时间", sdf.format(alarmHistoryResDTO.getRecoveryTime()));
+                map.put("备注", alarmHistoryResDTO.getAlarmRemark());
+                list.add(map);
+            }
+        }
+        ExcelPortUtil.excelPort("历史告警", listName, list, null, response);
     }
 
     /**
