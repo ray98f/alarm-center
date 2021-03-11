@@ -45,7 +45,7 @@ public class DeviceController {
     public DataResponse<T> importDevice(@RequestParam MultipartFile deviceFile, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.importDevice(deviceFile, tokenInfo == null ? null : tokenInfo.getUserId());
+        myDevice.importDevice(deviceFile, tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -65,7 +65,7 @@ public class DeviceController {
     public DataResponse<Void> addDevice(@RequestBody DeviceReqDTO deviceReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.addDevice(deviceReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
+        myDevice.addDevice(deviceReqDTO, tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -74,7 +74,7 @@ public class DeviceController {
     public DataResponse<Void> modifyDevice(@PathVariable("id") Long id, @RequestBody DeviceReqModifyDTO reqModifyDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.modifyDevice(reqModifyDTO, id, tokenInfo == null ? null : tokenInfo.getUserId());
+        myDevice.modifyDevice(reqModifyDTO, id, tokenInfo.getUserId());
         return DataResponse.success();
     }
 

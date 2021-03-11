@@ -47,7 +47,7 @@ public class DeviceSlotController {
     public DataResponse<T> importDevice(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserId());
+        mDeviceSlotService.importDevice(file, tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -68,7 +68,7 @@ public class DeviceSlotController {
     public DataResponse<Void> addDeviceSlot(@RequestBody DeviceSlotReqDTO deviceSlotReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.addDeviceSlot(deviceSlotReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
+        mDeviceSlotService.addDeviceSlot(deviceSlotReqDTO, tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -77,7 +77,7 @@ public class DeviceSlotController {
     public DataResponse<Void> modifyDevice(@PathVariable("id") Long id, @RequestBody DeviceSlotReqDTO deviceSlotReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.modifyDevice(id,deviceSlotReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
+        mDeviceSlotService.modifyDevice(id,deviceSlotReqDTO, tokenInfo.getUserId());
         return DataResponse.success();
     }
 
