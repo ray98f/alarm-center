@@ -45,27 +45,31 @@
 
     <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
         select
-            id,
-            `name`,
-            system_id,
-            position_id,
-            device_code,
-            brand,
-            serial_num,
-            description
-        from device
-        where is_deleted = 0
+            t.id,
+            t.`name`,
+            t.system_id,
+            t1.name as systemName,
+            t.position_id,
+            t2.name as positionName,
+            t.device_code,
+            t.brand,
+            t.serial_num,
+            t.description
+        from device t
+        join subsystem t1 on t1.id = t.system_id
+        join `position` t2 on t2.id = t.position_id
+        where t.is_deleted = 0
         <if test="name!=null and name!=''">
-            and `name` like concat('%',#{name},'%')
+            and t.`name` like concat('%',#{name},'%')
         </if>
         <if test="deviceCode!=null and deviceCode!=''">
-            and device_code = #{deviceCode}
+            and t.device_code = #{deviceCode}
         </if>
         <if test="systemId!=null">
-            and system_id = #{systemId}
+            and t.system_id = #{systemId}
         </if>
         <if test="positionId!=null">
-            and position_id = #{positionId}
+            and t.position_id = #{positionId}
         </if>
         <if test="page!=null and size!=null">
             limit #{page},#{size}

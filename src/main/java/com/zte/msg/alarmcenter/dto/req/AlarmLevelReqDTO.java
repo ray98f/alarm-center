@@ -27,7 +27,4 @@ public class AlarmLevelReqDTO {
     @ApiModelProperty(value = "告警级别颜色")
     private String color;
 
-    private String updatedBy;
-
-    private Timestamp updatedAt;
 }

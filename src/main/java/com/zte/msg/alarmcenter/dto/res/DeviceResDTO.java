@@ -30,9 +30,17 @@ public class DeviceResDTO {
     @NotNull(message = "32000006")
     private Long systemId;
 
+    @ApiModelProperty(value = "子系统名称")
+    @NotNull(message = "32000006")
+    private String systemName;
+
     @ApiModelProperty(value = "位置id")
     @NotNull(message = "32000006")
     private Long positionId;
+
+    @ApiModelProperty(value = "位置名称")
+    @NotNull(message = "32000006")
+    private String positionName;
 
     @ApiModelProperty(value = "设备编码")
     @NotBlank(message = "32000006")
