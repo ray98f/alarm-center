@@ -70,13 +70,26 @@ public class AlarmManageServiceImpl implements AlarmManageService {
         if (null != alarmHistory) {
             for (AlarmHistoryResDTO alarmHistoryResDTO : alarmHistory) {
                 Map<String, String> map = new HashMap<>(16);
-                String alarmLevelName;
+                String alarmLevelName, alarmStateName;
                 if (alarmHistoryResDTO.getAlarmLevel() == 1) {
                     alarmLevelName = "紧急告警";
                 } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
                     alarmLevelName = "重要告警";
                 } else {
                     alarmLevelName = "一般告警";
+                }
+                if (alarmHistoryResDTO.getAlarmLevel() == 1) {
+                    alarmStateName = "待处理";
+                } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
+                    alarmStateName = "手动确认";
+                } else if (alarmHistoryResDTO.getAlarmLevel() == 3) {
+                    alarmStateName = "自动确认";
+                } else if (alarmHistoryResDTO.getAlarmLevel() == 4) {
+                    alarmStateName = "已清除";
+                } else if (alarmHistoryResDTO.getAlarmLevel() == 5) {
+                    alarmStateName = "手动过滤";
+                } else {
+                    alarmStateName = "自动过滤";
                 }
                 map.put("系统", alarmHistoryResDTO.getSubsystemName());
                 map.put("告警等级", alarmLevelName);
@@ -88,7 +101,7 @@ public class AlarmManageServiceImpl implements AlarmManageService {
                 map.put("告警原因", alarmHistoryResDTO.getAlarmReason());
                 map.put("第一次告警时间", sdf.format(alarmHistoryResDTO.getFirstTime()));
                 map.put("最后告警时间", sdf.format(alarmHistoryResDTO.getFinalTime()));
-                map.put("告警状态", alarmHistoryResDTO.getAlarmState());
+                map.put("告警状态", alarmStateName);
                 map.put("告警恢复时间", sdf.format(alarmHistoryResDTO.getRecoveryTime()));
                 map.put("备注", alarmHistoryResDTO.getAlarmRemark());
                 list.add(map);

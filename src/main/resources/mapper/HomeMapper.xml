@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.HomeMapper">
+    <select id="projectSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeProjSituationResDTO">
+        select (select count(*) from alarm_history where is_deleted=0) as total_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=1) as emergency_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=2) as serious_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=3) as general_alarm_num
+    </select>
+
+    <select id="lineSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeLineSituationResDTO">
+        select
+        (SELECT count(site_id) FROM alarm_history where alarm_level=1 and is_deleted=0) as emergency_alarm_num,
+        (SELECT count(site_id) FROM alarm_history where alarm_level=2 and is_deleted=0) as serious_alarm_num,
+        (SELECT count(site_id) FROM alarm_history where alarm_level=3 and is_deleted=0) as general_alarm_num
+    </select>
+
+    <select id="deviceSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeDeviceSituationResDTO">
+        select
+        (SELECT count(id) FROM device where is_deleted=0) as total_num,
+        (SELECT count(id) FROM device where is_normal=0 and is_deleted=0) as normal_num,
+        (SELECT count(id) FROM device where is_normal=1 and is_deleted=0) as abnormal_num
+    </select>
+
+    <select id="alarmHandleNum" resultType="java.lang.Integer">
+        select count(id) from alarm_history where is_deleted=0 and alarm_state in (4,5,6)
+    </select>
+
+    <select id="alarmNotHandleNum" resultType="java.lang.Integer">
+        select count(id) from alarm_history where is_deleted=0 and alarm_state in (1,2,3)
+    </select>
+
+    <select id="subsystemSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeSubsystemSituationResDTO">
+        SELECT ah.subsystem_id,s.name as subsystem_name,s.is_online,
+        ifnull(sum(case when ah.alarm_level=1 then 1 end),0) as emergency_alarm_num,
+        ifnull(sum(case when ah.alarm_level=2 then 1 end),0) as serious_alarm_num,
+        ifnull(sum(case when ah.alarm_level=3 then 1 end),0) as general_alarm_num FROM alarm_history as ah
+        left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
+        where ah.is_deleted=0 group by ah.subsystem_id;
+    </select>
+
+    <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
+        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
+        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.frequency,
+        ah.alarm_volume,ah.alarm_state,ah.alarm_remark FROM alarm_history as ah
+        left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
+        left join position as p on p.id=ah.site_id and p.is_deleted=0
+        left join device as d on d.id=ah.device_id and d.is_deleted=0
+        left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
+        and (alarm_state=1 or alarm_state=2 or alarm_state=3)
+        ORDER BY ah.updated_at DESC
+    </select>
+
+    <update id="mute">
+        update alarm_history set is_mute=0 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="unmute">
+        update alarm_history set is_mute=1 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="adjustVolume">
+        update alarm_history set alarm_volume=#{alarmVolume} where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="clearAlarm">
+        update alarm_history set alarm_state=4 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="confirmAlarm">
+        update alarm_history set alarm_state=2 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="filterAlarm">
+        update alarm_history set alarm_state=5 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
+    <update id="recoveryAlarm">
+        update alarm_history set alarm_state=1 where id in (
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+</mapper>

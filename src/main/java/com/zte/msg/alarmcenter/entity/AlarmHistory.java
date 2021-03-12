@@ -57,7 +57,7 @@ public class AlarmHistory extends BaseEntity{
     @ApiModelProperty(value = "是否静音")
     private Integer isMute;
 
-    @ApiModelProperty(value = "告警状态")
+    @ApiModelProperty(value = "告警状态(1待处理;2手动确认;3自动确认;4已清除;5手动过滤;6自动过滤)")
     private String alarmState;
 
     @ApiModelProperty(value = "告警恢复时间")
@@ -65,8 +65,5 @@ public class AlarmHistory extends BaseEntity{
 
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;
-
-    @ApiModelProperty(value = "是否处理")
-    private Integer isHandle;
 
 }

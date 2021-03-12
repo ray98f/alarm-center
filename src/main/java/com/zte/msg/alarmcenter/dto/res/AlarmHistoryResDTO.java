@@ -58,7 +58,19 @@ public class AlarmHistoryResDTO {
     @ApiModelProperty(value = "最后一次告警时间")
     private Timestamp finalTime;
 
-    @ApiModelProperty(value = "告警状态")
+    @ApiModelProperty(value = "告警次数")
+    private Integer frequency;
+
+    @ApiModelProperty(value = "告警音量")
+    private String alarmVolume;
+
+    @ApiModelProperty(value = "告警升级")
+    private Integer isUpgrade;
+
+    @ApiModelProperty(value = "是否静音")
+    private Integer isMute;
+
+    @ApiModelProperty(value = "告警状态(1待处理;2手动确认;3自动确认;4已清除;5手动过滤;6自动过滤)")
     private String alarmState;
 
     @ApiModelProperty(value = "告警恢复时间")
