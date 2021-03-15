@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.config;
 
+import com.github.xiaoymin.knife4j.spring.annotations.EnableKnife4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ import java.util.List;
  */
 @Configuration
 @EnableSwagger2
+@EnableKnife4j
 @ConditionalOnProperty(name = "swagger.enable", havingValue = "true")
 public class SwaggerConfig {
     @Bean

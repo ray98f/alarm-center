@@ -24,7 +24,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
         FilterRegistrationBean<JwtFilter> registration = new FilterRegistrationBean<>();
         registration.setFilter(new JwtFilter());
         registration.setName("JwtFilter");
-        registration.addUrlPatterns("/api/*");
+        registration.addUrlPatterns("/*");
         registration.setOrder(2);
         return registration;
     }
@@ -54,5 +54,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
     }
 }
