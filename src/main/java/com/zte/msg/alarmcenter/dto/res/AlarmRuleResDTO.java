@@ -28,7 +28,15 @@ public class AlarmRuleResDTO {
     @ApiModelProperty(value = "规则状态")
     private Integer isEnable;
 
+    @ApiModelProperty(value = "创建时间")
+    private String createdAt;
+
+    @ApiModelProperty(value = "创建人")
+    private String createdBy;
+
+    @ApiModelProperty(value = "修改时间")
     private String updatedBy;
 
-    private Timestamp updatedAt;
+    @ApiModelProperty(value = "修改人")
+    private String updatedAt;
 }

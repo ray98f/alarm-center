@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmCodeMapper">
+
+    <insert id="importAlarmCode">
+        insert into alarm_code
+        (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
+        values
+        <foreach collection ="list" item="item" index= "index" separator =",">
+            (
+            null,
+            (select id from subsystem where sid = #{item.systemId}),
+            (select id from `position` where position_code = #{item.positionId}),
+            #{item.alarmCode},
+            #{item.alarmName},
+            #{item.reason},
+            {select id from alarm_level where id = #{item.alarmLevelId},
+            #{item.handlingOpinions},
+            NOW(),
+            #{userId}
+            )
+        </foreach>
+    </insert>
+    <insert id="addAlarmCode">
+        insert into alarm_code
+        (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
+        values
+        (
+         null,
+         #{alarmCodeReqDTO.systemId},
+         #{alarmCodeReqDTO.positionId},
+         #{alarmCodeReqDTO.alarmCode},
+         #{alarmCodeReqDTO.alarmName},
+         #{alarmCodeReqDTO.reason},
+         #{alarmCodeReqDTO.alarmLevelId},
+         #{alarmCodeReqDTO.handlingOpinions},
+         NOW(),
+         #{userId}
+        )
+    </insert>
+    <update id="modifyAlarmCode">
+        update alarm_code
+        set
+            system_id = #{alarmCodeReqDTO.systemId},
+            position_id = #{alarmCodeReqDTO.positionId},
+            `code` = #{alarmCodeReqDTO.alarmCode},
+            `name` = #{alarmCodeReqDTO.alarmName},
+            reason = #{alarmCodeReqDTO.reason},
+            level_id = #{alarmCodeReqDTO.alarmLevelId},
+            handling_opinions = #{alarmCodeReqDTO.handlingOpinions},
+            updated_at = NOW(),
+            updated_by = #{userId}
+        where id = #{id}
+    </update>
+    <update id="deleteAlarmCode">
+        update alarm_code
+        set
+            is_deleted = 1
+        where id = #{id}
+    </update>
+    <select id="exportAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
+        select
+            t.id,
+            t1.name as systemName,
+            t2.name as positionName,
+            t.`code`,
+            t.`name`,
+            t.reason,
+            t3.name as alarmLevelName,
+            t.handling_opinions
+        from alarm_code t
+        join subsystem t1 on t1.id = t.system_id
+        join `position` t2 on t2.id = t.position_id
+        join alarm_level t3 on t3.id = t.level_id
+        where t.is_deleted = 0
+        <if test="systemId!=null">
+            and t.system_id = #{systemId}
+        </if>
+        <if test="alarmCode!=null">
+            and t.code = #{alarmCode}
+        </if>
+        <if test="alarmName!=null and alarmName!=''">
+            and t.name like concat('%',#{alarmName},'%')
+        </if>
+        <if test="alarmLevelId!=null">
+            and t.level_id = #{alarmLevelId}
+        </if>
+        <if test="page!=null and size!=null">
+            limit #{page},#{size}
+        </if>
+    </select>
+    <select id="getAlarmCodeCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from alarm_code t
+        join subsystem t1 on t1.id = t.system_id
+        join `position` t2 on t2.id = t.position_id
+        join alarm_level t3 on t3.id = t.level_id
+        where t.is_deleted = 0
+        <if test="systemId!=null">
+            and t.system_id = #{systemId}
+        </if>
+        <if test="alarmCode!=null">
+            and t.code = #{alarmCode}
+        </if>
+        <if test="alarmName!=null and alarmName!=''">
+            and t.name like concat('%',#{alarmName},'%')
+        </if>
+        <if test="alarmLevelId!=null">
+            and t.level_id = #{alarmLevelId}
+        </if>
+    </select>
+</mapper>

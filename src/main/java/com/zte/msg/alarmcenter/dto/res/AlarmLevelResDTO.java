@@ -15,21 +15,21 @@ public class AlarmLevelResDTO {
     private Long code;
 
     @ApiModelProperty(value = "告警名称")
-    private Long name;
+    private String name;
 
     @ApiModelProperty(value = "告警色号")
-    private Long color;
+    private String color;
 
     @ApiModelProperty(value = "创建时间")
-    private Long createdAt;
+    private String createdAt;
 
     @ApiModelProperty(value = "更新时间")
-    private Long updatedAt;
+    private String updatedAt;
 
     @ApiModelProperty(value = "创建人")
-    private Long createdBy;
+    private String createdBy;
 
     @ApiModelProperty(value = "更新人")
-    private Long updatedBy;
+    private String updatedBy;
 
 }

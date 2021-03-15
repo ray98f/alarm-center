@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmRuleMapper">
+
+    <insert id="addAlarmRule"  useGeneratedKeys="true" keyProperty="id" parameterType="com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO">
+        insert into alarm_rule
+        (
+            id,
+            `type`,
+            `name`,
+            is_filter_system,
+            is_filter_position,
+            is_filter_device,
+            is_filter_alarm,
+            is_enable,
+            created_at,
+            created_by
+        )
+        values
+        (
+            null,
+            #{type},
+            #{name},
+            #{systemId},
+            #{positionId},
+            #{deviceId},
+            #{alarmId},
+            #{isEnable},
+            NOW(),
+            #{userId}
+        );
+        select @@IDENTITY as id;
+    </insert>
+    <insert id="addAlarmRuleOnSystem">
+        insert into filter_system
+        (
+            id,
+            rule_id,
+            system_id
+        )
+        values
+        (
+            null,
+            #{ruleId},
+            #{systemId}
+        )
+    </insert>
+    <insert id="addAlarmRuleOnPosition">
+        insert into filter_position
+        (
+            id,
+            rule_id,
+            position_id
+        )
+        values
+        (
+            null,
+            #{ruleId},
+            #{positionId}
+        )
+    </insert>
+    <insert id="addAlarmRuleOnDevice">
+        insert into filter_device
+        (
+            id,
+            rule_id,
+            device_id
+        )
+        values
+        (
+            null,
+            #{ruleId},
+            #{deviceId}
+        )
+    </insert>
+    <insert id="addAlarmRuleOnAlarm">
+        insert into filter_alarm
+        (
+            id,
+            rule_id,
+            alarm_code_id
+        )
+        values
+        (
+            null,
+            #{ruleId},
+            #{alarmId}
+        )
+    </insert>
+    <update id="modifyAlarmRule">
+        update alarm_rule
+        set
+            `type` = #{alarmRuleReqDTO.type},
+            `name` = #{alarmRuleReqDTO.name},
+            is_filter_system = #{alarmRuleReqDTO.systemId},
+            is_filter_position = #{alarmRuleReqDTO.positionId},
+            is_filter_device = #{alarmRuleReqDTO.deviceId},
+            is_filter_alarm = #{alarmRuleReqDTO.alarmId},
+            is_enable = #{alarmRuleReqDTO.isEnable},
+            updated_at = NOW(),
+            updated_by = #{userId}
+        WHERE id= #{id}
+    </update>
+    <delete id="deleteFilter">
+        DELETE
+            filter_alarm,filter_device,filter_position,filter_system
+        FROM filter_alarm,filter_device,filter_position,filter_system,alarm_rule
+        WHERE
+            alarm_rule.id = filter_alarm.rule_id
+        and alarm_rule.id = filter_device.rule_id
+        and alarm_rule.id = filter_position.rule_id
+        and alarm_rule.id = filter_system.rule_id
+        and alarm_rule.id = #{id}
+    </delete>
+    <select id="getAlarmRuleCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from alarm_rule
+        where is_deleted = 0
+        <if test="isEnable!=null">
+            and is_enable = #{isEnable}
+        </if>
+        <if test="type!=null">
+            and `type` = #{type}
+        </if>
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+    </select>
+    <select id="getAlarmRule" resultType="com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO">
+        select
+            id,
+            `type`,
+            `name`,
+            is_enable,
+            DATE_FORMAT(created_at, "%Y-%m-%d %T") as createdAt,
+            DATE_FORMAT(updated_at, "%Y-%m-%d %T") as updatedAt,
+            created_by,
+            updated_by
+        from alarm_rule
+        where is_deleted = 0
+        <if test="isEnable!=null">
+            and is_enable = #{isEnable}
+        </if>
+        <if test="type!=null">
+            and `type` = #{type}
+        </if>
+        <if test="name!=null and name!=''">
+            and `name` like concat('%',#{name},'%')
+        </if>
+        limit #{page},#{size}
+    </select>
+    <select id="lookOverAlarmRuleDetails" resultType="com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO">
+        select
+            id,
+            `type`,
+            `name`,
+            is_enable,
+            DATE_FORMAT(created_at, "%Y-%m-%d %T") as createdAt,
+            DATE_FORMAT(updated_at, "%Y-%m-%d %T") as updatedAt,
+            created_by,
+            updated_by
+        from alarm_rule
+        where is_deleted = 0
+    </select>
+    <select id="getSubsystemById" resultType="java.lang.String">
+        select
+            t1.`name`
+        from filter_system t
+        join subsystem t1 on t1.id = t.system_id
+        where t.id = #{id}
+    </select>
+    <select id="getPositionById" resultType="java.lang.String">
+        select
+            t1.`name`
+        from filter_position t
+        join `position` t1 on t1.id = t.position_id
+        where t.id = #{id}
+    </select>
+    <select id="getDeviceById" resultType="java.lang.String">
+        select
+            t1.`name`
+        from filter_device t
+        join device t1 on t1.id = t.device_id
+        where t.id = #{id}
+    </select>
+    <select id="getAlarmCodeById" resultType="java.lang.String">
+        select
+            t1.`name`
+        from filter_alarm t
+        join alarm_code t1 on t1.id = t.alarm_code_id
+        where t.id = #{id}
+    </select>
+</mapper>

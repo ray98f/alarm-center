@@ -24,8 +24,8 @@
             code,
             `name`,
             color,
-            created_at,
-            updated_at,
+            DATE_FORMAT(created_at, "%Y-%m-%d %T") as createdAt,
+            DATE_FORMAT(updated_at, "%Y-%m-%d %T") as updatedAt,
             created_by,
             updated_by
         from
