@@ -46,4 +46,8 @@ public class DeviceSlotResDTO {
     @NotBlank(message = "32000006")
     private String deviceName;
 
+    @ApiModelProperty(value = "设备id")
+    @NotBlank(message = "32000006")
+    private String deviceId;
+
 }

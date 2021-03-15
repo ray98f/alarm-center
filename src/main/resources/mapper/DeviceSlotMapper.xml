@@ -117,7 +117,7 @@
         )
     </insert>
     <update id="deleteDevice">
-        updata device_slot
+        update device_slot
         set is_deleted = 1
         where id = #{id}
     </update>
@@ -137,6 +137,7 @@
             t.id,
             t.slot_code as slotCode,
             t.`name` as slotName,
+            t.device_id,
             t1.device_code,
             t1.`name` as deviceName,
             t2.`name` as positionName,
