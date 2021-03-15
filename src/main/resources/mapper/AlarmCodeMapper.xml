@@ -63,8 +63,8 @@
             t.id,
             t1.name as systemName,
             t2.name as positionName,
-            t.`code`,
-            t.`name`,
+            t.`code` as alarmCode,
+            t.`name` as alarmName,
             t.reason,
             t3.name as alarmLevelName,
             t.handling_opinions

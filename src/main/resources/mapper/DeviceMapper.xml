@@ -78,19 +78,21 @@
     <select id="getDevicesCount" resultType="java.lang.Integer">
         select
             count(1)
-        from device
-        where is_deleted = 0
+        from device t
+        join subsystem t1 on t1.id = t.system_id
+        join `position` t2 on t2.id = t.position_id
+        where t.is_deleted = 0
         <if test="name!=null and name!=''">
-            and `name` like concat('%',#{name},'%')
+            and t.`name` like concat('%',#{name},'%')
         </if>
         <if test="deviceCode!=null and deviceCode!=''">
-            and device_code = #{deviceCode}
+            and t.device_code = #{deviceCode}
         </if>
         <if test="systemId!=null">
-            and system_id = #{systemId}
+            and t.system_id = #{systemId}
         </if>
         <if test="positionId!=null">
-            and position_id = #{positionId}
+            and t.position_id = #{positionId}
         </if>
     </select>
 </mapper>

@@ -47,7 +47,7 @@ public class DeviceSlotController {
     public DataResponse<T> importDevice(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.importDevice(file, tokenInfo.getUserId());
+        mDeviceSlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -68,7 +68,7 @@ public class DeviceSlotController {
     public DataResponse<Void> addDeviceSlot(@RequestBody DeviceSlotReqDTO deviceSlotReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.addDeviceSlot(deviceSlotReqDTO, tokenInfo.getUserId());
+        mDeviceSlotService.addDeviceSlot(deviceSlotReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -77,19 +77,19 @@ public class DeviceSlotController {
     public DataResponse<Void> modifyDevice(@PathVariable("id") Long id, @RequestBody DeviceSlotReqDTO deviceSlotReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.modifyDevice(id,deviceSlotReqDTO, tokenInfo.getUserId());
+        mDeviceSlotService.modifyDevice(id, deviceSlotReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<DeviceSlotResDTO> getDevicesSlot(@RequestParam("page") Long page,@RequestParam("size") Long size,
-                                                     @RequestParam(required = false) @ApiParam(value = "槽位名称模糊查询") String slotName,
-                                                     @RequestParam(required = false) @ApiParam(value = "设备名称模糊查询") String deviceName,
-                                                     @RequestParam(required = false) @ApiParam(value = "设备编号id") String deviceCode,
-                                                     @RequestParam(required = false) @ApiParam(value = "所属系统id") Long systemId,
-                                                     @RequestParam(required = false) @ApiParam(value = "设备位置id") Long positionId) {
-        Page<DeviceSlotResDTO> dtoPage = mDeviceSlotService.getDevicesSlot(slotName,deviceName,deviceCode,systemId,positionId,page,size);
+    public PageResponse<DeviceSlotResDTO> getDevicesSlot(@RequestParam("page") Long page, @RequestParam("size") Long size,
+                                                         @RequestParam(required = false) @ApiParam(value = "槽位名称模糊查询") String slotName,
+                                                         @RequestParam(required = false) @ApiParam(value = "设备名称模糊查询") String deviceName,
+                                                         @RequestParam(required = false) @ApiParam(value = "设备编号id") String deviceCode,
+                                                         @RequestParam(required = false) @ApiParam(value = "所属系统id") Long systemId,
+                                                         @RequestParam(required = false) @ApiParam(value = "设备位置id") Long positionId) {
+        Page<DeviceSlotResDTO> dtoPage = mDeviceSlotService.getDevicesSlot(slotName, deviceName, deviceCode, systemId, positionId, page, size);
         return PageResponse.of(dtoPage, page, size);
     }
 

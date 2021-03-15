@@ -48,16 +48,16 @@ public class SnmpController {
     public DataResponse<T> importSnmpSlot(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.importDevice(file, tokenInfo.getUserId());
+        mySlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/slot/export")
     @ApiOperation(value = "批量导出SNMP槽位")
     public DataResponse<T> exportSnmpSlot(@RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
-                                        @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
-                                        @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long siteId,
-                                        HttpServletResponse response) {
+                                          @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
+                                          @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long siteId,
+                                          HttpServletResponse response) {
         mySlotService.exportDevice(snmpSlotName, systemId, siteId, response);
         return DataResponse.success();
     }
@@ -67,7 +67,7 @@ public class SnmpController {
     public DataResponse<Void> addSnmpSlot(@RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.addSnmpSlot(slotModifyReqDTO, tokenInfo.getUserId());
+        mySlotService.addSnmpSlot(slotModifyReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -76,17 +76,17 @@ public class SnmpController {
     public DataResponse<Void> modifySnmpSlot(@PathVariable("id") Long id, @RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.modifySnmpSlot(slotModifyReqDTO, id, tokenInfo.getUserId());
+        mySlotService.modifySnmpSlot(slotModifyReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/slot/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<SnmpSlotResDTO> getSnmpSlot(@RequestParam("page") Long page,@RequestParam("size") Long size,
-                                                   @RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
-                                                   @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
-                                                   @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long siteId) {
-        Page<SnmpSlotResDTO> dtoPage = mySlotService.getSnmpSlot(snmpSlotName, systemId, siteId, page,size);
+    public PageResponse<SnmpSlotResDTO> getSnmpSlot(@RequestParam("page") Long page, @RequestParam("size") Long size,
+                                                    @RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
+                                                    @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
+                                                    @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long positionId) {
+        Page<SnmpSlotResDTO> dtoPage = mySlotService.getSnmpSlot(snmpSlotName, systemId, positionId, page, size);
         return PageResponse.of(dtoPage, page, size);
     }
 
@@ -103,15 +103,15 @@ public class SnmpController {
     public DataResponse<T> importSnmpAlarmCode(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.importSnmpAlarmCode(file, tokenInfo.getUserId());
+        mySlotService.importSnmpAlarmCode(file, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/code/export")
     @ApiOperation(value = "批量导出SNMP告警码")
     public DataResponse<T> exportSnmpAlarmCode(@RequestParam(required = false) @ApiParam(value = "SNMP告警码") String alarmCode,
-                                        @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
-                                        HttpServletResponse response) {
+                                               @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
+                                               HttpServletResponse response) {
         mySlotService.exportSnmpAlarmCode(alarmCode, systemId, response);
         return DataResponse.success();
     }
@@ -122,7 +122,7 @@ public class SnmpController {
     public DataResponse<Void> addSSnmpAlarmCode(@RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.addSSnmpAlarmCode(snmpAlarmCode, tokenInfo.getUserId());
+        mySlotService.addSSnmpAlarmCode(snmpAlarmCode, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -131,16 +131,16 @@ public class SnmpController {
     public DataResponse<Void> modifySnmpAlarmCode(@PathVariable("id") Long id, @RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.modifySnmpAlarmCode(snmpAlarmCode, id, tokenInfo.getUserId());
+        mySlotService.modifySnmpAlarmCode(snmpAlarmCode, id, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/code/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@RequestParam("page") Long page,@RequestParam("size") Long size,
+    public PageResponse<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@RequestParam("page") Long page, @RequestParam("size") Long size,
                                                               @RequestParam(required = false) @ApiParam(value = "告警码") Long systemId,
                                                               @RequestParam(required = false) @ApiParam(value = "设备编号查询") String code) {
-        Page<SnmpAlarmCodeResDTO> dtoPage = mySlotService.getSnmpAlarmCode(code, systemId, page,size);
+        Page<SnmpAlarmCodeResDTO> dtoPage = mySlotService.getSnmpAlarmCode(code, systemId, page, size);
         return PageResponse.of(dtoPage, page, size);
     }
 

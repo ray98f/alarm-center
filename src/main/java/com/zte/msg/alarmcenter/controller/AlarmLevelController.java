@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2021/2/18 17:14
  */
 @RestController
-@RequestMapping("/alarmLevel")
+@RequestMapping("/alarm/level")
 @Api(tags = "告警级别")
 @Validated
 public class AlarmLevelController {
@@ -49,7 +49,7 @@ public class AlarmLevelController {
                                                       ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmLevelService.modifyAlarmLevel(id, alarmLevelReqDTO,tokenInfo.getUserId());
+        alarmLevelService.modifyAlarmLevel(id, alarmLevelReqDTO,tokenInfo==null?null:tokenInfo.getUserId());
         return DataResponse.success();
     }
 

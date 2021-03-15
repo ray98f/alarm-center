@@ -45,7 +45,7 @@ public class DeviceController {
     public DataResponse<T> importDevice(@RequestParam MultipartFile deviceFile, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.importDevice(deviceFile, tokenInfo.getUserId());
+        myDevice.importDevice(deviceFile, tokenInfo==null?null:tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -65,7 +65,7 @@ public class DeviceController {
     public DataResponse<Void> addDevice(@RequestBody DeviceReqDTO deviceReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.addDevice(deviceReqDTO, tokenInfo.getUserId());
+        myDevice.addDevice(deviceReqDTO, tokenInfo == null ? null : tokenInfo==null?null:tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -74,18 +74,18 @@ public class DeviceController {
     public DataResponse<Void> modifyDevice(@PathVariable("id") Long id, @RequestBody DeviceReqModifyDTO reqModifyDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        myDevice.modifyDevice(reqModifyDTO, id, tokenInfo.getUserId());
+        myDevice.modifyDevice(reqModifyDTO, id, tokenInfo == null ? null : tokenInfo==null?null:tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/list")
     @ApiOperation(value = "设备分页查询")
-    public PageResponse<DeviceResDTO> getDevices(@RequestParam("page") Long page,@RequestParam("size") Long size,
+    public PageResponse<DeviceResDTO> getDevices(@RequestParam("page") Long page, @RequestParam("size") Long size,
                                                  @RequestParam(required = false) @ApiParam(value = "设备名称模糊查询") String name,
                                                  @RequestParam(required = false) @ApiParam(value = "设备编号查询") String deviceCode,
                                                  @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
                                                  @RequestParam(required = false) @ApiParam(value = "位置id") Long positionId) {
-        Page<DeviceResDTO> dtoPage = myDevice.getDevices(name, deviceCode, systemId, positionId, page,size);
+        Page<DeviceResDTO> dtoPage = myDevice.getDevices(name, deviceCode, systemId, positionId, page, size);
         return PageResponse.of(dtoPage, page, size);
     }
 

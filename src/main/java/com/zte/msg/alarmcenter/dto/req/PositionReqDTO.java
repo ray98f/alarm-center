@@ -22,7 +22,7 @@ public class PositionReqDTO {
     private String name;
 
     @ApiModelProperty(value = "上级节点id，不传则表示新增根节点")
-    private Long pId;
+    private Long pid;
 
     @ApiModelProperty(value = "位置图标")
     private String icon;

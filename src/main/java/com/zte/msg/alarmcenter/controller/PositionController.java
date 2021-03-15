@@ -53,11 +53,11 @@ public class PositionController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增位置")
-    public DataResponse<Void> addPosition(@Valid @RequestBody PositionReqDTO reqDTO, ServletRequest request) {
+    public DataResponse<Void> addPosition(@RequestBody PositionReqDTO reqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
         if (null != tokenInfo) {
-            reqDTO.setUserId(tokenInfo.getUserId());
+            reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
         }
         myPositionService.addPosition(reqDTO);
         return DataResponse.success();
@@ -71,7 +71,7 @@ public class PositionController {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
         if (null != tokenInfo) {
-            reqDTO.setUserId(tokenInfo.getUserId());
+            reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
         }
         myPositionService.modifyPosition(id, reqDTO);
         return DataResponse.success();

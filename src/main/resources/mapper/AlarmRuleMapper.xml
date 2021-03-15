@@ -162,33 +162,34 @@
             updated_by
         from alarm_rule
         where is_deleted = 0
+        and id = #{id}
     </select>
-    <select id="getSubsystemById" resultType="java.lang.String">
+    <select id="getSubsystemNameList" resultType="java.lang.String">
         select
             t1.`name`
         from filter_system t
         join subsystem t1 on t1.id = t.system_id
-        where t.id = #{id}
+        where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getPositionById" resultType="java.lang.String">
+    <select id="getPositionNameList" resultType="java.lang.String">
         select
             t1.`name`
         from filter_position t
         join `position` t1 on t1.id = t.position_id
-        where t.id = #{id}
+        where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getDeviceById" resultType="java.lang.String">
+    <select id="getDeviceNameList" resultType="java.lang.String">
         select
             t1.`name`
         from filter_device t
         join device t1 on t1.id = t.device_id
-        where t.id = #{id}
+        where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getAlarmCodeById" resultType="java.lang.String">
+    <select id="getAlarmCodeNameList" resultType="java.lang.String">
         select
             t1.`name`
         from filter_alarm t
         join alarm_code t1 on t1.id = t.alarm_code_id
-        where t.id = #{id}
+        where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
 </mapper>

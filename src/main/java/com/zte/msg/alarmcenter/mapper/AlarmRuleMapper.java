@@ -29,13 +29,13 @@ public interface AlarmRuleMapper {
 
     AlarmRuleDetailsResDTO lookOverAlarmRuleDetails(String id);
 
-    List<String> getSubsystemById(@Param("id") String id);
+    List<String> getSubsystemNameList(@Param("id") String id);
 
-    List<String> getPositionById(@Param("id") String id);
+    List<String> getPositionNameList(@Param("id") String id);
 
-    List<String> getDeviceById(@Param("id") String id);
+    List<String> getDeviceNameList(@Param("id") String id);
 
-    List<String> getAlarmCodeById(@Param("id") String id);
+    List<String> getAlarmCodeNameList(@Param("id") String id);
 
     Integer modifyAlarmRule(@Param("alarmRuleReqDTO") AlarmRuleReqDTO alarmRuleReqDTO, @Param("id") Long id, @Param("userId") String userId);
 

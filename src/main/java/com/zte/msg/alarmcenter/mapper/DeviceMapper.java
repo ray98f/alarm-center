@@ -21,7 +21,7 @@ public interface DeviceMapper {
 
     Integer modifyDevice(@Param("reqModifyDTO") DeviceReqModifyDTO reqModifyDTO, @Param("id") Long id, @Param("userId") String userId);
 
-    int getDevicesCount(@Param("name") String name, @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId, @Param("positionId") Long positionId);
+    Integer getDevicesCount(@Param("name") String name, @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId, @Param("positionId") Long positionId);
 
     Integer deleteDevice(@Param("id") Long id);
 }

@@ -147,10 +147,10 @@
         left join subsystem t3 on t1.system_id = t3.id
         where t.is_deleted = 0
         <if test="slotName!=null and slotName!=''">
-            and t.`name` = #{slotName}
+            and t.`name` like concat('%',#{slotName},'%')
         </if>
         <if test="deviceName!=null and deviceName!=''">
-            and t1.`name` = #{deviceName}
+            and t1.`name` like concat('%',#{deviceName},'%')
         </if>
         <if test="deviceCode!=null and deviceCode!=''">
             and t1.device_code = #{deviceCode}

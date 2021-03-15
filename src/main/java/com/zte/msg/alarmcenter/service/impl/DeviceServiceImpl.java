@@ -144,7 +144,6 @@ public class DeviceServiceImpl implements DeviceService {
         Page<DeviceResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
             page = (page-1)*size;
             deviceReqDTOList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, page,size);
             pageBean.setRecords(deviceReqDTOList);

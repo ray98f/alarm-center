@@ -164,10 +164,10 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     @Override
     public AlarmRuleDetailsResDTO lookOverAlarmRuleDetails(String id) {
         AlarmRuleDetailsResDTO alarmRule = alarmRuleMapper.lookOverAlarmRuleDetails(id);
-        alarmRule.setSystemIds(alarmRuleMapper.getSubsystemById(id));
-        alarmRule.setPositionIds(alarmRuleMapper.getPositionById(id));
-        alarmRule.setDeviceIds(alarmRuleMapper.getDeviceById(id));
-        alarmRule.setAlarmIds(alarmRuleMapper.getAlarmCodeById(id));
+        alarmRule.setSystemIds(alarmRuleMapper.getSubsystemNameList(id));
+        alarmRule.setPositionIds(alarmRuleMapper.getPositionNameList(id));
+        alarmRule.setDeviceIds(alarmRuleMapper.getDeviceNameList(id));
+        alarmRule.setAlarmIds(alarmRuleMapper.getAlarmCodeNameList(id));
         return alarmRule;
     }
 }

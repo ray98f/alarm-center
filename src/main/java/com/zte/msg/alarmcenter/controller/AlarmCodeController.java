@@ -37,7 +37,7 @@ public class AlarmCodeController {
         public DataResponse<T> importAlarmCode(@RequestParam MultipartFile file, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.importDevice(file, tokenInfo.getUserId());
+                alarmCodeService.importDevice(file, tokenInfo==null?null:tokenInfo.getUserId());
                 return DataResponse.success();
         }
 
@@ -53,26 +53,26 @@ public class AlarmCodeController {
         }
 
         @PostMapping("/add")
-        @ApiOperation(value = "新增设备")
+        @ApiOperation(value = "新增告警码")
         public DataResponse<Void> addAlarmCode(@RequestBody AlarmCodeReqDTO alarmCodeReqDTO, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.addAlarmCode(alarmCodeReqDTO, tokenInfo.getUserId());
+                alarmCodeService.addAlarmCode(alarmCodeReqDTO, tokenInfo==null?null:tokenInfo.getUserId());
                 return DataResponse.success();
         }
 
         @PutMapping("/upData/{id}")
-        @ApiOperation(value = "修改设备")
+        @ApiOperation(value = "修改告警码")
         public DataResponse<Void> modifyAlarmCode(@PathVariable("id") Long id, @RequestBody AlarmCodeReqDTO alarmCodeReqDTO, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.modifyAlarmCode(alarmCodeReqDTO, id, tokenInfo.getUserId());
+                alarmCodeService.modifyAlarmCode(alarmCodeReqDTO, id, tokenInfo==null?null:tokenInfo.getUserId());
                 return DataResponse.success();
         }
 
         @GetMapping("/list")
-        @ApiOperation(value = "设备分页查询")
-        public PageResponse<AlarmCodeResDTO> getAlarmCode(@RequestParam("page") Long page, @RequestParam("size") Long size,
+        @ApiOperation(value = "告警码分页查询")
+                public PageResponse<AlarmCodeResDTO> getAlarmCode(@RequestParam("page") Long page, @RequestParam("size") Long size,
                                                           @RequestParam(required = false) @ApiParam(value = "告警码") Long alarmCode,
                                                           @RequestParam(required = false) @ApiParam(value = "告警名称") String alarmName,
                                                           @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
@@ -82,7 +82,7 @@ public class AlarmCodeController {
         }
 
         @DeleteMapping("/delete/{id}")
-        @ApiOperation(value = "删除设备")
+        @ApiOperation(value = "删除告警码")
         public DataResponse<T> deleteAlarmCode(@PathVariable("id") Long id) {
                 alarmCodeService.deleteAlarmCode(id);
                 return DataResponse.success();

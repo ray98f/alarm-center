@@ -7,7 +7,9 @@
         INSERT INTO  `position`
         (
             id,
-            p_id,
+         <if test="pid!=null">
+             p_id,
+         </if>
             position_code,
             `name`,
             icon,
@@ -23,7 +25,9 @@
         VALUES
         (
             null,
-            #{pId},
+        <if test="pid!=null">
+            #{pid},
+        </if>
             #{positionCode},
             #{name},
             #{icon},
@@ -39,7 +43,7 @@
     <update id="modifyPosition">
         update `position`
         set
-            p_id = #{reqDTO.pId},
+            p_id = #{reqDTO.pid},
             `name` = #{reqDTO.name},
             icon = #{reqDTO.icon},
             topographic = #{reqDTO.topographic},
