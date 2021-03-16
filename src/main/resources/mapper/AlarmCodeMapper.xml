@@ -61,11 +61,14 @@
     <select id="exportAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
         select
             t.id,
+            t.system_id,
             t1.name as systemName,
+            t.position_id,
             t2.name as positionName,
             t.`code` as alarmCode,
             t.`name` as alarmName,
             t.reason,
+            t.level_id as alarmLevelId,
             t3.name as alarmLevelName,
             t.handling_opinions
         from alarm_code t

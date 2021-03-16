@@ -6,7 +6,7 @@
         select
         count(1)
         from alarm_error
-        where alarm_error.is_deleted = 0
+        where 1 = 1
         <if test="systemCode!=null">
             and system_code = #{systemCode}
         </if>
@@ -37,7 +37,7 @@
             DATE_FORMAT(t.created_at, "%Y-%m-%d %T") as createdAt,
             t.error_content
         from alarm_error t
-        where t.is_deleted = 0
+        where 1 = 1
         <if test="systemCode!=null">
             and t.system_code = #{systemCode}
         </if>
