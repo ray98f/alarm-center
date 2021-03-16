@@ -170,4 +170,12 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         alarmRule.setAlarmIds(alarmRuleMapper.getAlarmCodeNameList(id));
         return alarmRule;
     }
+
+    @Override
+    public void deleteAlarmRule(Long id) {
+        int alarmDelCount = alarmRuleMapper.deleteAlarmRule(id);
+        if (alarmDelCount == 0) {
+            throw new CommonException(4000,"删除失败");
+        }
+    }
 }

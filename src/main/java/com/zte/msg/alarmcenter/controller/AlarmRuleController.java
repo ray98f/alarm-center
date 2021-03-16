@@ -17,6 +17,7 @@ import com.zte.msg.alarmcenter.service.AlarmRuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +75,13 @@ public class AlarmRuleController {
     public DataResponse<AlarmRuleDetailsResDTO> lookOverAlarmRuleDetails(@PathVariable("id") String id) {
         AlarmRuleDetailsResDTO dtoPage = alarmRuleService.lookOverAlarmRuleDetails(id);
         return DataResponse.of(dtoPage);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ApiOperation(value = "删除告警规则")
+    public DataResponse<T> deleteAlarmRule(@PathVariable("id") Long id) {
+        alarmRuleService.deleteAlarmRule(id);
+        return DataResponse.success();
     }
 
 }

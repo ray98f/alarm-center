@@ -40,4 +40,6 @@ public interface AlarmRuleMapper {
     Integer modifyAlarmRule(@Param("alarmRuleReqDTO") AlarmRuleReqDTO alarmRuleReqDTO, @Param("id") Long id, @Param("userId") String userId);
 
     Integer deleteFilter(@Param("id") Long id);
+
+    Integer deleteAlarmRule(@Param("id") Long id);
 }

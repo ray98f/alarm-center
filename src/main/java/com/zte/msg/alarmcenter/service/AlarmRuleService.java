@@ -13,4 +13,6 @@ public interface AlarmRuleService {
     void modifyAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO, Long id, String userId);
 
     AlarmRuleDetailsResDTO lookOverAlarmRuleDetails(String id);
+
+    void deleteAlarmRule(Long id);
 }

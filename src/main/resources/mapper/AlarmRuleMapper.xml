@@ -112,6 +112,11 @@
         and alarm_rule.id = filter_system.rule_id
         and alarm_rule.id = #{id}
     </delete>
+    <update id="deleteAlarmRule">
+        update alarm_rule
+        set is_deleted = 1
+        where id = #{id}
+    </update>
     <select id="getAlarmRuleCount" resultType="java.lang.Integer">
         select
             count(1)
