@@ -197,4 +197,33 @@
         join alarm_code t1 on t1.id = t.alarm_code_id
         where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
+    <select id="getDevices" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
+        select id, name from device
+        <trim prefix="where " suffixOverrides="or">
+            <if test="systemIds!=null and systemIds.size()>0">
+                system_id in (
+                <foreach collection="systemIds" index="index" item="systemId" separator=",">
+                    #{systemId}
+                </foreach>
+                ) or
+            </if>
+            <if test="stationIds!=null and stationIds.size()>0">
+                station_id in (
+                <foreach collection="stationIds" index="index" item="stationId" separator=",">
+                    #{stationId}
+                </foreach>
+                ) or
+            </if>
+        </trim>
+    </select>
+    <select id="getAlarmCodes" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
+        SELECT id,code as alarm_code,name as alarm_name FROM alarm_code
+        <if test="systemIds!=null and systemIds.size()>0">
+            where system_id in (
+            <foreach collection="systemIds" index="index" item="systemId" separator=",">
+                #{systemId}
+            </foreach>
+            )
+        </if>
+    </select>
 </mapper>

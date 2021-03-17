@@ -1,8 +1,11 @@
 package com.zte.msg.alarmcenter.mapper;
 
+import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
+import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
+import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -42,4 +45,20 @@ public interface AlarmRuleMapper {
     Integer deleteFilter(@Param("id") Long id);
 
     Integer deleteAlarmRule(@Param("id") Long id);
+
+    /**
+     * 获取设备下拉列表
+     *
+     * @param alarmRuleDeviceReqDTO
+     * @return
+     */
+    List<DeviceResDTO> getDevices(AlarmRuleDeviceReqDTO alarmRuleDeviceReqDTO);
+
+    /**
+     * 获取告警码下拉列表
+     *
+     * @param systemIds
+     * @return
+     */
+    List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds);
 }

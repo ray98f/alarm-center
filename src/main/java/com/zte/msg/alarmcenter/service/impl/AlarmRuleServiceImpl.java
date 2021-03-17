@@ -1,20 +1,21 @@
 package com.zte.msg.alarmcenter.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
-import com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO;
+import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmRuleMapper;
 import com.zte.msg.alarmcenter.service.AlarmRuleService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 
-
+@Slf4j
 @Service
 public class AlarmRuleServiceImpl implements AlarmRuleService {
 
@@ -175,7 +176,42 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public void deleteAlarmRule(Long id) {
         int alarmDelCount = alarmRuleMapper.deleteAlarmRule(id);
         if (alarmDelCount == 0) {
-            throw new CommonException(4000,"删除失败");
+            throw new CommonException(4000, "删除失败");
         }
+    }
+
+    /**
+     * 获取设备下拉列表
+     *
+     * @param alarmRuleDeviceReqDTO
+     * @return
+     */
+    @Override
+    public List<DeviceResDTO> getDevices(AlarmRuleDeviceReqDTO alarmRuleDeviceReqDTO) {
+        List<DeviceResDTO> deviceResDTOList = alarmRuleMapper.getDevices(alarmRuleDeviceReqDTO);
+        if (null == deviceResDTOList || deviceResDTOList.isEmpty()) {
+            log.warn("设备下拉列表获取为空");
+            return null;
+        }
+        return deviceResDTOList;
+    }
+
+    /**
+     * 获取告警码下拉列表
+     *
+     * @param systemIds
+     * @return
+     */
+    @Override
+    public List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds) {
+        if (null == systemIds || systemIds.isEmpty()) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        List<AlarmCodeResDTO> alarmCodeResDTOList = alarmRuleMapper.getAlarmCodes(systemIds);
+        if (null == alarmCodeResDTOList || alarmCodeResDTOList.isEmpty()) {
+            log.warn("告警码下拉列表获取为空");
+            return null;
+        }
+        return alarmCodeResDTOList;
     }
 }

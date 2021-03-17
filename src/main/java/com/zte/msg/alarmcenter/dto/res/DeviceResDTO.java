@@ -20,7 +20,7 @@ public class DeviceResDTO {
 
     @ApiModelProperty(value = "id")
     @NotBlank(message = "32000006")
-    private String id;
+    private Long id;
 
     @ApiModelProperty(value = "设备名称")
     @NotBlank(message = "32000006")

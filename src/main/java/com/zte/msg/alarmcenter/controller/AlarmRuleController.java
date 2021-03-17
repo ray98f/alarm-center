@@ -4,14 +4,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
-import com.zte.msg.alarmcenter.dto.req.AlarmLevelReqDTO;
-import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
-import com.zte.msg.alarmcenter.dto.req.DeviceReqDTO;
-import com.zte.msg.alarmcenter.dto.req.DeviceReqModifyDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmLevelResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
-import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
+import com.zte.msg.alarmcenter.dto.req.*;
+import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.service.AlarmLevelService;
 import com.zte.msg.alarmcenter.service.AlarmRuleService;
 import io.swagger.annotations.Api;
@@ -24,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -47,16 +42,16 @@ public class AlarmRuleController {
     public DataResponse<Void> addAlarmRule(@RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmRuleService.addAlarmRule(alarmRuleReqDTO, tokenInfo==null?null:tokenInfo.getUserId());
+        alarmRuleService.addAlarmRule(alarmRuleReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
     @GetMapping("/list")
     @ApiOperation(value = "告警规则分页查询")
     public PageResponse<AlarmRuleResDTO> getAlarmRule(@RequestParam("page") Long page, @RequestParam("size") Long size,
-                                                      @RequestParam(value = "isEnable",required = false) Integer isEnable,
-                                                      @RequestParam(value = "name",required = false) String name,
-                                                      @RequestParam(value = "type",required = false) Integer type) {
+                                                      @RequestParam(value = "isEnable", required = false) Integer isEnable,
+                                                      @RequestParam(value = "name", required = false) String name,
+                                                      @RequestParam(value = "type", required = false) Integer type) {
         Page<AlarmRuleResDTO> dtoPage = alarmRuleService.getAlarmRule(name, isEnable, type, page, size);
         return PageResponse.of(dtoPage, page, size);
     }
@@ -66,7 +61,7 @@ public class AlarmRuleController {
     public DataResponse<Void> modifyAlarmRule(@PathVariable("id") Long id, @RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmRuleService.modifyAlarmRule(alarmRuleReqDTO, id, tokenInfo==null?null:tokenInfo.getUserId());
+        alarmRuleService.modifyAlarmRule(alarmRuleReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 
@@ -82,6 +77,18 @@ public class AlarmRuleController {
     public DataResponse<T> deleteAlarmRule(@PathVariable("id") Long id) {
         alarmRuleService.deleteAlarmRule(id);
         return DataResponse.success();
+    }
+
+    @PostMapping("/device")
+    @ApiOperation(value = "获取设备下拉列表")
+    public DataResponse<List<DeviceResDTO>> getDevices(@RequestBody @Valid AlarmRuleDeviceReqDTO alarmRuleDeviceReqDTO) {
+        return DataResponse.of(alarmRuleService.getDevices(alarmRuleDeviceReqDTO));
+    }
+
+    @PostMapping("/code")
+    @ApiOperation(value = "获取告警码下拉列表")
+    public DataResponse<List<AlarmCodeResDTO>> getAlarmCodes(@RequestBody @Valid List<Long> systemIds) {
+        return DataResponse.of(alarmRuleService.getAlarmCodes(systemIds));
     }
 
 }
