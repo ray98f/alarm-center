@@ -60,5 +60,5 @@ public interface AlarmRuleMapper {
      * @param systemIds
      * @return
      */
-    List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds);
+    List<AlarmCodeResDTO> getAlarmCodes(@Param("systemIds") List<Long> systemIds);
 }

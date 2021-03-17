@@ -20,6 +20,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -87,8 +88,8 @@ public class AlarmRuleController {
 
     @PostMapping("/code")
     @ApiOperation(value = "获取告警码下拉列表")
-    public DataResponse<List<AlarmCodeResDTO>> getAlarmCodes(@RequestBody @Valid List<Long> systemIds) {
-        return DataResponse.of(alarmRuleService.getAlarmCodes(systemIds));
+    public DataResponse<List<AlarmCodeResDTO>> getAlarmCodes(@RequestBody @Valid AlarmRuleDeviceReqDTO alarmRuleDeviceReqDTO) {
+        return DataResponse.of(alarmRuleService.getAlarmCodes(alarmRuleDeviceReqDTO.getSystemIds()));
     }
 
 }
