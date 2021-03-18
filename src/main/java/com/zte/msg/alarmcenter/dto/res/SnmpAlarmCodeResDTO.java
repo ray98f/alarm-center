@@ -15,6 +15,9 @@ import lombok.Data;
 @ApiModel
 public class SnmpAlarmCodeResDTO {
 
+    @ApiModelProperty(value = "id")
+    private String id;
+
     @ApiModelProperty(value = "系统id")
     private String systemId;
 
