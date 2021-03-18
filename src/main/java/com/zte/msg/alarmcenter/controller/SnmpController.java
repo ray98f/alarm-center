@@ -13,6 +13,7 @@ import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO;
 import com.zte.msg.alarmcenter.service.SnmpService;
+import com.zte.msg.alarmcenter.utils.SendTrapUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -26,6 +27,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * description:
@@ -81,7 +83,7 @@ public class SnmpController {
     }
 
     @GetMapping("/slot/list")
-    @ApiOperation(value = "设备分页查询")
+    @ApiOperation(value = "SNMP槽位查询")
     public PageResponse<SnmpSlotResDTO> getSnmpSlot(@RequestParam("page") Long page, @RequestParam("size") Long size,
                                                     @RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
                                                     @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
@@ -150,4 +152,5 @@ public class SnmpController {
         mySlotService.deleteSnmpAlarmCode(id);
         return DataResponse.success();
     }
+
 }

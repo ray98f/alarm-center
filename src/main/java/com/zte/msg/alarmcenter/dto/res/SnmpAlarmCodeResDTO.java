@@ -33,13 +33,10 @@ public class SnmpAlarmCodeResDTO {
     @ApiModelProperty(value = "告警原因")
     private String reason;
 
-
     @ApiModelProperty(value = "系统名称")
     private String systemName;
 
     @ApiModelProperty(value = "线路名称")
     private String positionName;
-
-
 
 }

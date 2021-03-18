@@ -99,10 +99,10 @@ public class SnmpServiceImpl implements SnmpService {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("SNMP槽位（必填）", snmpSlotResDTO.getSnmpSlotName());
                 map.put("系统编号（必填）", snmpSlotResDTO.getSystemId());
-                map.put("线路编号（必填）", snmpSlotResDTO.getLineCode());
+                map.put("线路编号（必填）", snmpSlotResDTO.getPositionId());
                 map.put("站点编号（必填）", snmpSlotResDTO.getSiteCode());
                 map.put("设备编号（必填）", snmpSlotResDTO.getDeviceCode());
-                map.put("槽位编号（必填）", snmpSlotResDTO.getSlotCode());
+                map.put("槽位编号（必填）", snmpSlotResDTO.getSlotId());
                 map.put("槽位名称（必填）", snmpSlotResDTO.getSlotName());
                 list.add(map);
             }

@@ -169,29 +169,33 @@
         where is_deleted = 0
         and id = #{id}
     </select>
-    <select id="getSubsystemNameList" resultType="java.lang.String">
+    <select id="getSubsystemNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
+            t.system_id as id,
             t1.`name`
         from filter_system t
         join subsystem t1 on t1.id = t.system_id
         where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getPositionNameList" resultType="java.lang.String">
+    <select id="getPositionNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
+            t.position_id as id,
             t1.`name`
         from filter_position t
         join `position` t1 on t1.id = t.position_id
         where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getDeviceNameList" resultType="java.lang.String">
+    <select id="getDeviceNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
+            t.device_id as id,
             t1.`name`
         from filter_device t
         join device t1 on t1.id = t.device_id
         where t.rule_id = #{id} and t1.is_deleted = 0
     </select>
-    <select id="getAlarmCodeNameList" resultType="java.lang.String">
+    <select id="getAlarmCodeNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
+            t.alarm_code_id as id,
             t1.`name`
         from filter_alarm t
         join alarm_code t1 on t1.id = t.alarm_code_id

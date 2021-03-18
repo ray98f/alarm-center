@@ -24,7 +24,7 @@ public class SnmpSlotResDTO {
     private String systemId;
 
     @ApiModelProperty(value = "线路编号")
-    private String lineCode;
+    private String positionId;
 
     @ApiModelProperty(value = "站点编号")
     private String siteCode;
@@ -33,7 +33,7 @@ public class SnmpSlotResDTO {
     private String deviceCode;
 
     @ApiModelProperty(value = "槽位编号")
-    private String slotCode;
+    private String slotId;
 
     @ApiModelProperty(value = "槽位名称")
     private String slotName;

@@ -1,11 +1,11 @@
 package com.zte.msg.alarmcenter.mapper;
 
-import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
+import com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -32,13 +32,13 @@ public interface AlarmRuleMapper {
 
     AlarmRuleDetailsResDTO lookOverAlarmRuleDetails(String id);
 
-    List<String> getSubsystemNameList(@Param("id") String id);
+    List<DataIdAndNameResDTO> getSubsystemNameList(@Param("id") String id);
 
-    List<String> getPositionNameList(@Param("id") String id);
+    List<DataIdAndNameResDTO> getPositionNameList(@Param("id") String id);
 
-    List<String> getDeviceNameList(@Param("id") String id);
+    List<DataIdAndNameResDTO> getDeviceNameList(@Param("id") String id);
 
-    List<String> getAlarmCodeNameList(@Param("id") String id);
+    List<DataIdAndNameResDTO> getAlarmCodeNameList(@Param("id") String id);
 
     Integer modifyAlarmRule(@Param("alarmRuleReqDTO") AlarmRuleReqDTO alarmRuleReqDTO, @Param("id") Long id, @Param("userId") String userId);
 

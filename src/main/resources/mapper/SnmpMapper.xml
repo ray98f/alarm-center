@@ -156,7 +156,7 @@
             t.id,
             t.`name` as snmpSlotName,
             t1.id as systemId,
-            t2.p_id as lineCode,
+            t2.p_id as positionId,
             t2.id as siteCode,
             t4.device_code as deviceCode,
             t3.id as slotCode,
@@ -190,20 +190,23 @@
         join device t4 on t3.device_id = t4.id
         where t.is_deleted = 0
         <if test="snmpSlotName!=null and snmpSlotName!=''">
-            t.`name` like concat('%',#{snmpSlotName},'%')
+            and t.`name` like concat('%',#{snmpSlotName},'%')
         </if>
         <if test="systemId!=null">
-            t.system_id = #{systemId}
+            and t.system_id = #{systemId}
         </if>
         <if test="siteId!=null">
-            t.position_id = #{siteId}
+            and t.position_id = #{siteId}
         </if>
     </select>
     <select id="getSnmpSlot" resultType="com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO">
         select
             t.id,
+            t.system_id,
             t.`name` as snmpSlotName,
+            t.position_id,
             t1.`name` as systemName,
+            t.slot_id,
             t2.`name` as siteName,
             t4.`name` as deviceName,
             t3.id as slotCode,
@@ -215,13 +218,13 @@
         join device t4 on t3.device_id = t4.id
         where t.is_deleted = 0
         <if test="snmpSlotName!=null and snmpSlotName!=''">
-            t.`name` like concat('%',#{snmpSlotName},'%')
+            and t.`name` like concat('%',#{snmpSlotName},'%')
         </if>
         <if test="systemId!=null">
-            t.system_id = #{systemId}
+            and t.system_id = #{systemId}
         </if>
         <if test="siteId!=null">
-            t.position_id = #{siteId}
+            and t.position_id = #{siteId}
         </if>
         <if test="page!=null and size!=null">
             limit #{page},#{size}
@@ -262,6 +265,9 @@
     </select>
     <select id="getSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
         select
+            t.id,
+            t.system_id,
+            t.positionId,
             t1.`name` as systemName,
             t2.`name` as positionName,
             t.element_type,

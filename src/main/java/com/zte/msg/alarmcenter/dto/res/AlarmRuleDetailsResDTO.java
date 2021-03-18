@@ -11,12 +11,13 @@ public class AlarmRuleDetailsResDTO {
     private Long type;
     private String name;
     private Long isEnable;
-    private List<String> systemIds;
-    private List<String> positionIds;
-    private List<String> deviceIds;
-    private List<String> alarmIds;
+    private List<DataIdAndNameResDTO> systemIds;
+    private List<DataIdAndNameResDTO> positionIds;
+    private List<DataIdAndNameResDTO> deviceIds;
+    private List<DataIdAndNameResDTO> alarmIds;
     private String createdAt;
     private String createdBy;
     private String updatedAt;
     private String updatedBy;
+
 }
