@@ -13,7 +13,6 @@ import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO;
 import com.zte.msg.alarmcenter.service.SnmpService;
-import com.zte.msg.alarmcenter.utils.SendTrapUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;

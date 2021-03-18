@@ -157,7 +157,8 @@ public enum ErrorCode {
     FILE_DELETE_ERROR(32100001, "file.delete.error"),
     USER_NOT_LOGIN_IN(32100002, "user.not.login.in"),
     PERMISSION_FAILED(32100003, "permission.failed"),
-    SECRET_NOT_EXIST(32100004, "secret.not.exist");
+    SECRET_NOT_EXIST(32100004, "secret.not.exist"),
+    SYNC_ERROR(32100005, "sync.error");
 
     private Integer code;
 

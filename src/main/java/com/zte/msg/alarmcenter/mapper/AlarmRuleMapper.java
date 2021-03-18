@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.mapper;
 
+import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
