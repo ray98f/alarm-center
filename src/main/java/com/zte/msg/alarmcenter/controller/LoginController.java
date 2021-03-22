@@ -65,6 +65,8 @@ public class LoginController {
         log.info("{} Token返回成功", userInfo.getUserName());
         Map<String, Object> data = new HashMap<>(16);
         data.put("token", token);
+        data.put("userName", userInfo.getUserName());
+        data.put("userRealName", userInfo.getUserRealName());
         log.info("登陆成功");
         return DataResponse.of(data);
     }
@@ -98,6 +100,7 @@ public class LoginController {
 
     /**
      * 交接班
+     *
      * @param loginReqDTO
      * @return
      * @throws Exception
