@@ -8,6 +8,8 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 /**
  * @author frp
  */
@@ -23,13 +25,16 @@ public class AsyncSender {
             return false;
         }
         rabbitTemplate.convertAndSend(RabbitMqConfig.STRING_QUEUE, message);
-        log.info(String.format("HelloSender发送字符串消息结果：%s", true));
+        log.info(String.format("Sender发送字符串消息结果：%s", true));
         return true;
     }
 
     public boolean send(AsyncVO asyncVO) throws Exception {
+        if (Objects.isNull(asyncVO)) {
+            return false;
+        }
         rabbitTemplate.convertAndSend(RabbitMqConfig.ASYNC_QUEUE, asyncVO);
-        log.info(String.format("HelloSender发送对象消息结果：%s", true));
+        log.info(String.format("Sender发送对象消息结果：%s", true));
         return true;
     }
 }

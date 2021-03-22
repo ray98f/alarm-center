@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.SynchronizeMapper">
     <insert id="alarmCodesSync">
-        <foreach collection="alarmCodeSyncReqDTOList" item="alarmCodeSyncReqDTO" index="index">
+        <foreach collection="list" item="alarmCodeSyncReqDTO" index="index">
             INSERT INTO alarm_code
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <if test="alarmCodeSyncReqDTO.id!=null">
@@ -28,52 +28,56 @@
                 </if>
             </trim>
             SELECT
-            <if test="alarmCodeSyncReqDTO.id!=null">
-                #{alarmCodeSyncReqDTO.id},
-            </if>
-            #{alarmCodeSyncReqDTO.systemId},
-            #{alarmCodeSyncReqDTO.lineId},
-            #{alarmCodeSyncReqDTO.alarmCode},
-            <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
-                #{alarmCodeSyncReqDTO.alarmName},
-            </if>
-            <if test="alarmCodeSyncReqDTO.alarmReason!=null and alarmCodeSyncReqDTO.alarmReason!=''">
-                #{alarmCodeSyncReqDTO.alarmReason},
-            </if>
-            <if test="alarmCodeSyncReqDTO.alarmLevel!=null">
-                #{alarmCodeSyncReqDTO.alarmLevel},
-            </if>
-            <if test="alarmCodeSyncReqDTO.handlingOpinions!=null and alarmCodeSyncReqDTO.handlingOpinions!=''">
-                #{alarmCodeSyncReqDTO.handlingOpinions},
-            </if>
-            <if test="alarmCodeSyncReqDTO.isDeleted!=null">
-                #{alarmCodeSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="alarmCodeSyncReqDTO.id!=null">
+                    #{alarmCodeSyncReqDTO.id},
+                </if>
+                #{alarmCodeSyncReqDTO.systemId},
+                #{alarmCodeSyncReqDTO.lineId},
+                #{alarmCodeSyncReqDTO.alarmCode},
+                <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
+                    #{alarmCodeSyncReqDTO.alarmName},
+                </if>
+                <if test="alarmCodeSyncReqDTO.alarmReason!=null and alarmCodeSyncReqDTO.alarmReason!=''">
+                    #{alarmCodeSyncReqDTO.alarmReason},
+                </if>
+                <if test="alarmCodeSyncReqDTO.alarmLevel!=null">
+                    #{alarmCodeSyncReqDTO.alarmLevel},
+                </if>
+                <if test="alarmCodeSyncReqDTO.handlingOpinions!=null and alarmCodeSyncReqDTO.handlingOpinions!=''">
+                    #{alarmCodeSyncReqDTO.handlingOpinions},
+                </if>
+                <if test="alarmCodeSyncReqDTO.isDeleted!=null">
+                    #{alarmCodeSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             FROM DUAL
             WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=#{alarmCodeSyncReqDTO.systemId}
             and position_id=#{alarmCodeSyncReqDTO.lineId} and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0);
             UPDATE alarm_code SET
-            <if test="alarmCodeSyncReqDTO.id!=null">
-                exe_id=#{alarmCodeSyncReqDTO.id},
-            </if>
-            system_id=#{alarmCodeSyncReqDTO.systemId},
-            position_id=#{alarmCodeSyncReqDTO.lineId},
-            code=#{alarmCodeSyncReqDTO.alarmCode},
-            <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
-                name=#{alarmCodeSyncReqDTO.alarmName},
-            </if>
-            <if test="alarmCodeSyncReqDTO.alarmReason!=null and alarmCodeSyncReqDTO.alarmReason!=''">
-                reason=#{alarmCodeSyncReqDTO.alarmReason},
-            </if>
-            <if test="alarmCodeSyncReqDTO.alarmLevel!=null">
-                level_id=#{alarmCodeSyncReqDTO.alarmLevel},
-            </if>
-            <if test="alarmCodeSyncReqDTO.handlingOpinions!=null and alarmCodeSyncReqDTO.handlingOpinions!=''">
-                handling_opinions=#{alarmCodeSyncReqDTO.handlingOpinions},
-            </if>
-            <if test="alarmCodeSyncReqDTO.isDeleted!=null">
-                is_deleted=#{alarmCodeSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="alarmCodeSyncReqDTO.id!=null">
+                    exe_id=#{alarmCodeSyncReqDTO.id},
+                </if>
+                system_id=#{alarmCodeSyncReqDTO.systemId},
+                position_id=#{alarmCodeSyncReqDTO.lineId},
+                code=#{alarmCodeSyncReqDTO.alarmCode},
+                <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
+                    name=#{alarmCodeSyncReqDTO.alarmName},
+                </if>
+                <if test="alarmCodeSyncReqDTO.alarmReason!=null and alarmCodeSyncReqDTO.alarmReason!=''">
+                    reason=#{alarmCodeSyncReqDTO.alarmReason},
+                </if>
+                <if test="alarmCodeSyncReqDTO.alarmLevel!=null">
+                    level_id=#{alarmCodeSyncReqDTO.alarmLevel},
+                </if>
+                <if test="alarmCodeSyncReqDTO.handlingOpinions!=null and alarmCodeSyncReqDTO.handlingOpinions!=''">
+                    handling_opinions=#{alarmCodeSyncReqDTO.handlingOpinions},
+                </if>
+                <if test="alarmCodeSyncReqDTO.isDeleted!=null">
+                    is_deleted=#{alarmCodeSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             WHERE system_id=#{alarmCodeSyncReqDTO.systemId} and position_id=#{alarmCodeSyncReqDTO.lineId}
             and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0;
         </foreach>
@@ -105,52 +109,56 @@
             </if>
         </trim>
         SELECT
-        <if test="id!=null">
-            #{id},
-        </if>
-        #{systemId},
-        #{lineId},
-        #{alarmCode},
-        <if test="alarmName!=null and alarmName!=''">
-            #{alarmName},
-        </if>
-        <if test="alarmReason!=null and alarmReason!=''">
-            #{alarmReason},
-        </if>
-        <if test="alarmLevel!=null">
-            #{alarmLevel},
-        </if>
-        <if test="handlingOpinions!=null and handlingOpinions!=''">
-            #{handlingOpinions},
-        </if>
-        <if test="isDeleted!=null">
-            #{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            #{systemId},
+            #{lineId},
+            #{alarmCode},
+            <if test="alarmName!=null and alarmName!=''">
+                #{alarmName},
+            </if>
+            <if test="alarmReason!=null and alarmReason!=''">
+                #{alarmReason},
+            </if>
+            <if test="alarmLevel!=null">
+                #{alarmLevel},
+            </if>
+            <if test="handlingOpinions!=null and handlingOpinions!=''">
+                #{handlingOpinions},
+            </if>
+            <if test="isDeleted!=null">
+                #{isDeleted},
+            </if>
+        </trim>
         FROM DUAL
         WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=#{systemId} and position_id=#{lineId}
         and code=#{alarmCode} and is_locked=0);
         UPDATE alarm_code SET
-        <if test="id!=null">
-            exe_id=#{id},
-        </if>
-        system_id=#{systemId},
-        position_id=#{lineId},
-        code=#{alarmCode},
-        <if test="alarmName!=null and alarmName!=''">
-            name=#{alarmName},
-        </if>
-        <if test="alarmReason!=null and alarmReason!=''">
-            reason=#{alarmReason},
-        </if>
-        <if test="alarmLevel!=null">
-            level_id=#{alarmLevel},
-        </if>
-        <if test="handlingOpinions!=null and handlingOpinions!=''">
-            handling_opinions=#{handlingOpinions},
-        </if>
-        <if test="isDeleted!=null">
-            is_deleted=#{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                exe_id=#{id},
+            </if>
+            system_id=#{systemId},
+            position_id=#{lineId},
+            code=#{alarmCode},
+            <if test="alarmName!=null and alarmName!=''">
+                name=#{alarmName},
+            </if>
+            <if test="alarmReason!=null and alarmReason!=''">
+                reason=#{alarmReason},
+            </if>
+            <if test="alarmLevel!=null">
+                level_id=#{alarmLevel},
+            </if>
+            <if test="handlingOpinions!=null and handlingOpinions!=''">
+                handling_opinions=#{handlingOpinions},
+            </if>
+            <if test="isDeleted!=null">
+                is_deleted=#{isDeleted},
+            </if>
+        </trim>
         WHERE system_id=#{systemId} and position_id=#{lineId} and code=#{alarmCode} and is_locked=0;
     </insert>
 
@@ -179,48 +187,52 @@
                 </if>
             </trim>
             SELECT
-            <if test="deviceSyncReqDTO.id!=null">
-                #{deviceSyncReqDTO.id},
-            </if>
-            #{deviceSyncReqDTO.systemId},
-            #{deviceSyncReqDTO.lineId},
-            #{deviceSyncReqDTO.stationId},
-            #{deviceSyncReqDTO.deviceId},
-            <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
-                #{deviceSyncReqDTO.deviceName},
-            </if>
-            <if test="deviceSyncReqDTO.model!=null and deviceSyncReqDTO.model!=''">
-                #{deviceSyncReqDTO.model},
-            </if>
-            <if test="deviceSyncReqDTO.manufacturer!=null and deviceSyncReqDTO.manufacturer!=''">
-                #{deviceSyncReqDTO.manufacturer},
-            </if>
-            <if test="deviceSyncReqDTO.isDeleted!=null">
-                #{deviceSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="deviceSyncReqDTO.id!=null">
+                    #{deviceSyncReqDTO.id},
+                </if>
+                #{deviceSyncReqDTO.systemId},
+                #{deviceSyncReqDTO.lineId},
+                #{deviceSyncReqDTO.stationId},
+                #{deviceSyncReqDTO.deviceId},
+                <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
+                    #{deviceSyncReqDTO.deviceName},
+                </if>
+                <if test="deviceSyncReqDTO.model!=null and deviceSyncReqDTO.model!=''">
+                    #{deviceSyncReqDTO.model},
+                </if>
+                <if test="deviceSyncReqDTO.manufacturer!=null and deviceSyncReqDTO.manufacturer!=''">
+                    #{deviceSyncReqDTO.manufacturer},
+                </if>
+                <if test="deviceSyncReqDTO.isDeleted!=null">
+                    #{deviceSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             FROM DUAL
             WHERE NOT exists (SELECT id FROM device WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.lineId}
             and station_id=#{deviceSyncReqDTO.stationId} and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0);
             UPDATE device SET
-            <if test="deviceSyncReqDTO.id!=null">
-                exe_id=#{deviceSyncReqDTO.id},
-            </if>
-            system_id=#{deviceSyncReqDTO.systemId},
-            position_id=#{deviceSyncReqDTO.lineId},
-            station_id=#{deviceSyncReqDTO.stationId},
-            device_code=#{deviceSyncReqDTO.deviceId},
-            <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
-                name=#{deviceSyncReqDTO.deviceName},
-            </if>
-            <if test="deviceSyncReqDTO.model!=null and deviceSyncReqDTO.model!=''">
-                brand=#{deviceSyncReqDTO.model},
-            </if>
-            <if test="deviceSyncReqDTO.manufacturer!=null and deviceSyncReqDTO.manufacturer!=''">
-                manufacturer=#{deviceSyncReqDTO.manufacturer},
-            </if>
-            <if test="deviceSyncReqDTO.isDeleted!=null">
-                is_deleted=#{deviceSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="deviceSyncReqDTO.id!=null">
+                    exe_id=#{deviceSyncReqDTO.id},
+                </if>
+                system_id=#{deviceSyncReqDTO.systemId},
+                position_id=#{deviceSyncReqDTO.lineId},
+                station_id=#{deviceSyncReqDTO.stationId},
+                device_code=#{deviceSyncReqDTO.deviceId},
+                <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
+                    name=#{deviceSyncReqDTO.deviceName},
+                </if>
+                <if test="deviceSyncReqDTO.model!=null and deviceSyncReqDTO.model!=''">
+                    brand=#{deviceSyncReqDTO.model},
+                </if>
+                <if test="deviceSyncReqDTO.manufacturer!=null and deviceSyncReqDTO.manufacturer!=''">
+                    manufacturer=#{deviceSyncReqDTO.manufacturer},
+                </if>
+                <if test="deviceSyncReqDTO.isDeleted!=null">
+                    is_deleted=#{deviceSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.lineId}
             and station_id=#{deviceSyncReqDTO.stationId} and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0;
         </foreach>
@@ -250,48 +262,52 @@
             </if>
         </trim>
         SELECT
-        <if test="id!=null">
-            #{id},
-        </if>
-        #{systemId},
-        #{lineId},
-        #{stationId},
-        #{deviceId},
-        <if test="deviceName!=null and deviceName!=''">
-            #{deviceName},
-        </if>
-        <if test="model!=null and model!=''">
-            #{model},
-        </if>
-        <if test="manufacturer!=null and manufacturer!=''">
-            #{manufacturer},
-        </if>
-        <if test="isDeleted!=null">
-            #{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            #{systemId},
+            #{lineId},
+            #{stationId},
+            #{deviceId},
+            <if test="deviceName!=null and deviceName!=''">
+                #{deviceName},
+            </if>
+            <if test="model!=null and model!=''">
+                #{model},
+            </if>
+            <if test="manufacturer!=null and manufacturer!=''">
+                #{manufacturer},
+            </if>
+            <if test="isDeleted!=null">
+                #{isDeleted},
+            </if>
+        </trim>
         FROM DUAL
         WHERE NOT exists (SELECT id FROM device WHERE system_id=#{systemId} and position_id=#{lineId}
         and station_id=#{stationId} and device_code=#{deviceId} and is_locked=0);
         UPDATE device SET
-        <if test="id!=null">
-            exe_id=#{id},
-        </if>
-        system_id=#{systemId},
-        position_id=#{lineId},
-        station_id=#{stationId},
-        device_code=#{deviceId},
-        <if test="deviceName!=null and deviceName!=''">
-            name=#{deviceName},
-        </if>
-        <if test="model!=null and model!=''">
-            brand=#{model},
-        </if>
-        <if test="manufacturer!=null and manufacturer!=''">
-            manufacturer=#{manufacturer},
-        </if>
-        <if test="isDeleted!=null">
-            is_deleted=#{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                exe_id=#{id},
+            </if>
+            system_id=#{systemId},
+            position_id=#{lineId},
+            station_id=#{stationId},
+            device_code=#{deviceId},
+            <if test="deviceName!=null and deviceName!=''">
+                name=#{deviceName},
+            </if>
+            <if test="model!=null and model!=''">
+                brand=#{model},
+            </if>
+            <if test="manufacturer!=null and manufacturer!=''">
+                manufacturer=#{manufacturer},
+            </if>
+            <if test="isDeleted!=null">
+                is_deleted=#{isDeleted},
+            </if>
+        </trim>
         WHERE system_id=#{systemId} and position_id=#{lineId} and station_id=#{stationId}
         and device_code=#{deviceId} and is_locked=0;
     </insert>
@@ -316,38 +332,42 @@
                 </if>
             </trim>
             SELECT
-            <if test="slotSyncReqDTO.id!=null">
-                #{slotSyncReqDTO.id},
-            </if>
-            #{slotSyncReqDTO.systemId},
-            #{slotSyncReqDTO.lineId},
-            #{slotSyncReqDTO.stationId},
-            #{slotSyncReqDTO.deviceId},
-            #{slotSyncReqDTO.slotId},
-            <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
-                #{slotSyncReqDTO.slotName},
-            </if>
-            <if test="slotSyncReqDTO.isDeleted!=null">
-                #{slotSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="slotSyncReqDTO.id!=null">
+                    #{slotSyncReqDTO.id},
+                </if>
+                #{slotSyncReqDTO.systemId},
+                #{slotSyncReqDTO.lineId},
+                #{slotSyncReqDTO.stationId},
+                #{slotSyncReqDTO.deviceId},
+                #{slotSyncReqDTO.slotId},
+                <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
+                    #{slotSyncReqDTO.slotName},
+                </if>
+                <if test="slotSyncReqDTO.isDeleted!=null">
+                    #{slotSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             FROM DUAL
             WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.lineId}
             and station_id=#{slotSyncReqDTO.stationId} and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0);
             UPDATE device_slot SET
-            <if test="slotSyncReqDTO.id!=null">
-                exe_id=#{slotSyncReqDTO.id},
-            </if>
-            system_id=#{slotSyncReqDTO.systemId},
-            position_id=#{slotSyncReqDTO.lineId},
-            station_id=#{slotSyncReqDTO.stationId},
-            device_id=#{slotSyncReqDTO.deviceId},
-            slot_code=#{slotSyncReqDTO.slotId},
-            <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
-                name=#{slotSyncReqDTO.slotName},
-            </if>
-            <if test="slotSyncReqDTO.isDeleted!=null">
-                is_deleted=#{slotSyncReqDTO.isDeleted},
-            </if>
+            <trim suffixOverrides=",">
+                <if test="slotSyncReqDTO.id!=null">
+                    exe_id=#{slotSyncReqDTO.id},
+                </if>
+                system_id=#{slotSyncReqDTO.systemId},
+                position_id=#{slotSyncReqDTO.lineId},
+                station_id=#{slotSyncReqDTO.stationId},
+                device_id=#{slotSyncReqDTO.deviceId},
+                slot_code=#{slotSyncReqDTO.slotId},
+                <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
+                    name=#{slotSyncReqDTO.slotName},
+                </if>
+                <if test="slotSyncReqDTO.isDeleted!=null">
+                    is_deleted=#{slotSyncReqDTO.isDeleted},
+                </if>
+            </trim>
             WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.lineId} and station_id=#{slotSyncReqDTO.stationId}
             and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0;
         </foreach>
@@ -372,38 +392,42 @@
             </if>
         </trim>
         SELECT
-        <if test="id!=null">
-            #{id},
-        </if>
-        #{systemId},
-        #{lineId},
-        #{stationId},
-        #{deviceId},
-        #{slotId},
-        <if test="slotName!=null and slotName!=''">
-            #{slotName},
-        </if>
-        <if test="isDeleted!=null">
-            #{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            #{systemId},
+            #{lineId},
+            #{stationId},
+            #{deviceId},
+            #{slotId},
+            <if test="slotName!=null and slotName!=''">
+                #{slotName},
+            </if>
+            <if test="isDeleted!=null">
+                #{isDeleted},
+            </if>
+        </trim>
         FROM DUAL
         WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{systemId} and position_id=#{lineId}
         and station_id=#{stationId} and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0);
         UPDATE device_slot SET
-        <if test="id!=null">
-            exe_id=#{id},
-        </if>
-        system_id=#{systemId},
-        position_id=#{lineId},
-        station_id=#{stationId},
-        device_id=#{deviceId},
-        slot_code=#{slotId},
-        <if test="slotName!=null and slotName!=''">
-            name=#{slotName},
-        </if>
-        <if test="isDeleted!=null">
-            is_deleted=#{isDeleted},
-        </if>
+        <trim suffixOverrides=",">
+            <if test="id!=null">
+                exe_id=#{id},
+            </if>
+            system_id=#{systemId},
+            position_id=#{lineId},
+            station_id=#{stationId},
+            device_id=#{deviceId},
+            slot_code=#{slotId},
+            <if test="slotName!=null and slotName!=''">
+                name=#{slotName},
+            </if>
+            <if test="isDeleted!=null">
+                is_deleted=#{isDeleted},
+            </if>
+        </trim>
         WHERE system_id=#{systemId} and position_id=#{lineId} and station_id=#{stationId}
         and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0;
     </insert>

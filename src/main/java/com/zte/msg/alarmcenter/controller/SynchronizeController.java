@@ -10,6 +10,7 @@ import com.zte.msg.alarmcenter.utils.AsyncSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,9 @@ public class SynchronizeController {
     @Resource
     private SynchronizeService synchronizeService;
 
+    @Autowired
+    AsyncSender asyncSender;
+
     /**
      * 全量告警码同步
      *
@@ -48,7 +52,6 @@ public class SynchronizeController {
     @ApiOperation(value = "全量告警码同步")
     public <T> DataResponse<T> alarmCodesSync(@RequestBody @Valid List<AlarmCodeSyncReqDTO> alarmCodeSyncReqDTOList) throws Exception {
 //        synchronizeService.alarmCodesSync(alarmCodeSyncReqDTOList);
-        AsyncSender asyncSender = new AsyncSender();
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setAlarmCodeSyncReqDTOList(alarmCodeSyncReqDTOList);
         asyncSender.send(asyncVO);
@@ -80,7 +83,6 @@ public class SynchronizeController {
     @ApiOperation(value = "全量设备同步")
     public <T> DataResponse<T> devicesSync(@RequestBody @Valid List<DeviceSyncReqDTO> deviceSyncReqDTOList) throws Exception {
 //        synchronizeService.devicesSync(deviceSyncReqDTOList);
-        AsyncSender asyncSender = new AsyncSender();
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setDeviceSyncReqDTOList(deviceSyncReqDTOList);
         asyncSender.send(asyncVO);
@@ -112,7 +114,6 @@ public class SynchronizeController {
     @ApiOperation(value = "全量设备槽位同步")
     public <T> DataResponse<T> slotsSync(@RequestBody @Valid List<SlotSyncReqDTO> slotSyncReqDTOList) throws Exception {
 //        synchronizeService.slotsSync(slotSyncReqDTOList);
-        AsyncSender asyncSender = new AsyncSender();
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setSlotSyncReqDTOList(slotSyncReqDTOList);
         asyncSender.send(asyncVO);

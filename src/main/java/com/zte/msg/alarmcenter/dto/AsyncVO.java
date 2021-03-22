@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  */
 @ApiModel
 @Data
-public class AsyncVO {
+public class AsyncVO implements Serializable {
 
     @ApiModelProperty(value = "全量告警码同步信息")
     private List<AlarmCodeSyncReqDTO> alarmCodeSyncReqDTOList;

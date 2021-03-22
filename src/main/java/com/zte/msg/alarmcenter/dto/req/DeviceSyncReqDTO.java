@@ -4,12 +4,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author frp
  */
 @ApiModel
 @Data
-public class DeviceSyncReqDTO {
+public class DeviceSyncReqDTO implements Serializable {
 
     @ApiModelProperty(value = "客户端系统内id")
     private Long id;
