@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * @author frp
@@ -79,4 +80,16 @@ public class AlarmHistoryResDTO {
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;
 
+    @ApiModelProperty(value = "告警记录附加信息")
+    private List<AlarmMessageResDTO> alarmMessageResDTOList;
+
+    @Data
+    public static class AlarmMessageResDTO {
+
+        @ApiModelProperty(value = "标题")
+        private String title;
+
+        @ApiModelProperty(value = "内容")
+        private String content;
+    }
 }

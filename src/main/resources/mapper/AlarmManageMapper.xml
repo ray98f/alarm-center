@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmManageMapper">
-    <select id="pageAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
+    <resultMap id="sAlarmHistory" type="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
+        <id property="id" column="id"/>
+        <result property="subsystemId" column="subsystem_id"/>
+        <result property="subsystemName" column="subsystem_name"/>
+        <result property="alarmLevel" column="alarm_level"/>
+        <result property="siteId" column="site_id"/>
+        <result property="siteName" column="site_name"/>
+        <result property="deviceId" column="device_id"/>
+        <result property="deviceName" column="device_name"/>
+        <result property="slotId" column="slot_id"/>
+        <result property="slotPosition" column="slot_name"/>
+        <result property="alarmCode" column="alarm_code"/>
+        <result property="alarmName" column="alarm_name"/>
+        <result property="alarmReason" column="alarm_reason"/>
+        <result property="firstTime" column="first_time"/>
+        <result property="finalTime" column="final_time"/>
+        <result property="frequency" column="frequency"/>
+        <result property="alarmVolume" column="alarm_volume"/>
+        <result property="isUpgrade" column="is_upgrade"/>
+        <result property="isMute" column="is_mute"/>
+        <result property="alarmState" column="alarm_state"/>
+        <result property="recoveryTime" column="recovery_time"/>
+        <result property="alarmRemark" column="alarm_remark"/>
+        <collection property="alarmMessageResDTOList" javaType="ArrayList" ofType="SelectionEntity" select="selectAlarmMsg" column="id"/>
+    </resultMap>
+
+    <select id="selectAlarmMsg" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO$AlarmMessageResDTO">
+        select title, content from alarm_message where alarm_id=#{id} and is_deleted=0
+    </select>
+
+    <select id="pageAlarmHistory" resultMap="sAlarmHistory">
         SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
