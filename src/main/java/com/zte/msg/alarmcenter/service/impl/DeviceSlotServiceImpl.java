@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     private DeviceSlotMapper myDeviceSlotMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void importDevice(MultipartFile deviceFile, String userId) {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(deviceFile));
@@ -89,6 +91,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDevice(Long id) {
         int integer = myDeviceSlotMapper.deleteDevice(id);
         if (integer == 0) {
@@ -97,6 +100,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addDeviceSlot(DeviceSlotReqDTO deviceSlotReqDTO, String userId) {
         int integer = myDeviceSlotMapper.addDeviceSlot(deviceSlotReqDTO, userId);
         if (integer == 0) {
@@ -105,6 +109,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyDevice(Long id, DeviceSlotReqDTO deviceSlotReqDTO, String userId) {
         int integer = myDeviceSlotMapper.modifyDevice(id, deviceSlotReqDTO, userId);
         if (integer == 0) {

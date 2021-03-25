@@ -8,6 +8,7 @@ import com.zte.msg.alarmcenter.mapper.AlarmLevelMapper;
 import com.zte.msg.alarmcenter.service.AlarmLevelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -32,6 +33,7 @@ public class AlarmLevelServiceImpl implements AlarmLevelService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyAlarmLevel(Long id, AlarmLevelReqDTO alarmLevelReqDTO, String userId) {
         int integer = alarmLevelMapper.modifyAlarmLevel(id,alarmLevelReqDTO,userId);
         if (integer == 0) {

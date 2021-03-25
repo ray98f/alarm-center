@@ -11,6 +11,7 @@ import com.zte.msg.alarmcenter.service.AlarmRuleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     private AlarmRuleMapper alarmRuleMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO, String userId) {
 
         int systemIdSize = alarmRuleReqDTO.getSystemIds().size();
@@ -100,6 +102,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO, Long id, String userId) {
         alarmRuleReqDTO.setSystemId(alarmRuleReqDTO.getSystemIds().size() == 0 ? 0 : 1);
         alarmRuleReqDTO.setPositionId(alarmRuleReqDTO.getPositionIds().size() == 0 ? 0 : 1);
@@ -173,6 +176,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAlarmRule(Long id) {
         int alarmDelCount = alarmRuleMapper.deleteAlarmRule(id);
         if (alarmDelCount == 0) {

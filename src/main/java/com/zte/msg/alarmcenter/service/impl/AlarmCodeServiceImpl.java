@@ -14,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +29,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     private AlarmCodeMapper alarmCodeMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void importDevice(MultipartFile file, String userId) {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(file));
@@ -89,6 +91,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addAlarmCode(AlarmCodeReqDTO alarmCodeReqDTO, String userId) {
         int integer = alarmCodeMapper.addAlarmCode(alarmCodeReqDTO, userId);
         if (integer == 0) {
@@ -97,6 +100,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifyAlarmCode(AlarmCodeReqDTO alarmCodeReqDTO, Long id, String userId) {
         int integer = alarmCodeMapper.modifyAlarmCode(alarmCodeReqDTO, id, userId);
         if (integer == 0) {
@@ -119,6 +123,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteAlarmCode(Long id) {
         int integer = alarmCodeMapper.deleteAlarmCode(id);
         if (integer == 0) {

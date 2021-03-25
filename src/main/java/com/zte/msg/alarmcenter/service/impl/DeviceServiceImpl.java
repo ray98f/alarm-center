@@ -53,6 +53,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void importDevice(MultipartFile deviceFile, String userId) {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(deviceFile));

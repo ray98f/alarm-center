@@ -16,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,6 +34,7 @@ public class SnmpServiceImpl implements SnmpService {
     private DeviceSlotMapper myDeviceSlotMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void importDevice(MultipartFile file, String userId) {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(file));
@@ -114,6 +116,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addSnmpSlot(SnmpSlotModifyReqDTO slotModifyReqDTO, String userId) {
         int integer = mySlotMapper.addSnmpSlot(slotModifyReqDTO, userId);
         if (integer < 0) {
@@ -122,6 +125,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifySnmpSlot(SnmpSlotModifyReqDTO slotModifyReqDTO, Long id, String userId) {
         int integer = mySlotMapper.modifySnmpSlot(slotModifyReqDTO, id, userId);
         if (integer < 0) {
@@ -130,6 +134,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteSnmpSlot(Long id) {
         int integer = mySlotMapper.deleteSnmpSlot(id);
         if (integer < 0) {
@@ -153,6 +158,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void importSnmpAlarmCode(MultipartFile file, String userId) {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(file));
@@ -214,6 +220,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void addSSnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, String userId) {
         int integer = mySlotMapper.addSSnmpAlarmCode(snmpAlarmCode, userId);
         if (integer < 0) {
@@ -222,6 +229,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void modifySnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, Long id, String userId) {
         int integer = mySlotMapper.modifySnmpAlarmCode(snmpAlarmCode, id, userId);
         if (integer < 0) {
@@ -245,6 +253,7 @@ public class SnmpServiceImpl implements SnmpService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteSnmpAlarmCode(Long id) {
         int integer = mySlotMapper.deleteSnmpAlarmCode(id);
         if (integer < 0) {
