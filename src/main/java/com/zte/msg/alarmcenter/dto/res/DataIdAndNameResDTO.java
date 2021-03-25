@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class DataIdAndNameResDTO {
 
-    private String id;
+    private Long id;
+
     private String name;
 
 }

@@ -12,6 +12,8 @@ public class RabbitMqConfig {
 
     public static final String ASYNC_QUEUE = "ASYNC_QUEUE";
     public static final String STRING_QUEUE = "STRING_QUEUE";
+    public static final String ALARM_QUEUE = "ALARM_QUEUE";
+    public static final String SYNC_ALARM_QUEUE = "SYNC_ALARM_QUEUE";
 
     /**
      * 声明接收字符串的队列 默认
@@ -32,6 +34,11 @@ public class RabbitMqConfig {
     @Bean
     public Queue goodsQueue() {
         return QueueBuilder.durable(ASYNC_QUEUE).build();
+    }
+
+    @Bean
+    public Queue aaa() {
+        return QueueBuilder.durable(SYNC_ALARM_QUEUE).build();
     }
 
 }

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.DataCacheMapper">
+    <select id="selectAlarmCode" resultType="com.zte.msg.alarmcenter.entity.AlarmCode">
+        select * from alarm_code where is_deleted=0
+    </select>
+
+    <select id="selectAlarmCodeByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmCode">
+        select * from alarm_code where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+
+    <resultMap id="sAlarmRule" type="com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO">
+        <id property="id" column="id"/>
+        <result property="type" column="type"/>
+        <result property="name" column="name"/>
+        <result property="isEnable" column="is_enable"/>
+        <collection property="systemIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterSystem" column="id"/>
+        <collection property="positionIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterPosition" column="id"/>
+        <collection property="deviceIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterDevice" column="id"/>
+        <collection property="alarmIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterAlarm" column="id"/>
+    </resultMap>
+
+    <select id="selectAlarmRule" resultMap="sAlarmRule">
+        SELECT * FROM alarm_rule where is_deleted=0
+    </select>
+
+    <select id="selectAlarmRuleByTime" resultMap="sAlarmRule">
+        SELECT * FROM alarm_rule where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+
+    <select id="selectFilterSystem" resultType="java.lang.Long">
+        SELECT s.id FROM filter_system as fs left join subsystem as s on s.id=fs.system_id and s.is_deleted=0 where fs.rule_id=#{id} and fs.is_deleted=0;
+    </select>
+
+    <select id="selectFilterPosition" resultType="java.lang.Long">
+        SELECT p.id FROM filter_position as fp left join position as p on p.id=fp.position_id and p.is_deleted=0 where fp.rule_id=#{id} and fp.is_deleted=0;
+    </select>
+
+    <select id="selectFilterDevice" resultType="java.lang.Long">
+        SELECT d.id FROM filter_device as fd left join device as d on d.id=fd.device_id and d.is_deleted=0 where fd.rule_id=#{id} and fd.is_deleted=0;
+    </select>
+
+    <select id="selectFilterAlarm" resultType="java.lang.Long">
+        SELECT ac.id FROM filter_alarm as fa left join alarm_code as ac on ac.id=fa.alarm_code_id and ac.is_deleted=0 where fa.rule_id=#{id} and fa.is_deleted=0;
+    </select>
+
+    <select id="selectDevice" resultType="com.zte.msg.alarmcenter.entity.Device">
+        select * from device where is_deleted=0
+    </select>
+
+    <select id="selectDeviceByTime" resultType="com.zte.msg.alarmcenter.entity.Device">
+        select * from device where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+
+    <select id="selectDeviceSlot" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
+        select * from device_slot where is_deleted=0
+    </select>
+
+    <select id="selectDeviceSlotByTime" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
+        select * from device_slot where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+
+    <select id="selectSubsystem" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
+        select * from subsystem where is_deleted=0
+    </select>
+
+    <select id="selectSubsystemByTime" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
+        select * from subsystem where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+
+    <select id="selectPosition" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select * from position where is_deleted=0
+    </select>
+
+    <select id="selectPositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select * from position where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+    </select>
+</mapper>

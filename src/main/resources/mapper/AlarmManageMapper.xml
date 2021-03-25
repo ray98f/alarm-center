@@ -5,13 +5,15 @@
         <id property="id" column="id"/>
         <result property="subsystemId" column="subsystem_id"/>
         <result property="subsystemName" column="subsystem_name"/>
-        <result property="alarmLevel" column="alarm_level"/>
+        <result property="lineId" column="line_id"/>
+        <result property="lineName" column="line_name"/>
         <result property="siteId" column="site_id"/>
         <result property="siteName" column="site_name"/>
         <result property="deviceId" column="device_id"/>
         <result property="deviceName" column="device_name"/>
         <result property="slotId" column="slot_id"/>
         <result property="slotPosition" column="slot_name"/>
+        <result property="alarmLevel" column="alarm_level"/>
         <result property="alarmCode" column="alarm_code"/>
         <result property="alarmName" column="alarm_name"/>
         <result property="alarmReason" column="alarm_reason"/>
@@ -32,15 +34,16 @@
     </select>
 
     <select id="pageAlarmHistory" resultMap="sAlarmHistory">
-        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.line_id,p1.name as line_name,ah.site_id,p2.name as site_name,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
-        FROM alarm_center.alarm_history as ah
+        FROM alarm_history as ah
         left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
-        left join position as p on p.id=ah.site_id and p.is_deleted=0
+        left join position as p1 on p1.id=ah.site_id and p1.is_deleted=0
+        left join position as p2 on p2.id=ah.site_id and p2.is_deleted=0
         left join device as d on d.id=ah.device_id and d.is_deleted=0
         left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
-        and (alarm_state=4 or alarm_state=5 or alarm_state=6)
+        and (ah.alarm_state=4 or ah.alarm_state=5 or ah.alarm_state=6)
         <if test="subsystemId!=null">
             and ah.subsystem_id=#{subsystemId}
         </if>
@@ -63,15 +66,16 @@
     </select>
 
     <select id="exportAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
-        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.line_id,p1.name as line_name,ah.site_id,p2.name as site_name,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
-        FROM alarm_center.alarm_history as ah
+        FROM alarm_history as ah
         left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
-        left join position as p on p.id=ah.site_id and p.is_deleted=0
+        left join position as p1 on p1.id=ah.site_id and p1.is_deleted=0
+        left join position as p2 on p2.id=ah.site_id and p2.is_deleted=0
         left join device as d on d.id=ah.device_id and d.is_deleted=0
         left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
-        and (alarm_state=4 or alarm_state=5 or alarm_state=6)
+        and (ah.alarm_state=4 or ah.alarm_state=5 or ah.alarm_state=6)
         <if test="subsystemId!=null">
             and ah.subsystem_id=#{subsystemId}
         </if>
@@ -96,4 +100,70 @@
     <update id="editRemark">
         update alarm_history set alarm_remark=#{alarmRemark} where id=#{id}
     </update>
+
+    <insert id="editAlarmHistory">
+        <foreach collection="list" item="alarmHistory" index="index" separator=";">
+            INSERT INTO alarm_history (subsystem_id, alarm_level, line_id, site_id, device_id, slot_id, alarm_code,
+            <if test="alarmHistory.firstTime!=null">
+                first_time,
+            </if>
+            <if test="alarmHistory.finalTime!=null">
+                final_time,
+            </if>
+            <if test="alarmHistory.alarmState!=null">
+                alarm_state,
+            </if>
+            recovery_time)
+            SELECT #{alarmHistory.subsystemId}, #{alarmHistory.alarmLevel}, #{alarmHistory.lineId}, #{alarmHistory.siteId},
+            #{alarmHistory.deviceId}, #{alarmHistory.slotId}, #{alarmHistory.alarmCode},
+            <if test="alarmHistory.firstTime!=null">
+                #{alarmHistory.firstTime},
+            </if>
+            <if test="alarmHistory.finalTime!=null">
+                #{alarmHistory.finalTime},
+            </if>
+            <if test="alarmHistory.alarmState!=null">
+                #{alarmHistory.alarmState},
+            </if>
+            #{alarmHistory.recoveryTime}
+            FROM DUAL
+            WHERE NOT exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
+            and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_level=#{alarmHistory.alarmLevel}
+            and alarm_code=#{alarmHistory.alarmCode} and is_deleted=0);
+            UPDATE alarm_history SET
+            subsystem_id=#{alarmHistory.subsystemId},
+            alarm_level=#{alarmHistory.alarmLevel},
+            line_id=#{alarmHistory.lineId},
+            site_id=#{alarmHistory.siteId},
+            device_id=#{alarmHistory.deviceId},
+            slot_id=#{alarmHistory.slotId},
+            alarm_code=#{alarmHistory.alarmCode},
+            <if test="alarmHistory.finalTime!=null">
+                final_time=#{alarmHistory.finalTime},
+            </if>
+            frequency=frequency+1,
+            <if test="alarmHistory.alarmState!=null">
+                alarm_state=#{alarmHistory.alarmState},
+            </if>
+            recovery_time=#{alarmHistory.recoveryTime}
+            WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
+            and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode} and is_deleted=0
+        </foreach>
+    </insert>
+
+    <insert id="editAlarmMessage">
+        <foreach collection="alarmMessages" index="index" item="alarmMessage" separator=";">
+            INSERT INTO alarm_message (alarm_id, title, content)
+            SELECT #{alarmId}, #{alarmMessage.title}, #{alarmMessage.content} FROM DUAL
+            WHERE NOT exists (SELECT id FROM alarm_message WHERE alarm_id=#{alarmId} and title=#{alarmMessage.title}
+            and content=#{alarmMessage.content} and is_deleted=0);
+            UPDATE alarm_message SET alarm_id=#{alarmId}, title=#{alarmMessage.title}, content=#{alarmMessage.content}
+            WHERE alarm_id=#{alarmId} and title=#{alarmMessage.title} and content=#{alarmMessage.content} and is_deleted=0
+        </foreach>
+    </insert>
+
+    <select id="getAlarmHistoryId" resultType="java.lang.Long">
+        select id from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
+        and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and is_deleted=0
+    </select>
 </mapper>

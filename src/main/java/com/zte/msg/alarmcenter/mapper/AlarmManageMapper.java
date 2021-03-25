@@ -1,7 +1,9 @@
 package com.zte.msg.alarmcenter.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.entity.AlarmHistory;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -51,4 +53,29 @@ public interface AlarmManageMapper {
      * @return
      */
     int editRemark(String alarmRemark, Long id);
+
+    /**
+     * 批量新增告警记录
+     *
+     * @param alarmHistories
+     * @return
+     */
+    int editAlarmHistory(List<AlarmHistory> alarmHistories);
+
+    /**
+     * 编辑告警记录附加信息
+     *
+     * @param alarmId
+     * @param alarmMessages
+     * @return
+     */
+    int editAlarmMessage(Long alarmId, List<AlarmHistoryReqDTO.AlarmMessage> alarmMessages);
+
+    /**
+     * 获取告警记录id
+     *
+     * @param alarmHistory
+     * @return
+     */
+    Long getAlarmHistoryId(AlarmHistory alarmHistory);
 }

@@ -8,10 +8,12 @@ import com.zte.msg.alarmcenter.dto.req.PasswordReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
 import com.zte.msg.alarmcenter.entity.User;
 import com.zte.msg.alarmcenter.service.UserService;
+import com.zte.msg.alarmcenter.utils.AsyncSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,6 +39,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Autowired
+    AsyncSender asyncSender;
 
     /**
      * 新增管理平台登录用户
@@ -132,5 +137,11 @@ public class UserController {
                                            @ApiParam("姓名") String userRealName,
                                        @Valid PageReqDTO pageReqDTO){
         return PageResponse.of(userService.listUser(status, userRealName, pageReqDTO));
+    }
+
+    @GetMapping("/test")
+    public <T> DataResponse<T> test() throws Exception {
+        asyncSender.test();
+        return DataResponse.success();
     }
 }
