@@ -30,7 +30,8 @@ public class JwtFilter implements Filter {
      */
     private final String[] excludedPages = {
             "/api/v1/login",
-            "/api/v1/openapi/token"
+            "/api/v1/openapi/token",
+            "/api/v1/alarm/level/list"
     };
 
     @Override

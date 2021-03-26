@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.utils;
 
+import com.alibaba.fastjson.JSON;
 import com.zte.msg.alarmcenter.config.RabbitMqConfig;
 import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
@@ -42,15 +43,21 @@ public class AsyncSender {
         return true;
     }
 
+    public boolean refresh() throws Exception {
+        rabbitTemplate.convertAndSend(RabbitMqConfig.REFRESH_QUEUE);
+        log.info(String.format("Sender发送刷新结果：%s", true));
+        return true;
+    }
+
     public boolean test() throws Exception {
         List<AlarmHistoryReqDTO> alarmHistoryReqDTOList = new ArrayList<>();
         AlarmHistoryReqDTO alarmHistoryReqDTO = new AlarmHistoryReqDTO();
-        alarmHistoryReqDTO.setSystem(22);
-        alarmHistoryReqDTO.setLine(23);
-        alarmHistoryReqDTO.setStation(342);
-        alarmHistoryReqDTO.setDevice(232323);
-        alarmHistoryReqDTO.setSlot(213);
-        alarmHistoryReqDTO.setAlarmCode(100);
+        alarmHistoryReqDTO.setSystem(1);
+        alarmHistoryReqDTO.setLine(2);
+        alarmHistoryReqDTO.setStation(2);
+        alarmHistoryReqDTO.setDevice(2);
+        alarmHistoryReqDTO.setSlot(2);
+        alarmHistoryReqDTO.setAlarmCode(2);
         alarmHistoryReqDTO.setIsRecovery(true);
         alarmHistoryReqDTO.setAlarmTime(new Timestamp(System.currentTimeMillis()));
         List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList = new ArrayList<>();
@@ -64,7 +71,8 @@ public class AsyncSender {
         alarmMessageList.add(alarmMessage2);
         alarmHistoryReqDTO.setAlarmMessageList(alarmMessageList);
         alarmHistoryReqDTOList.add(alarmHistoryReqDTO);
-        rabbitTemplate.convertAndSend(RabbitMqConfig.SYNC_ALARM_QUEUE, alarmHistoryReqDTOList);
+        String json = JSON.toJSONString(alarmHistoryReqDTOList);
+        rabbitTemplate.convertAndSend(RabbitMqConfig.SYNC_ALARM_QUEUE, json);
         log.info(String.format("Sender发送告警记录结果：%s", true));
         return true;
     }

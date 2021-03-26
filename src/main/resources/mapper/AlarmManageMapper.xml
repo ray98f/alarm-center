@@ -43,7 +43,7 @@
         left join position as p2 on p2.id=ah.site_id and p2.is_deleted=0
         left join device as d on d.id=ah.device_id and d.is_deleted=0
         left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
-        and (ah.alarm_state=4 or ah.alarm_state=5 or ah.alarm_state=6)
+        and ah.alarm_state in (4,5,6,7)
         <if test="subsystemId!=null">
             and ah.subsystem_id=#{subsystemId}
         </if>
@@ -75,7 +75,7 @@
         left join position as p2 on p2.id=ah.site_id and p2.is_deleted=0
         left join device as d on d.id=ah.device_id and d.is_deleted=0
         left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
-        and (ah.alarm_state=4 or ah.alarm_state=5 or ah.alarm_state=6)
+        and ah.alarm_state in (4,5,6,7)
         <if test="subsystemId!=null">
             and ah.subsystem_id=#{subsystemId}
         </if>
