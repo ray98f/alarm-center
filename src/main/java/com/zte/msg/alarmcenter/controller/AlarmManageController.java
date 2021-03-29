@@ -8,6 +8,7 @@ import com.zte.msg.alarmcenter.service.AlarmManageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,19 +54,19 @@ public class AlarmManageController {
 
     @GetMapping("/history/export")
     @ApiOperation("告警历史-导出")
-    public <T> DataResponse<T> exportAlarmHistory(@RequestParam(required = false)
+    public DataResponse<T> exportAlarmHistory(@RequestParam(required = false)
                                                       @ApiParam("所属子系统") Long subsystemId,
-                                                  @RequestParam(required = false)
+                                              @RequestParam(required = false)
                                                       @ApiParam("站点") Long siteId,
-                                                  @RequestParam(required = false)
+                                              @RequestParam(required = false)
                                                       @ApiParam("站点") Integer alarmLevel,
-                                                  @RequestParam(required = false)
+                                              @RequestParam(required = false)
                                                       @ApiParam("告警码") Integer alarmCode,
-                                                  @RequestParam(required = false)
+                                              @RequestParam(required = false)
                                                       @ApiParam("开始时间") Timestamp startTime,
-                                                  @RequestParam(required = false)
+                                              @RequestParam(required = false)
                                                       @ApiParam("结束时间") Timestamp endTime,
-                                                  HttpServletResponse response) {
+                                              HttpServletResponse response) {
         alarmManageService.exportAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime, response);
         return DataResponse.success();
     }

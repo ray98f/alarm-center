@@ -6,7 +6,8 @@
     </select>
 
     <select id="selectAlarmCodeByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmCode">
-        select * from alarm_code where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        select * from alarm_code where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
     <resultMap id="sAlarmRule" type="com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO">
@@ -25,7 +26,8 @@
     </select>
 
     <select id="selectAlarmRuleByTime" resultMap="sAlarmRule">
-        SELECT * FROM alarm_rule where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        SELECT * FROM alarm_rule where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
     <select id="selectFilterSystem" resultType="java.lang.Long">
@@ -49,7 +51,8 @@
     </select>
 
     <select id="selectDeviceByTime" resultType="com.zte.msg.alarmcenter.entity.Device">
-        select * from device where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        select * from device where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
     <select id="selectDeviceSlot" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
@@ -57,7 +60,8 @@
     </select>
 
     <select id="selectDeviceSlotByTime" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
-        select * from device_slot where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        select * from device_slot where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
     <select id="selectSubsystem" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
@@ -65,7 +69,8 @@
     </select>
 
     <select id="selectSubsystemByTime" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
-        select * from subsystem where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        select * from subsystem where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
     <select id="selectPosition" resultType="com.zte.msg.alarmcenter.entity.Position">
@@ -73,6 +78,7 @@
     </select>
 
     <select id="selectPositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
-        select * from position where is_deleted=0 and #{endTime}>=created_at and created_at>=#{startTime}
+        select * from position where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 </mapper>

@@ -2,7 +2,6 @@ package com.zte.msg.alarmcenter.service;
 
 import com.zte.msg.alarmcenter.dto.res.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -20,35 +19,21 @@ public interface HomeService {
      *
      * @return
      */
-    HomeProjSituationResDTO projectSituation();
-
-    /**
-     * 线路情况查询
-     *
-     * @return
-     */
-    HomeLineSituationResDTO lineSituation();
-
-    /**
-     * 设备情况查询
-     *
-     * @return
-     */
-    HomeDeviceSituationResDTO deviceSituation();
-
-    /**
-     * 告警处置情况
-     *
-     * @return
-     */
-    Map<String, Object> alarmHandleSituation();
+    HomeAlarmStatusSituationResDTO alarmStatusSituation();
 
     /**
      * 系统状况查询
      *
      * @return
      */
-    HomeSubsystemSituationResDTO subsystemSituation();
+    List<HomeSubsystemSituationResDTO> subsystemSituation();
+
+    /**
+     * 车站状况查询
+     *
+     * @return
+     */
+    List<HomeStationSituationResDTO> stationSituation();
 
     /**
      * 首页告警消息
@@ -59,13 +44,12 @@ public interface HomeService {
 
     /**
      * 首页告警消息导出
-     *
-     * @param response
      */
-    void exportAlarmHistory(HttpServletResponse response);
+    void exportAlarmHistory();
 
     /**
      * 静音
+     *
      * @param ids
      * @return
      */
@@ -73,6 +57,7 @@ public interface HomeService {
 
     /**
      * 解除静音
+     *
      * @param ids
      * @return
      */

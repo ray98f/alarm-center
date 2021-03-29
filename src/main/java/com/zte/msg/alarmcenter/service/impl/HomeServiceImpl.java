@@ -1,6 +1,5 @@
 package com.zte.msg.alarmcenter.service.impl;
 
-import com.baomidou.mybatisplus.extension.api.R;
 import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
@@ -10,6 +9,8 @@ import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
@@ -35,58 +36,12 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public HomeProjSituationResDTO projectSituation() {
-        HomeProjSituationResDTO homeProjSituationResDTO = homeMapper.projectSituation();
-        if (Objects.isNull(homeProjSituationResDTO)) {
+    public HomeAlarmStatusSituationResDTO alarmStatusSituation() {
+        HomeAlarmStatusSituationResDTO homeAlarmStatusSituationResDTO = homeMapper.alarmStatusSituation();
+        if (Objects.isNull(homeAlarmStatusSituationResDTO)) {
             throw new CommonException(ErrorCode.SELECT_ERROR);
         }
-        return homeProjSituationResDTO;
-    }
-
-    /**
-     * 线路情况查询
-     *
-     * @return
-     */
-    @Override
-    public HomeLineSituationResDTO lineSituation() {
-        HomeLineSituationResDTO homeLineSituationResDTO = homeMapper.lineSituation();
-        if (Objects.isNull(homeLineSituationResDTO)) {
-            throw new CommonException(ErrorCode.SELECT_ERROR);
-        }
-        return homeLineSituationResDTO;
-    }
-
-    /**
-     * 设备情况查询
-     *
-     * @return
-     */
-    @Override
-    public HomeDeviceSituationResDTO deviceSituation() {
-        HomeDeviceSituationResDTO homeDeviceSituationResDTO = homeMapper.deviceSituation();
-        if (Objects.isNull(homeDeviceSituationResDTO)) {
-            throw new CommonException(ErrorCode.SELECT_ERROR);
-        }
-        homeDeviceSituationResDTO.setNormalRate(homeDeviceSituationResDTO.getTotalNum(), homeDeviceSituationResDTO.getNormalNum());
-        return homeDeviceSituationResDTO;
-    }
-
-    /**
-     * 告警处置情况
-     *
-     * @return
-     */
-    @Override
-    public Map<String, Object> alarmHandleSituation() {
-        Map<String, Object> data = new HashMap<>(16);
-        Integer handleNum = homeMapper.alarmHandleNum();
-        Integer notHandleNum = homeMapper.alarmNotHandleNum();
-        data.put("handleNum", handleNum);
-        data.put("notHandleNum", notHandleNum);
-        data.put("handleRate", (handleNum / (handleNum + notHandleNum)) * 100);
-        data.put("notHandleRate", (notHandleNum / (handleNum + notHandleNum)) * 100);
-        return data;
+        return homeAlarmStatusSituationResDTO;
     }
 
     /**
@@ -95,12 +50,35 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public HomeSubsystemSituationResDTO subsystemSituation() {
-        HomeSubsystemSituationResDTO homeSubsystemSituationResDTO = homeMapper.subsystemSituation();
+    public List<HomeSubsystemSituationResDTO> subsystemSituation() {
+        List<HomeSubsystemSituationResDTO> homeSubsystemSituationResDTO = homeMapper.subsystemSituation();
         if (Objects.isNull(homeSubsystemSituationResDTO)) {
             throw new CommonException(ErrorCode.SELECT_ERROR);
         }
         return homeSubsystemSituationResDTO;
+    }
+
+    /**
+     * 车站状况查询
+     *
+     * @return
+     */
+    @Override
+    public List<HomeStationSituationResDTO> stationSituation() {
+        List<HomeStationSituationResDTO> list = homeMapper.selectAllLine();
+        if (null == list || list.isEmpty()) {
+            log.warn("无路线信息");
+            return null;
+        }
+        for (HomeStationSituationResDTO homeStationSituationResDTO : list) {
+            List<HomeStationSituationResDTO.Station> stationList = homeMapper.stationSituation(homeStationSituationResDTO.getLineId());
+            if (null == stationList || stationList.isEmpty()) {
+                log.warn("{}路线下无站点信息",homeStationSituationResDTO.getLineId());
+                continue;
+            }
+            homeStationSituationResDTO.setStationList(stationList);
+        }
+        return list;
     }
 
     /**
@@ -120,11 +98,9 @@ public class HomeServiceImpl implements HomeService {
 
     /**
      * 首页告警消息导出
-     *
-     * @param response
      */
     @Override
-    public void exportAlarmHistory(HttpServletResponse response) {
+    public void exportAlarmHistory() {
         List<String> listName = Arrays.asList("子系统", "告警等级", "站点", "设备", "槽位", "告警码", "告警名称", "告警原因", "第一次告警时间", "最后告警时间", "告警次数", "告警音量", "是否静音", "告警状态", "告警升级", "告警备注");
         List<AlarmHistoryResDTO> alarmHistory = homeMapper.selectAlarmHistory();
         List<Map<String, String>> list = new ArrayList<>();
@@ -153,19 +129,20 @@ public class HomeServiceImpl implements HomeService {
                 map.put("设备", alarmHistoryResDTO.getDeviceName());
                 map.put("槽位", alarmHistoryResDTO.getSlotPosition());
                 map.put("告警码", alarmHistoryResDTO.getAlarmCode());
-                map.put("告警名称", alarmHistoryResDTO.getAlarmName());
-                map.put("告警原因", alarmHistoryResDTO.getAlarmReason());
+                map.put("告警名称", (alarmHistoryResDTO.getAlarmName() == null ? "" : alarmHistoryResDTO.getAlarmName()));
+                map.put("告警原因", (alarmHistoryResDTO.getAlarmReason() == null ? "" : alarmHistoryResDTO.getAlarmName()));
                 map.put("第一次告警时间", sdf.format(alarmHistoryResDTO.getFirstTime()));
                 map.put("最后告警时间", sdf.format(alarmHistoryResDTO.getFinalTime()));
                 map.put("告警次数", alarmHistoryResDTO.getFrequency().toString());
                 map.put("告警音量", alarmHistoryResDTO.getAlarmVolume());
-                map.put("是否静音", (alarmHistoryResDTO.getIsMute() == 0 ? "否" : "是"));
+                map.put("是否静音", (alarmHistoryResDTO.getIsMute() == 0 ? "是" : "否"));
                 map.put("告警状态", alarmStateName);
-                map.put("告警升级", (alarmHistoryResDTO.getIsUpgrade() == 0 ? "否" : "是"));
+                map.put("告警升级", (alarmHistoryResDTO.getIsUpgrade() == 0 ? "是" : "否"));
                 map.put("告警备注", alarmHistoryResDTO.getAlarmRemark());
                 list.add(map);
             }
         }
+        HttpServletResponse response = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getResponse();
         ExcelPortUtil.excelPort("历史告警", listName, list, null, response);
     }
 
@@ -211,7 +188,7 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public void adjustVolume(List<Integer> ids, String alarmVolume){
+    public void adjustVolume(List<Integer> ids, String alarmVolume) {
         if (ids.isEmpty() || alarmVolume.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -228,7 +205,7 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public void clearAlarm(List<Integer> ids){
+    public void clearAlarm(List<Integer> ids) {
         if (ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -245,7 +222,7 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public void confirmAlarm(List<Integer> ids){
+    public void confirmAlarm(List<Integer> ids) {
         if (ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -262,7 +239,7 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public void filterAlarm(List<Integer> ids){
+    public void filterAlarm(List<Integer> ids) {
         if (ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
@@ -279,7 +256,7 @@ public class HomeServiceImpl implements HomeService {
      * @return
      */
     @Override
-    public void recoveryAlarm(List<Integer> ids){
+    public void recoveryAlarm(List<Integer> ids) {
         if (ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }

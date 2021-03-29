@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,30 +70,28 @@ public class AlarmStatisticsController {
 
     /**
      * 导出告警数据
-     *
      * @param systemId
      * @param siteId
      * @param alarmReason
      * @param startTime
      * @param endTime
      * @param response
-     * @param <T>
      * @return
      */
     @GetMapping("/total/export")
     @ApiOperation(value = "导出告警数据")
-    public <T> DataResponse<T> exportTotalAlarmData(@RequestParam(required = false)
+    public DataResponse<T> exportTotalAlarmData(@RequestParam(required = false)
                                                         @ApiParam("系统") Long systemId,
-                                                    @RequestParam(required = false)
+                                                @RequestParam(required = false)
                                                         @ApiParam("站点") Long siteId,
-                                                    @RequestParam(required = false)
+                                                @RequestParam(required = false)
                                                         @ApiParam("告警原因") String alarmReason,
-                                                    @RequestParam(required = false)
+                                                @RequestParam(required = false)
                                                         @ApiParam("开始时间") String startTime,
-                                                    @RequestParam(required = false)
+                                                @RequestParam(required = false)
                                                         @ApiParam("结束时间") String endTime,
-                                                    HttpServletResponse response) {
-
+                                                HttpServletResponse response) {
+        alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, response);
         return DataResponse.success();
     }
 

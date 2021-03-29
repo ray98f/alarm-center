@@ -18,4 +18,7 @@ public class ChangeShifts extends BaseEntity {
 
     @ApiModelProperty(value = "接班人")
     private String toUserName;
+
+    @ApiModelProperty(value = "备注")
+    private String remark;
 }

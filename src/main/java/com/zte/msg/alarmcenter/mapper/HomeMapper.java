@@ -17,42 +17,27 @@ public interface HomeMapper {
      *
      * @return
      */
-    HomeProjSituationResDTO projectSituation();
-
-    /**
-     * 线路情况查询
-     *
-     * @return
-     */
-    HomeLineSituationResDTO lineSituation();
-
-    /**
-     * 设备情况查询
-     *
-     * @return
-     */
-    HomeDeviceSituationResDTO deviceSituation();
-
-    /**
-     * 告警处理数获取
-     *
-     * @return
-     */
-    Integer alarmHandleNum();
-
-    /**
-     * 告警未处理数获取
-     *
-     * @return
-     */
-    Integer alarmNotHandleNum();
+    HomeAlarmStatusSituationResDTO alarmStatusSituation();
 
     /**
      * 系统状况查询
      *
      * @return
      */
-    HomeSubsystemSituationResDTO subsystemSituation();
+    List<HomeSubsystemSituationResDTO> subsystemSituation();
+
+    /**
+     * 获取所有线路
+     * @return
+     */
+    List<HomeStationSituationResDTO> selectAllLine();
+
+    /**
+     * 获取线路下的站点信息
+     * @param lineId
+     * @return
+     */
+    List<HomeStationSituationResDTO.Station> stationSituation(Long lineId);
 
     /**
      * 首页告警消息

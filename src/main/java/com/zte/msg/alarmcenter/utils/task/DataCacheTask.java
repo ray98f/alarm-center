@@ -1,4 +1,4 @@
-package com.zte.msg.alarmcenter.utils;
+package com.zte.msg.alarmcenter.utils.task;
 
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Slf4j
-public class DataCache {
+public class DataCacheTask {
     @Autowired
     private DataCacheMapper dataCacheMapper;
 
@@ -29,7 +29,7 @@ public class DataCache {
     public static ConcurrentHashMap<Long, AlarmCode> alarmCodeData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmRuleDataResDTO> alarmRuleData = new ConcurrentHashMap<>();
 
-    @Scheduled(cron = "*/60 * * * * ? ")
+    @Scheduled(cron = "0 */1 * * * ? ")
     public void cacheOne() {
         Timestamp startTime = new Timestamp(System.currentTimeMillis() - 60000);
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
@@ -118,7 +118,7 @@ public class DataCache {
         log.info("------------ 缓存结束 ------------");
     }
 
-    @Scheduled(cron = "0 0 0 1/1 * ? ")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void cacheAll() {
         log.info("---------- 全量缓存开始 ----------");
         List<Subsystem> subsystemList = dataCacheMapper.selectSubsystem();

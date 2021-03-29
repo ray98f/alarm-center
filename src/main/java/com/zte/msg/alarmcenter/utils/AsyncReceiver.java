@@ -6,13 +6,12 @@ import com.zte.msg.alarmcenter.config.RabbitMqConfig;
 import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
-import com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
 import com.zte.msg.alarmcenter.mapper.SynchronizeMapper;
+import com.zte.msg.alarmcenter.utils.task.DataCacheTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -132,23 +131,23 @@ public class AsyncReceiver {
         List<AlarmHistory> alarmHistories = new ArrayList<>();
         for (AlarmHistoryReqDTO alarmReqDTO : alarmReqDTOList) {
             AlarmHistory alarmHistory = new AlarmHistory();
-            if (null != DataCache.subsystemData.get(alarmReqDTO.getSystem())) {
-                alarmHistory.setSubsystemId(DataCache.subsystemData.get(alarmReqDTO.getSystem()).getId());
+            if (null != DataCacheTask.subsystemData.get(alarmReqDTO.getSystem())) {
+                alarmHistory.setSubsystemId(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getId());
             }
-            for (Map.Entry<Long, Position> m : DataCache.positionData.entrySet()) {
+            for (Map.Entry<Long, Position> m : DataCacheTask.positionData.entrySet()) {
                 if (m.getValue().getType().equals(2) && alarmReqDTO.getLine().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setLineId(m.getValue().getId());
                     break;
                 }
             }
-            for (Map.Entry<Long, Position> m : DataCache.positionData.entrySet()) {
+            for (Map.Entry<Long, Position> m : DataCacheTask.positionData.entrySet()) {
                 if (m.getValue().getType().equals(3) && alarmHistory.getLineId().equals(m.getValue().getPid())
                         && alarmReqDTO.getStation().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setSiteId(m.getValue().getId());
                     break;
                 }
             }
-            for (Map.Entry<Long, Device> m : DataCache.deviceData.entrySet()) {
+            for (Map.Entry<Long, Device> m : DataCacheTask.deviceData.entrySet()) {
                 if (alarmReqDTO.getDevice().equals(m.getValue().getDeviceCode())
                         && alarmHistory.getLineId().equals(m.getValue().getPositionId())
                         && alarmHistory.getSiteId().equals(m.getValue().getStationId())
@@ -157,7 +156,7 @@ public class AsyncReceiver {
                     break;
                 }
             }
-            for (Map.Entry<Long, DeviceSlot> m : DataCache.deviceSlotData.entrySet()) {
+            for (Map.Entry<Long, DeviceSlot> m : DataCacheTask.deviceSlotData.entrySet()) {
                 if (alarmReqDTO.getSlot().equals(m.getValue().getSlotCode())
                         && alarmHistory.getLineId().equals(m.getValue().getPositionId())
                         && alarmHistory.getSiteId().equals(m.getValue().getStationId())
@@ -167,7 +166,7 @@ public class AsyncReceiver {
                     break;
                 }
             }
-            for (Map.Entry<Long, AlarmCode> m : DataCache.alarmCodeData.entrySet()) {
+            for (Map.Entry<Long, AlarmCode> m : DataCacheTask.alarmCodeData.entrySet()) {
                 if (alarmReqDTO.getAlarmCode().equals(m.getValue().getCode())
                         && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())
                         && alarmHistory.getLineId().equals(m.getValue().getPositionId())) {
@@ -175,7 +174,7 @@ public class AsyncReceiver {
                     break;
                 }
             }
-            for (Map.Entry<Long, AlarmRuleDataResDTO> m : DataCache.alarmRuleData.entrySet()) {
+            for (Map.Entry<Long, AlarmRuleDataResDTO> m : DataCacheTask.alarmRuleData.entrySet()) {
                 if (m.getValue().getSystemIds().contains(alarmHistory.getSubsystemId())
                         && m.getValue().getDeviceIds().contains(alarmHistory.getDeviceId())
                         && m.getValue().getPositionIds().contains(alarmHistory.getSiteId())
@@ -203,7 +202,7 @@ public class AsyncReceiver {
                 }
             }
             if (!Objects.isNull(alarmHistory)) {
-                alarmHistory.setAlarmLevel(DataCache.alarmCodeData.get(alarmHistory.getAlarmCode()).getLevelId());
+                alarmHistory.setAlarmLevel(DataCacheTask.alarmCodeData.get(alarmHistory.getAlarmCode()).getLevelId());
                 if (alarmReqDTO.getIsRecovery()) {
                     alarmHistory.setRecoveryTime(new Timestamp(System.currentTimeMillis()));
 //                    alarmHistory.setAlarmState(7);

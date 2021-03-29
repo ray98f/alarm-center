@@ -9,6 +9,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -172,9 +173,10 @@ public class ExcelPortUtil {
             response.reset();
             wb.write(output);
             wb.close();
+            response.setContentType("multipart/form-data");
             // 设置文件头
             response.setHeader("Content-Disposition",
-                    "attchement;filename=" + new String((sheetName + ".xls").getBytes("gb2312"), "ISO8859-1"));
+                    "attchement;filename=" + new String((sheetName + ".xls").getBytes(StandardCharsets.UTF_8), "ISO8859-1"));
         } catch (Exception e) {
             e.printStackTrace();
         }

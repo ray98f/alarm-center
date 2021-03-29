@@ -7,14 +7,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 /**
  * description:
@@ -34,47 +33,14 @@ public class HomeController {
     private HomeService homeService;
 
     /**
-     * 项目情况查询
+     * 告警情况查询
      *
      * @return
      */
-    @GetMapping("/proj")
-    @ApiOperation(value = "项目情况查询")
-    public DataResponse<HomeProjSituationResDTO> projectSituation() {
-        return DataResponse.of(homeService.projectSituation());
-    }
-
-    /**
-     * 线路情况查询
-     *
-     * @return
-     */
-    @GetMapping("/line")
-    @ApiOperation(value = "线路情况查询")
-    public DataResponse<HomeLineSituationResDTO> lineSituation() {
-        return DataResponse.of(homeService.lineSituation());
-    }
-
-    /**
-     * 设备情况查询
-     *
-     * @return
-     */
-    @GetMapping("/device")
-    @ApiOperation(value = "设备情况查询")
-    public DataResponse<HomeDeviceSituationResDTO> deviceSituation() {
-        return DataResponse.of(homeService.deviceSituation());
-    }
-
-    /**
-     * 告警处置情况
-     *
-     * @return
-     */
-    @GetMapping("/alarm-handle")
-    @ApiOperation(value = "告警处置情况")
-    public DataResponse<Map<String, Object>> alarmHandleSituation() {
-        return DataResponse.of(homeService.alarmHandleSituation());
+    @GetMapping("/status")
+    @ApiOperation(value = "告警情况查询")
+    public DataResponse<HomeAlarmStatusSituationResDTO> statusSituation() {
+        return DataResponse.of(homeService.alarmStatusSituation());
     }
 
     /**
@@ -84,8 +50,19 @@ public class HomeController {
      */
     @GetMapping("/subsystem")
     @ApiOperation(value = "系统状况查询")
-    public DataResponse<HomeSubsystemSituationResDTO> subsystemSituation() {
+    public DataResponse<List<HomeSubsystemSituationResDTO>> subsystemSituation() {
         return DataResponse.of(homeService.subsystemSituation());
+    }
+
+    /**
+     * 车站状况查询
+     *
+     * @return
+     */
+    @GetMapping("/station")
+    @ApiOperation(value = "车站状况查询")
+    public DataResponse<List<HomeStationSituationResDTO>> stationSituation() {
+        return DataResponse.success();
     }
 
     /**
@@ -106,8 +83,8 @@ public class HomeController {
      */
     @GetMapping("/alarm/export")
     @ApiOperation(value = "首页告警消息导出")
-    public <T> DataResponse<T> exportAlarmHistory(HttpServletResponse response) {
-        homeService.exportAlarmHistory(response);
+    public DataResponse<T> exportAlarmHistory() {
+        homeService.exportAlarmHistory();
         return DataResponse.success();
     }
 
@@ -115,12 +92,11 @@ public class HomeController {
      * 静音
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/mute")
     @ApiOperation(value = "静音")
-    public <T> DataResponse<T> mute(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> mute(@Valid @RequestBody List<Integer> ids) {
         homeService.mute(ids);
         return DataResponse.success();
     }
@@ -129,12 +105,11 @@ public class HomeController {
      * 解除静音
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/unmute")
     @ApiOperation(value = "解除静音")
-    public <T> DataResponse<T> unmute(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> unmute(@Valid @RequestBody List<Integer> ids) {
         homeService.unmute(ids);
         return DataResponse.success();
     }
@@ -144,14 +119,13 @@ public class HomeController {
      *
      * @param alarmVolume
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/volume")
     @ApiOperation(value = "调节音量")
-    public <T> DataResponse<T> adjustVolume(@RequestParam(required = false)
+    public DataResponse<T> adjustVolume(@RequestParam(required = false)
                                             @ApiParam("音量大小") String alarmVolume,
-                                            @Valid @RequestBody List<Integer> ids) {
+                                        @Valid @RequestBody List<Integer> ids) {
         homeService.adjustVolume(ids, alarmVolume);
         return DataResponse.success();
     }
@@ -160,12 +134,11 @@ public class HomeController {
      * 清除告警
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/clear")
     @ApiOperation(value = "清除告警")
-    public <T> DataResponse<T> clearAlarm(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> clearAlarm(@Valid @RequestBody List<Integer> ids) {
         homeService.clearAlarm(ids);
         return DataResponse.success();
     }
@@ -174,12 +147,11 @@ public class HomeController {
      * 确认告警
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/confirm")
     @ApiOperation(value = "确认告警")
-    public <T> DataResponse<T> confirmAlarm(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> confirmAlarm(@Valid @RequestBody List<Integer> ids) {
         homeService.confirmAlarm(ids);
         return DataResponse.success();
     }
@@ -188,12 +160,11 @@ public class HomeController {
      * 过滤告警
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/filter")
     @ApiOperation(value = "过滤告警")
-    public <T> DataResponse<T> filterAlarm(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> filterAlarm(@Valid @RequestBody List<Integer> ids) {
         homeService.filterAlarm(ids);
         return DataResponse.success();
     }
@@ -202,14 +173,12 @@ public class HomeController {
      * 恢复告警
      *
      * @param ids
-     * @param <T>
      * @return
      */
     @PostMapping("/alarm/recovery")
     @ApiOperation(value = "恢复告警")
-    public <T> DataResponse<T> recoveryAlarm(@Valid @RequestBody List<Integer> ids) {
+    public DataResponse<T> recoveryAlarm(@Valid @RequestBody List<Integer> ids) {
         homeService.recoveryAlarm(ids);
         return DataResponse.success();
     }
-
 }

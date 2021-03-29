@@ -9,14 +9,17 @@ import lombok.Data;
  */
 @ApiModel
 @Data
-public class HomeLineSituationResDTO {
+public class HomeAlarmStatusSituationResDTO {
 
-    @ApiModelProperty(value = "紧急告警数")
+    @ApiModelProperty(value = "告警总数")
+    private Long totalAlarmNum;
+
+    @ApiModelProperty(value = "紧急告警总数")
     private Long emergencyAlarmNum;
 
-    @ApiModelProperty(value = "严重告警数")
+    @ApiModelProperty(value = "严重告警总数")
     private Long seriousAlarmNum;
 
-    @ApiModelProperty(value = "一般告警数")
+    @ApiModelProperty(value = "一般告警总数")
     private Long generalAlarmNum;
 }

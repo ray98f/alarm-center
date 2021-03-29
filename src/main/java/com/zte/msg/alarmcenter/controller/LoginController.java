@@ -12,6 +12,7 @@ import com.zte.msg.alarmcenter.service.UserService;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -107,11 +108,14 @@ public class LoginController {
      */
     @PostMapping("/handover")
     @ApiOperation(value = "交接班")
-    public DataResponse<Map<String, Object>> handover(@RequestBody @Valid LoginReqDTO loginReqDTO) throws Exception {
+    public DataResponse<Map<String, Object>> handover(@RequestBody @Valid LoginReqDTO loginReqDTO,
+                                                      @RequestParam(required = false)
+                                                      @ApiParam("remark") String remark) throws Exception {
         UserReqDTO userInfo = userService.selectUserInfo(loginReqDTO);
         ChangeShifts changeShifts = new ChangeShifts();
         changeShifts.setByUserName(TokenUtil.getCurrentUserName());
         changeShifts.setToUserName(userInfo.getUserName());
+        changeShifts.setRemark(remark);
         changeShiftsService.addChangeShifts(changeShifts);
         Map<String, Object> data = new HashMap<>(16);
         String token = createSimpleToken(userInfo);
