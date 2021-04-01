@@ -106,4 +106,15 @@
                     ofType="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO" select="selectByPid" />
     </resultMap>
 
+    <update id="isOnline" parameterType="com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO">
+        <foreach collection="list" index="index" item="heartbeatQueueReqDTO" separator=";">
+            update subsystem set is_online=0, online_time=#{heartbeatQueueReqDTO.time} where sid=#{heartbeatQueueReqDTO.systemCode} and is_deleted=0
+        </foreach>
+    </update>
+
+    <update id="offline">
+        update subsystem set is_online=1 where is_online=0  and
+        now() - interval 12 second > online_time
+    </update>
+
 </mapper>

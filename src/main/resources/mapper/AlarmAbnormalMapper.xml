@@ -2,6 +2,69 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmAbnormalMapper">
 
+    <insert id="insertAlarmError">
+        insert into alarm_error
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmHistoryReqDTO.alarmTime!=null">
+                alarm_time,
+            </if>
+            <if test="alarmHistoryReqDTO.system!=null">
+                system_code,
+            </if>
+            <if test="alarmHistoryReqDTO.line!=null">
+                line_code,
+            </if>
+            <if test="alarmHistoryReqDTO.station!=null">
+                position_code,
+            </if>
+            <if test="alarmHistoryReqDTO.device!=null">
+                device_code,
+            </if>
+            <if test="alarmHistoryReqDTO.slot!=null">
+                slot_code,
+            </if>
+            <if test="alarmHistoryReqDTO.alarmCode!=null">
+                alarm_code,
+            </if>
+            <if test="ip!=null and ip!=''">
+                ip,
+            </if>
+            <if test="error!=null and error!=''">
+                error_content,
+            </if>
+        </trim>
+        value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmHistoryReqDTO.alarmTime!=null">
+                #{alarmHistoryReqDTO.alarmTime},
+            </if>
+            <if test="alarmHistoryReqDTO.system!=null">
+                #{alarmHistoryReqDTO.system},
+            </if>
+            <if test="alarmHistoryReqDTO.line!=null">
+                #{alarmHistoryReqDTO.line},
+            </if>
+            <if test="alarmHistoryReqDTO.station!=null">
+                #{alarmHistoryReqDTO.station},
+            </if>
+            <if test="alarmHistoryReqDTO.device!=null">
+                #{alarmHistoryReqDTO.device},
+            </if>
+            <if test="alarmHistoryReqDTO.slot!=null">
+                #{alarmHistoryReqDTO.slot},
+            </if>
+            <if test="alarmHistoryReqDTO.alarmCode!=null">
+                #{alarmHistoryReqDTO.alarmCode},
+            </if>
+            <if test="ip!=null and ip!=''">
+                #{ip},
+            </if>
+            <if test="error!=null and error!=''">
+                #{error},
+            </if>
+        </trim>
+    </insert>
+
     <select id="getAlarmAbnormalCount" resultType="java.lang.Integer">
         select
         count(1)
@@ -19,23 +82,23 @@
     </select>
     <select id="getAlarmAbnormal" resultType="com.zte.msg.alarmcenter.dto.res.AlarmAbnormalResDTO">
         select
-            t.id,
-            DATE_FORMAT(t.alarm_time, "%Y-%m-%d %T") as alarmTime,
-            t.system_code,
-            (select distinct t1.name from subsystem t1 where t1.sid = t.system_code and t1.is_deleted = 0) as systemName,
-            t.line_code,
-            (select distinct t2.name from `position` t2 where t2.position_code = t.line_code and t2.`type` = 1  and t2.is_deleted = 0) as lineName,
-            t.position_code,
-            (select distinct t3.name from `position` t3 where t3.position_code = t.position_code and t3.`type` = 3  and t3.is_deleted = 0) as positionName,
-            t.device_code,
-            (select distinct t4.name from device t4 where t4.device_code = t.device_code and t4.is_deleted = 0) as deviceName,
-            t.slot_code,
-            (select distinct t5.name from device_slot t5 where t5.slot_code = t.slot_code and t5.is_deleted = 0) as slotName,
-            t.alarm_code,
-            (select distinct t6.name from alarm_code t6 where t6.code = t.alarm_code and t6.is_deleted = 0) as alarmName,
-            t.ip,
-            DATE_FORMAT(t.created_at, "%Y-%m-%d %T") as createdAt,
-            t.error_content
+        t.id,
+        t.alarm_time,
+        t.system_code,
+        t.system_code as system_name,
+        t.line_code,
+        t.line_code as line_name,
+        t.position_code,
+        t.position_code as position_name,
+        t.device_code,
+        t.device_code as device_name,
+        t.slot_code,
+        t.slot_code as slot_name,
+        t.alarm_code,
+        t.alarm_code as alarm_name,
+        t.ip,
+        t.created_at,
+        t.error_content
         from alarm_error t
         where 1 = 1
         <if test="systemCode!=null">
@@ -47,6 +110,7 @@
         <if test="endTime!=null and endTime!=''">
             and t.alarm_time &lt;= #{endTime}
         </if>
+        order by t.created_at desc,t.id desc
         limit #{page},#{size}
     </select>
 </mapper>

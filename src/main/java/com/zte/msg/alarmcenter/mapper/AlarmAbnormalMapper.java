@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.mapper;
 
+import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmAbnormalResDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -11,6 +12,7 @@ import java.util.List;
 @Repository
 public interface AlarmAbnormalMapper {
 
+    Integer insertAlarmError(AlarmHistoryReqDTO alarmHistoryReqDTO, String ip, String error);
 
     Integer getAlarmAbnormalCount(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("systemCode") Long systemCode);
 

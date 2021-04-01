@@ -43,10 +43,9 @@ public class AsyncSender {
         return true;
     }
 
-    public boolean refresh() throws Exception {
+    public void refresh() throws Exception {
         rabbitTemplate.convertAndSend(RabbitMqConfig.REFRESH_QUEUE);
         log.info(String.format("Sender发送刷新结果：%s", true));
-        return true;
     }
 
     public boolean test() throws Exception {
@@ -58,7 +57,7 @@ public class AsyncSender {
         alarmHistoryReqDTO.setDevice(2);
         alarmHistoryReqDTO.setSlot(2);
         alarmHistoryReqDTO.setAlarmCode(2);
-        alarmHistoryReqDTO.setIsRecovery(true);
+        alarmHistoryReqDTO.setRecovery(true);
         alarmHistoryReqDTO.setAlarmTime(new Timestamp(System.currentTimeMillis()));
         List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList = new ArrayList<>();
         AlarmHistoryReqDTO.AlarmMessage alarmMessage1 = new AlarmHistoryReqDTO.AlarmMessage();
