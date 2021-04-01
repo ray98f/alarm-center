@@ -72,7 +72,7 @@
         left join alarm_code as ac on ac.id=ah.alarm_code and ac.is_deleted=0
         where ah.is_deleted=0
         and alarm_state in (0,1,2,3)
-        ORDER BY ah.alarm_level DESC,ah.final_time DESC,ah.id DESC
+        ORDER BY ah.alarm_level ASC,ah.final_time DESC,ah.id ASC
     </select>
 
     <update id="mute">
