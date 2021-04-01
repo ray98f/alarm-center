@@ -218,7 +218,7 @@
     </select>
 
     <select id="alarmResolutionEfficiency" resultType="com.zte.msg.alarmcenter.dto.res.AlarmResolutionEfficiencyResDTO">
-        select ah.alarm_level,TIMESTAMPDIFF(SECOND,ah.first_time,ah.recovery_time) as disposal_time,DATE_FORMAT(ah.final_time,
+        select ah.alarm_level,avg(TIMESTAMPDIFF(SECOND,ah.first_time,ah.recovery_time)) as disposal_time,DATE_FORMAT(ah.final_time,
         <if test="statisticsCycle==1">
             '%Y年%m月%d日'
         </if>

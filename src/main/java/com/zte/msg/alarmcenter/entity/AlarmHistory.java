@@ -15,7 +15,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class AlarmHistory extends BaseEntity{
+public class AlarmHistory extends BaseEntity {
 
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
@@ -62,11 +62,23 @@ public class AlarmHistory extends BaseEntity{
     @ApiModelProperty(value = "是否静音")
     private Integer isMute;
 
-    @ApiModelProperty(value = "告警状态(1待处理;2手动确认;3自动确认;4已清除;5手动过滤;6自动过滤)")
+    @ApiModelProperty(value = "告警状态(0待处理;1延迟告警;2手动确认;3自动确认;4手动过滤;5自动过滤;6手动清除;7自动清除)")
     private Integer alarmState;
 
     @ApiModelProperty(value = "告警恢复时间")
     private Timestamp recoveryTime;
+
+    @ApiModelProperty(value = "告警延迟时间")
+    private Timestamp delayTime;
+
+    @ApiModelProperty(value = "告警升级频次")
+    private Integer alarmFrequency;
+
+    @ApiModelProperty(value = "告警升级频次单位时间")
+    private Long frequencyTime;
+
+    @ApiModelProperty(value = "告警升级精力时间")
+    private Long experienceTime;
 
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;

@@ -73,7 +73,7 @@ public class HomeServiceImpl implements HomeService {
         for (HomeStationSituationResDTO homeStationSituationResDTO : list) {
             List<HomeStationSituationResDTO.Station> stationList = homeMapper.stationSituation(homeStationSituationResDTO.getLineId());
             if (null == stationList || stationList.isEmpty()) {
-                log.warn("{}路线下无站点信息",homeStationSituationResDTO.getLineId());
+                log.warn("{}路线下无站点信息", homeStationSituationResDTO.getLineId());
                 continue;
             }
             homeStationSituationResDTO.setStationList(stationList);
@@ -261,6 +261,24 @@ public class HomeServiceImpl implements HomeService {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
         int result = homeMapper.recoveryAlarm(ids);
+        if (result < 0) {
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+    }
+
+    /**
+     * 修改响铃
+     *
+     * @param isRing
+     * @param ids
+     * @return
+     */
+    @Override
+    public void updateIsRing(Integer isRing, List<Long> ids) {
+        if (null == isRing || ids.isEmpty()) {
+            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        int result = homeMapper.updateIsRing(isRing, ids);
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }

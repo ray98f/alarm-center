@@ -103,4 +103,12 @@ public interface HomeService {
      * @return
      */
     void recoveryAlarm(List<Integer> ids);
+
+    /**
+     * 修改响铃
+     * @param isRing
+     * @param ids
+     * @return
+     */
+    void updateIsRing(Integer isRing, List<Long> ids);
 }

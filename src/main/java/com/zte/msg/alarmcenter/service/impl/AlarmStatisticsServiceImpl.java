@@ -171,10 +171,10 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
         StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
+        data.setEmergencyAlarmNum(0L);
+        data.setGeneralAlarmNum(0L);
+        data.setSeriousAlarmNum(0L);
         for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
-            data.setEmergencyAlarmNum(0L);
-            data.setGeneralAlarmNum(0L);
-            data.setSeriousAlarmNum(0L);
             if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
                 data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
             } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {

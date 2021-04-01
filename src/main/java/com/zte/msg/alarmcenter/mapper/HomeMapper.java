@@ -33,7 +33,7 @@ public interface HomeMapper {
     List<HomeStationSituationResDTO> selectAllLine();
 
     /**
-     * 获取线路下的站点信息
+     * 获取线路下站点信息
      * @param lineId
      * @return
      */
@@ -102,4 +102,12 @@ public interface HomeMapper {
      * @return
      */
     int recoveryAlarm(List<Integer> ids);
+
+    /**
+     * 修改响铃
+     * @param isRing
+     * @param ids
+     * @return
+     */
+    int updateIsRing(Integer isRing, List<Long> ids);
 }

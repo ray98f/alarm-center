@@ -37,7 +37,7 @@ public class AlarmHistoryReqDTO implements Serializable {
     private Timestamp alarmTime;
 
     @ApiModelProperty(value = "故障恢复标识 true 恢复 false 故障")
-    private Boolean isRecovery;
+    private Boolean recovery;
 
     @ApiModelProperty(value = "告警附加信息")
     private List<AlarmMessage> alarmMessageList;

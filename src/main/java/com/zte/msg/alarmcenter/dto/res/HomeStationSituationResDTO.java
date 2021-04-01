@@ -24,6 +24,10 @@ public class HomeStationSituationResDTO {
 
     @Data
     public static class Station {
+
+        @ApiModelProperty(value = "线路id")
+        private Long lineId;
+
         @ApiModelProperty(value = "车站id")
         private Long stationId;
 
@@ -57,13 +61,13 @@ public class HomeStationSituationResDTO {
             private String subsystemName;
 
             @ApiModelProperty(value = "紧急告警数")
-            private Long emergencyAlarmNum;
+            private Long sysEmergencyAlarmNum;
 
             @ApiModelProperty(value = "严重告警数")
-            private Long seriousAlarmNum;
+            private Long sysSeriousAlarmNum;
 
             @ApiModelProperty(value = "一般告警数")
-            private Long generalAlarmNum;
+            private Long sysGeneralAlarmNum;
         }
     }
 }

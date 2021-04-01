@@ -47,9 +47,9 @@ mybatis-plus:
   mapper-locations: classpath:/mapper/*.xml
   type-aliases-package: com.zte.msg.alarmcenter.entity
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     multiple-result-sets-enabled: true
-#    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     map-underscore-to-camel-case: true
   global-config:
     db-config:

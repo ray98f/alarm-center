@@ -3,6 +3,8 @@ package com.zte.msg.alarmcenter.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.sql.Timestamp;
+
 /**
  * description:
  *
@@ -26,4 +28,6 @@ public class Subsystem extends BaseEntity {
     private String icon;
 
     private Integer isOnline;
+
+    private Timestamp onlineTime;
 }

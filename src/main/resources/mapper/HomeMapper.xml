@@ -2,56 +2,77 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.HomeMapper">
     <select id="alarmStatusSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeAlarmStatusSituationResDTO">
-        select (select count(*) from alarm_history where is_deleted=0) as total_alarm_num,
-        (select count(*) from alarm_history where is_deleted=0 and alarm_level=1) as emergency_alarm_num,
-        (select count(*) from alarm_history where is_deleted=0 and alarm_level=2) as serious_alarm_num,
-        (select count(*) from alarm_history where is_deleted=0 and alarm_level=3) as general_alarm_num
+        select (select count(*) from alarm_history where is_deleted=0 and alarm_state in(0,1,2,3)) as total_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=1 and alarm_state in(0,1,2,3)) as emergency_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=2 and alarm_state in(0,1,2,3)) as serious_alarm_num,
+        (select count(*) from alarm_history where is_deleted=0 and alarm_level=3 and alarm_state in(0,1,2,3)) as general_alarm_num
     </select>
 
     <select id="subsystemSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeSubsystemSituationResDTO">
         select a.subsystem_name,a.is_online,
-        ifnull(sum(case when ah.alarm_level=1 then 1 end),0) as emergency_alarm_num,
-        ifnull(sum(case when ah.alarm_level=2 then 1 end),0) as serious_alarm_num,
-        ifnull(sum(case when ah.alarm_level=3 then 1 end),0) as general_alarm_num
-        from (SELECT p.id as pid,s.id as sid,concat(p.name,s.name) as subsystem_name,s.is_online
+        ifnull(sum(case when ah.alarm_level=1 and alarm_state in(0,1,2,3) then 1 end),0) as emergency_alarm_num,
+        ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as serious_alarm_num,
+        ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
+        from (SELECT p.id as pid,s.id as sid,p.sort as p_sort,s.sort as s_sort,concat(p.name,s.name) as subsystem_name,s.is_online
         FROM position as p join subsystem as s where p.type=2 and p.is_deleted=0 and s.is_deleted=0) as a
         left join alarm_history as ah on a.sid=ah.subsystem_id and a.pid=ah.line_id and ah.is_deleted=0 group by a.subsystem_name
-        order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc
-    </select>
-
-    <select id="selectAllLine" resultType="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO">
-        SELECT id as line_id, name as line_name FROM position where type=2 and is_deleted=0
+        order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,a.p_sort asc,a.s_sort asc
     </select>
 
     <resultMap id="stationDTO" type="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO$Station">
         <id property="stationId" column="station_id"/>
+        <result property="lineId" column="line_id"/>
         <result property="stationName" column="station_name"/>
         <result property="coordinate" column="coordinate"/>
         <result property="emergencyAlarmNum" column="emergency_alarm_num"/>
         <result property="seriousAlarmNum" column="serious_alarm_num"/>
         <result property="generalAlarmNum" column="general_alarm_num"/>
-        <collection property="subsystemList" javaType="ArrayList" ofType="SelectionEntity" select="subsystemSituationByStation" column="stationId"/>
+        <collection property="subsystemList" javaType="java.util.ArrayList" ofType="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO$Station$Subsystem" select="subsystemSituationByStation" column="{lineId=line_id,stationId=station_id}">
+            <id property="subsystemList.subsystemId" column="subsystem_id"/>
+            <result property="subsystemList.subsystemName" column="subsystem_name"/>
+            <result property="subsystemList.sysEmergencyAlarmNum" column="sys_emergency_alarm_num"/>
+            <result property="subsystemList.sysSeriousAlarmNum" column="sys_serious_alarm_num"/>
+            <result property="subsystemList.sysGeneralAlarmNum" column="sys_general_alarm_num"/>
+        </collection>
     </resultMap>
 
-    <select id="stationSituation" resultMap="stationDTO">
-
+    <select id="selectAllLine" resultType="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO">
+        SELECT id as line_id, name as line_name FROM position where type=2 and is_deleted=0
     </select>
 
-    <select id="subsystemSituationByStation" resultMap="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO$Station$Subsystem">
+    <select id="stationSituation" resultMap="stationDTO">
+        select p.id as station_id,p.name as station_name,p.coordinate,#{lineId} as line_id,
+        ifnull(sum(case when ah.alarm_level=1 and alarm_state in(0,1,2,3) then 1 end),0) as emergency_alarm_num,
+        ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as serious_alarm_num,
+        ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
+        from position as p left join alarm_history as ah on ah.site_id=p.id and ah.line_id=#{lineId} and ah.is_deleted=0
+        where p.p_id=#{lineId} and p.type=3 and p.is_deleted=0 group by station_id
+        order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,p.sort asc
+    </select>
 
+    <select id="subsystemSituationByStation" resultType="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO$Station$Subsystem">
+        select s.id as subsystem_id,s.name as subsystem_name,
+        ifnull(sum(case when ah.alarm_level=1 and alarm_state in(0,1,2,3) then 1 end),0) as sys_emergency_alarm_num,
+        ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as sys_serious_alarm_num,
+        ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as sys_general_alarm_num
+        from subsystem as s left join alarm_history as ah on ah.subsystem_id=s.id and ah.site_id=#{stationId} and ah.line_id=#{lineId}
+        and ah.is_deleted=0 where s.is_deleted=0 group by s.id
+        order by sys_emergency_alarm_num desc,sys_serious_alarm_num desc,sys_general_alarm_num desc,s.sort asc
     </select>
 
     <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
         SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
-        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ah.alarm_code,
-        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.frequency,
+        ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
+        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.is_ring,ah.frequency,
         ah.alarm_volume,ah.alarm_state,ah.alarm_remark FROM alarm_history as ah
         left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
         left join position as p on p.id=ah.site_id and p.is_deleted=0
         left join device as d on d.id=ah.device_id and d.is_deleted=0
-        left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0 where ah.is_deleted=0
+        left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0
+        left join alarm_code as ac on ac.id=ah.alarm_code and ac.is_deleted=0
+        where ah.is_deleted=0
         and alarm_state in (0,1,2,3)
-        ORDER BY ah.updated_at DESC
+        ORDER BY ah.updated_at DESC,ah.alarm_level DESC,ah.id DESC
     </select>
 
     <update id="mute">
@@ -79,7 +100,7 @@
     </update>
 
     <update id="clearAlarm">
-        update alarm_history set alarm_state=4 where id in (
+        update alarm_history set alarm_state=6,recovery_time=now() where id in (
         <foreach collection="list" index="index" item="id" separator=",">
             #{id}
         </foreach>
@@ -95,7 +116,7 @@
     </update>
 
     <update id="filterAlarm">
-        update alarm_history set alarm_state=5 where id in (
+        update alarm_history set alarm_state=4 where id in (
         <foreach collection="list" index="index" item="id" separator=",">
             #{id}
         </foreach>
@@ -103,10 +124,19 @@
     </update>
 
     <update id="recoveryAlarm">
-        update alarm_history set alarm_state=1 where id in (
+        update alarm_history set alarm_state=0 where id in (
         <foreach collection="list" index="index" item="id" separator=",">
             #{id}
         </foreach>
         )
     </update>
+
+    <update id="updateIsRing">
+        update alarm_history set is_ring=#{isRing} where id in (
+        <foreach collection="ids" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </update>
+
 </mapper>

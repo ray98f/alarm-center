@@ -78,4 +78,12 @@ public interface AlarmManageMapper {
      * @return
      */
     Long getAlarmHistoryId(AlarmHistory alarmHistory);
+
+    /**
+     * 修改延迟参数
+     *
+     * @param id
+     * @return
+     */
+    int updateDelayHistory(Long id);
 }

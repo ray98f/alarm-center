@@ -3,17 +3,20 @@ package com.zte.msg.alarmcenter.controller;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.service.HomeService;
+import com.zte.msg.alarmcenter.utils.AsyncSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -31,6 +34,10 @@ public class HomeController {
 
     @Resource
     private HomeService homeService;
+
+    @Autowired
+    AsyncSender asyncSender;
+
 
     /**
      * 告警情况查询
@@ -62,7 +69,7 @@ public class HomeController {
     @GetMapping("/station")
     @ApiOperation(value = "车站状况查询")
     public DataResponse<List<HomeStationSituationResDTO>> stationSituation() {
-        return DataResponse.success();
+        return DataResponse.of(homeService.stationSituation());
     }
 
     /**
@@ -179,6 +186,32 @@ public class HomeController {
     @ApiOperation(value = "恢复告警")
     public DataResponse<T> recoveryAlarm(@Valid @RequestBody List<Integer> ids) {
         homeService.recoveryAlarm(ids);
+        return DataResponse.success();
+    }
+
+    /**
+     * 告警记录刷新
+     *
+     * @return
+     */
+    @GetMapping("/alarm/refresh")
+    @ApiOperation(value = "告警记录刷新")
+    public DataResponse<T> refreshAlarm() throws Exception {
+        asyncSender.refresh();
+        return DataResponse.success();
+    }
+
+    /**
+     * 修改响铃
+     *
+     * @return
+     */
+    @PostMapping("/alarm/ring")
+    @ApiOperation(value = "修改响铃")
+    public DataResponse<T> alarmRing(@RequestBody Map<String, Object> map) throws Exception {
+        Integer isRing = (Integer) map.get("isRing");
+        List<Long> ids = (List<Long>) map.get("ids");
+        homeService.updateIsRing(isRing, ids);
         return DataResponse.success();
     }
 }
