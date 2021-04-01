@@ -56,9 +56,7 @@ public class PositionController {
     public DataResponse<Void> addPosition(@RequestBody PositionReqDTO reqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        if (null != tokenInfo) {
-            reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
-        }
+        reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
         myPositionService.addPosition(reqDTO);
         return DataResponse.success();
     }
@@ -70,9 +68,7 @@ public class PositionController {
                                              ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        if (null != tokenInfo) {
-            reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
-        }
+        reqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
         myPositionService.modifyPosition(id, reqDTO);
         return DataResponse.success();
     }

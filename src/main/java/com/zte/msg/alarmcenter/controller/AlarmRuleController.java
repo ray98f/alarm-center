@@ -43,7 +43,7 @@ public class AlarmRuleController {
     public DataResponse<Void> addAlarmRule(@RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmRuleService.addAlarmRule(alarmRuleReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
+        alarmRuleService.addAlarmRule(alarmRuleReqDTO, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -62,7 +62,7 @@ public class AlarmRuleController {
     public DataResponse<Void> modifyAlarmRule(@PathVariable("id") Long id, @RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmRuleService.modifyAlarmRule(alarmRuleReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserId());
+        alarmRuleService.modifyAlarmRule(alarmRuleReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 

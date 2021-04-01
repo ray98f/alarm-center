@@ -49,7 +49,7 @@ public class AlarmLevelController {
                                                       ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        alarmLevelService.modifyAlarmLevel(id, alarmLevelReqDTO,tokenInfo==null?null:tokenInfo.getUserId());
+        alarmLevelService.modifyAlarmLevel(id, alarmLevelReqDTO,tokenInfo==null?null:tokenInfo.getUserName());
         return DataResponse.success();
     }
 

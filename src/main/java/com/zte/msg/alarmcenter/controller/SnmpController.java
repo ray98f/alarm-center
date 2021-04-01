@@ -45,7 +45,7 @@ public class SnmpController {
     public DataResponse<T> importSnmpSlot(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -64,7 +64,7 @@ public class SnmpController {
     public DataResponse<Void> addSnmpSlot(@RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.addSnmpSlot(slotModifyReqDTO, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.addSnmpSlot(slotModifyReqDTO, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -73,7 +73,7 @@ public class SnmpController {
     public DataResponse<Void> modifySnmpSlot(@PathVariable("id") Long id, @RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.modifySnmpSlot(slotModifyReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.modifySnmpSlot(slotModifyReqDTO, id, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -100,7 +100,7 @@ public class SnmpController {
     public DataResponse<T> importSnmpAlarmCode(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.importSnmpAlarmCode(file, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.importSnmpAlarmCode(file, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -119,7 +119,7 @@ public class SnmpController {
     public DataResponse<Void> addSSnmpAlarmCode(@RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.addSSnmpAlarmCode(snmpAlarmCode, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.addSSnmpAlarmCode(snmpAlarmCode, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 
@@ -128,7 +128,7 @@ public class SnmpController {
     public DataResponse<Void> modifySnmpAlarmCode(@PathVariable("id") Long id, @RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mySlotService.modifySnmpAlarmCode(snmpAlarmCode, id, tokenInfo == null ? null : tokenInfo.getUserId());
+        mySlotService.modifySnmpAlarmCode(snmpAlarmCode, id, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 

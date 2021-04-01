@@ -37,7 +37,7 @@ public class AlarmCodeController {
         public DataResponse<T> importAlarmCode(@RequestParam MultipartFile file, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.importDevice(file, tokenInfo==null?null:tokenInfo.getUserId());
+                alarmCodeService.importDevice(file, tokenInfo==null?null:tokenInfo.getUserName());
                 return DataResponse.success();
         }
 
@@ -57,7 +57,7 @@ public class AlarmCodeController {
         public DataResponse<Void> addAlarmCode(@RequestBody AlarmCodeReqDTO alarmCodeReqDTO, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.addAlarmCode(alarmCodeReqDTO, tokenInfo==null?null:tokenInfo.getUserId());
+                alarmCodeService.addAlarmCode(alarmCodeReqDTO, tokenInfo==null?null:tokenInfo.getUserName());
                 return DataResponse.success();
         }
 
@@ -66,7 +66,7 @@ public class AlarmCodeController {
         public DataResponse<Void> modifyAlarmCode(@PathVariable("id") Long id, @RequestBody AlarmCodeReqDTO alarmCodeReqDTO, ServletRequest request) {
                 HttpServletRequest httpRequest = (HttpServletRequest) request;
                 SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-                alarmCodeService.modifyAlarmCode(alarmCodeReqDTO, id, tokenInfo==null?null:tokenInfo.getUserId());
+                alarmCodeService.modifyAlarmCode(alarmCodeReqDTO, id, tokenInfo==null?null:tokenInfo.getUserName());
                 return DataResponse.success();
         }
 

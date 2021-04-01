@@ -48,9 +48,7 @@ public class ChildSystemController {
                                                     ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        if (null != tokenInfo) {
-            childSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
-        }
+        childSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
         myChildSystemService.addChildSystemConfigs(childSystemConfigReqDTO);
         return DataResponse.success();
     }
@@ -69,9 +67,7 @@ public class ChildSystemController {
                                                       ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        if (null != tokenInfo) {
-            ChildSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserId());
-        }
+        ChildSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
         myChildSystemService.modifyChildSystemConfig(id, ChildSystemConfigReqDTO);
         return DataResponse.success();
     }

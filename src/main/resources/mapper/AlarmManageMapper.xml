@@ -12,7 +12,7 @@
         <result property="deviceId" column="device_id"/>
         <result property="deviceName" column="device_name"/>
         <result property="slotId" column="slot_id"/>
-        <result property="slotPosition" column="slot_name"/>
+        <result property="slotPosition" column="slot_position"/>
         <result property="alarmLevel" column="alarm_level"/>
         <result property="alarmCode" column="alarm_code"/>
         <result property="alarmName" column="alarm_name"/>
