@@ -13,7 +13,7 @@
         ifnull(sum(case when ah.alarm_level=1 and alarm_state in(0,1,2,3) then 1 end),0) as emergency_alarm_num,
         ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as serious_alarm_num,
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
-        from (SELECT p.id as pid,s.id as sid,p.sort as p_sort,s.sort as s_sort,concat(p.name,s.name) as subsystem_name,s.is_online
+        from (SELECT p.id as pid,s.id as sid,p.sort as p_sort,s.sort as s_sort,s.name as subsystem_name,s.is_online
         FROM position as p join subsystem as s where p.type=2 and p.is_deleted=0 and s.is_deleted=0) as a
         left join alarm_history as ah on a.sid=ah.subsystem_id and a.pid=ah.line_id and ah.is_deleted=0 group by a.subsystem_name
         order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,a.p_sort asc,a.s_sort asc
@@ -47,7 +47,7 @@
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
         from position as p left join alarm_history as ah on ah.site_id=p.id and ah.line_id=#{lineId} and ah.is_deleted=0
         where p.p_id=#{lineId} and p.type=3 and p.is_deleted=0 group by station_id
-        order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,p.sort asc
+        order by p.sort asc
     </select>
 
     <select id="subsystemSituationByStation" resultType="com.zte.msg.alarmcenter.dto.res.HomeStationSituationResDTO$Station$Subsystem">
@@ -57,7 +57,7 @@
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as sys_general_alarm_num
         from subsystem as s left join alarm_history as ah on ah.subsystem_id=s.id and ah.site_id=#{stationId} and ah.line_id=#{lineId}
         and ah.is_deleted=0 where s.is_deleted=0 group by s.id
-        order by sys_emergency_alarm_num desc,sys_serious_alarm_num desc,sys_general_alarm_num desc,s.sort asc
+        order by s.sort asc
     </select>
 
     <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
