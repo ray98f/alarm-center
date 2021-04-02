@@ -77,8 +77,11 @@ public class AlarmHistory extends BaseEntity {
     @ApiModelProperty(value = "告警升级频次单位时间")
     private Long frequencyTime;
 
-    @ApiModelProperty(value = "告警升级精力时间")
+    @ApiModelProperty(value = "告警升级经历时间")
     private Long experienceTime;
+
+    @ApiModelProperty(value = "告警升级等级")
+    private Integer alarmUpdateLevel;
 
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;

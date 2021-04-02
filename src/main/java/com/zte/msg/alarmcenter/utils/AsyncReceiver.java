@@ -10,10 +10,7 @@ import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
-import com.zte.msg.alarmcenter.mapper.AlarmAbnormalMapper;
-import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
-import com.zte.msg.alarmcenter.mapper.ChildSystemMapper;
-import com.zte.msg.alarmcenter.mapper.SynchronizeMapper;
+import com.zte.msg.alarmcenter.mapper.*;
 import com.zte.msg.alarmcenter.utils.task.DataCacheTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -48,6 +45,9 @@ public class AsyncReceiver {
 
     @Autowired
     private ChildSystemMapper childSystemMapper;
+
+    @Autowired
+    private AlarmRuleMapper alarmRuleMapper;
 
     @RabbitListener(queues = RabbitMqConfig.STRING_QUEUE)
     @RabbitHandler
@@ -260,6 +260,14 @@ public class AsyncReceiver {
                         alarmHistory.setAlarmFrequency(m.getValue().getFrequency());
                         alarmHistory.setFrequencyTime(m.getValue().getFrequencyTime());
                         alarmHistory.setExperienceTime(m.getValue().getExperienceTime());
+                        break;
+                    } else if (m.getValue().getType() == 7) {
+                        if (m.getValue().getMsgConfigId() == null) {
+                            alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
+                            continue;
+                        } else {
+                            alarmRuleMapper.insertMsgPush(m.getValue().getMsgConfigId(), JSON.toJSONString(alarmReqDTO));
+                        }
                         break;
                     }
                 }
