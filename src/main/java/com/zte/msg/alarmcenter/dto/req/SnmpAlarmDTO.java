@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * description:
@@ -17,23 +20,43 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class SnmpAlarmDTO {
 
-    @ApiModelProperty(value = "系统名称")
-    @NotNull(message = "32000006")
-    private Long systemId;
+    /**
+     * 线路编号
+     */
+    private int lineCode;
+    /**
+     * 系统编号
+     */
+    private int systemCode;
+    /**
+     * 是否清除告警 false 正常告警  true 消除告警
+     */
+    private boolean cleared;
+    /**
+     * 告警位置名称
+     */
+    private String alarmManagedObjectInstanceName;
+    /**
+     * 告警特殊原因
+     */
+    private String alarmSpecificProblem;
+    /**
+     * 告警码
+     */
+    private String emsAlarmCode;
+    /**
+     * 网元类型
+     */
+    private String alarmNetype;
 
-    @ApiModelProperty(value = "线路id")
-    private String positionId;
+    /**
+     * 告警时间
+     */
+    private Timestamp alarmTime;
 
-    @ApiModelProperty(value = "告警码")
-    private String code;
-
-    @ApiModelProperty(value = "网元类型")
-    private String elementType;
-
-    @ApiModelProperty(value = "SNMP码")
-    private String snmpCode;
-
-    @ApiModelProperty(value = "告警原因")
-    private String reason;
+    /**
+     * 附加信息
+     */
+    private List<AlarmHistoryReqDTO.AlarmMessage> messages;
 
 }

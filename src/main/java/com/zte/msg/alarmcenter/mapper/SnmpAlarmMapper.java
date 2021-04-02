@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.mapper;
 
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
+import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.req.SnmpAlarmCodeReqDTO;
 import com.zte.msg.alarmcenter.dto.req.SnmpSlotModifyReqDTO;
 import com.zte.msg.alarmcenter.dto.req.SnmpSlotReqDTO;
@@ -16,32 +17,7 @@ import java.util.List;
 @Repository
 public interface SnmpAlarmMapper {
 
-    Integer importDevice(@Param("list") List<SnmpSlotReqDTO> list, @Param("userId") String userId);
+    AlarmHistoryReqDTO getAlarmHistoryBySnmpName(String snmpName);
 
-    List<SnmpSlotResDTO> exportDevice(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId,
-                                      @Param("siteId") Long siteId, @Param("pageReq") PageReqDTO pageReq);
-
-    Integer addSnmpSlot(@Param("slotModifyReqDTO") SnmpSlotModifyReqDTO slotModifyReqDTO, @Param("userId") String userId);
-
-    Integer modifySnmpSlot(@Param("slotModifyReqDTO") SnmpSlotModifyReqDTO slotModifyReqDTO, @Param("id") Long id, @Param("userId") String userId);
-
-    Integer deleteSnmpSlot(@Param("id") Long id);
-
-    Integer getSnmpSlotCount(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId, @Param("siteId") Long siteId);
-
-    List<SnmpSlotResDTO> getSnmpSlot(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId, @Param("siteId") Long siteId, @Param("page") Long page, @Param("size") Long size);
-
-    Integer importSnmpAlarmCode(@Param("list") List<SnmpAlarmCodeReqDTO> list, @Param("userId") String userId);
-
-    List<SnmpAlarmCodeResDTO> exportSnmpAlarmCode(@Param("alarmCode") String alarmCode, @Param("systemId") Long systemId);
-
-    Integer addSSnmpAlarmCode(@Param("snmpAlarmCode") SnmpAlarmCodeReqDTO snmpAlarmCode, @Param("userId") String userId);
-
-    Integer modifySnmpAlarmCode(@Param("snmpAlarmCode") SnmpAlarmCodeReqDTO snmpAlarmCode, @Param("id") Long id, @Param("userId") String userId);
-
-    Integer deleteSnmpAlarmCode(@Param("id") Long id);
-
-    int getSnmpAlarmCodeCount(@Param("code") String code, @Param("systemId") Long systemId);
-
-    List<SnmpAlarmCodeResDTO> getSnmpAlarmCode(@Param("code") String code, @Param("systemId") Long systemId, @Param("page") Long page, @Param("size") Long size);
+    Integer getAlarmCodeBySnmpInfo(int systemId, String emsAlarmCode, String alarmNetype, String reason);
 }
