@@ -226,7 +226,18 @@
         and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0
     </select>
 
-    <update id="updateDelayHistory">
-        UPDATE alarm_history SET alarm_state=0 where id=#{id}
+    <update id="updateDelayAlarmHistory">
+        UPDATE alarm_history SET alarm_state=0 where alarm_state=1 and delay_time is not null
+        and now()>=delay_time and is_deleted=0
+    </update>
+
+<!--    <update id="updateFrequencyAlarmHistory">-->
+<!--        UPDATE alarm_history SET alarm_level=alarm_update_level where is_deleted=0 and frequency>=alarm_frequency-->
+<!--        and frequency_time is not null and experience_time is null-->
+<!--    </update>-->
+
+    <update id="updateExperienceAlarmHistory">
+        UPDATE alarm_history SET alarm_level=alarm_update_level where is_deleted=0 and experience_time is not null
+        and alarm_level!=alarm_update_level and now()>=date_add(first_time,interval experience_time minute_second)
     </update>
 </mapper>

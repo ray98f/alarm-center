@@ -32,12 +32,7 @@ public class AlarmRuleTask {
     @Async
     public void alarmDelayRuleTask() {
         log.info("-----------  告警延迟规则修改开始  -----------");
-        Timestamp now = new Timestamp(System.currentTimeMillis());
-        for (Map.Entry<Long, AlarmHistory> m : DataCacheTask.alarmDelayHistoryData.entrySet()) {
-            if (m.getValue().getDelayTime().before(now)) {
-                alarmManageMapper.updateDelayHistory(m.getValue().getId());
-            }
-        }
+        alarmManageMapper.updateDelayAlarmHistory();
         log.info("-----------  告警延迟规则修改结束  -----------");
     }
 
@@ -48,8 +43,8 @@ public class AlarmRuleTask {
     @Async
     public void alarmUpdateRuleTask() {
         log.info("-----------  告警升级规则修改开始  -----------");
-        System.out.println(DataCacheTask.alarmUpdateFrequencyHistoryData.size());
-        System.out.println(DataCacheTask.alarmUpdateExperienceHistoryData.size());
+//        alarmManageMapper.updateFrequencyAlarmHistory();
+        alarmManageMapper.updateExperienceAlarmHistory();
         log.info("-----------  告警升级规则修改结束  -----------");
     }
 

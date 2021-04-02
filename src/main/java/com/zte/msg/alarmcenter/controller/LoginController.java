@@ -121,6 +121,8 @@ public class LoginController {
         String token = createSimpleToken(userInfo);
         log.info("{} Token返回成功", userInfo.getUserName());
         data.put("token", token);
+        data.put("userName", userInfo.getUserName());
+        data.put("userRealName", userInfo.getUserRealName());
         log.info("交接班成功");
         return DataResponse.of(data);
     }

@@ -4,7 +4,6 @@ import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
-import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO;
@@ -63,4 +62,12 @@ public interface AlarmRuleMapper {
      * @return
      */
     List<AlarmCodeResDTO> getAlarmCodes(@Param("systemIds") List<Long> systemIds);
+
+    /**
+     * 新增前转告警推送记录
+     *
+     * @param msgConfigId
+     * @param content
+     */
+    void insertMsgPush(Long msgConfigId, String content);
 }

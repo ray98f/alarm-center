@@ -15,6 +15,11 @@
         <result property="type" column="type"/>
         <result property="name" column="name"/>
         <result property="isEnable" column="is_enable"/>
+        <result property="delayTime" column="delay_time"/>
+        <result property="frequency" column="frequency"/>
+        <result property="frequencyTime" column="frequency_time"/>
+        <result property="experienceTime" column="experience_time"/>
+        <result property="msgConfigId" column="msg_config_id"/>
         <collection property="systemIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterSystem" column="id"/>
         <collection property="positionIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterPosition" column="id"/>
         <collection property="deviceIds" javaType="ArrayList" ofType="SelectionEntity" select="selectFilterDevice" column="id"/>
@@ -88,33 +93,5 @@
     <select id="selectPositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
         select * from position where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
         (#{endTime}>=updated_at and updated_at>=#{startTime})
-    </select>
-
-    <select id="selectDelayAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and alarm_state=1 and delay_time is not null
-    </select>
-
-    <select id="selectDelayAlarmHistoryByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and alarm_state=1 and delay_time is not null and
-        (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
-    </select>
-
-    <select id="selectUpdateFrequencyAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and frequency is not null and frequency_time is not null and experience_time is null
-    </select>
-
-    <select id="selectUpdateFrequencyAlarmHistoryByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and frequency is not null and frequency_time is not null and experience_time is null and
-        (#{endTime}>=created_at and created_at>=#{startTime}) or (#{endTime}>=updated_at and updated_at>=#{startTime})
-    </select>
-
-    <select id="selectUpdateExperienceAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and frequency is null and frequency_time is null and experience_time is not null
-    </select>
-
-    <select id="selectUpdateExperienceAlarmHistoryByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        select * from alarm_history where is_deleted=0 and frequency is null and frequency_time is null and experience_time is not null and
-        (#{endTime}>=created_at and created_at>=#{startTime}) or (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 </mapper>

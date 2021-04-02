@@ -230,4 +230,8 @@
             )
         </if>
     </select>
+    <insert id="insertMsgPush">
+        INSERT INT msg_push_history(msg_config_id, content)
+        VALUE(#{msgConfigId},#{content})
+    </insert>
 </mapper>
