@@ -7,6 +7,7 @@ import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 
 import java.util.List;
 
@@ -36,4 +37,11 @@ public interface AlarmRuleService {
      * @return
      */
     List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds);
+
+    /**
+     * 获取前转消息推送配置列表
+     *
+     * @return
+     */
+    List<MsgConfig> getMsgConfigs();
 }

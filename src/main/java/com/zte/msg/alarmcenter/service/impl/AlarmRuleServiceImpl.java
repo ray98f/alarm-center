@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmRuleMapper;
@@ -217,5 +218,20 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
             return null;
         }
         return alarmCodeResDTOList;
+    }
+
+    /**
+     * 获取前转消息推送配置列表
+     *
+     * @return
+     */
+    @Override
+    public List<MsgConfig> getMsgConfigs() {
+        List<MsgConfig> msgConfigs = alarmRuleMapper.getMsgConfigs();
+        if (null == msgConfigs || msgConfigs.isEmpty()) {
+            log.warn("消息推送配置列表无数据");
+            return null;
+        }
+        return msgConfigs;
     }
 }

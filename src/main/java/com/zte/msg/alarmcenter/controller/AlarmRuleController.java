@@ -6,6 +6,7 @@ import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.dto.req.*;
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 import com.zte.msg.alarmcenter.service.AlarmLevelService;
 import com.zte.msg.alarmcenter.service.AlarmRuleService;
 import io.swagger.annotations.Api;
@@ -92,4 +93,9 @@ public class AlarmRuleController {
         return DataResponse.of(alarmRuleService.getAlarmCodes(alarmRuleDeviceReqDTO.getSystemIds()));
     }
 
+    @PostMapping("/msg")
+    @ApiOperation(value = "获取前转消息推送配置列表")
+    public DataResponse<List<MsgConfig>> getMsgConfigs() {
+        return DataResponse.of(alarmRuleService.getMsgConfigs());
+    }
 }

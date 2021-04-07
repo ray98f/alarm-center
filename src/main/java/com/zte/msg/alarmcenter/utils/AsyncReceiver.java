@@ -165,6 +165,7 @@ public class AsyncReceiver {
             AlarmHistory alarmHistory = new AlarmHistory();
             if (null != DataCacheTask.subsystemData.get(alarmReqDTO.getSystem())) {
                 alarmHistory.setSubsystemId(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getId());
+                alarmHistory.setSubsystemCode(alarmReqDTO.getSystem());
             }
             if (alarmHistory.getSubsystemId() == null) {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "系统数据异常，未找到系统 | Data: " + JSON.toJSONString(alarmReqDTO));
@@ -173,6 +174,7 @@ public class AsyncReceiver {
             for (Map.Entry<Long, Position> m : DataCacheTask.positionData.entrySet()) {
                 if (m.getValue().getType().equals(2) && alarmReqDTO.getLine().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setLineId(m.getValue().getId());
+                    alarmHistory.setLineCode(alarmReqDTO.getLine());
                     break;
                 }
             }
@@ -184,6 +186,7 @@ public class AsyncReceiver {
                 if (m.getValue().getType().equals(3) && alarmHistory.getLineId().equals(m.getValue().getPid())
                         && alarmReqDTO.getStation().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setSiteId(m.getValue().getId());
+                    alarmHistory.setSiteCode(alarmReqDTO.getStation());
                     break;
                 }
             }
@@ -197,6 +200,7 @@ public class AsyncReceiver {
                         && alarmHistory.getSiteId().equals(m.getValue().getStationId())
                         && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())) {
                     alarmHistory.setDeviceId(m.getValue().getId());
+                    alarmHistory.setDeviceCode(alarmReqDTO.getDevice());
                     break;
                 }
             }
@@ -211,6 +215,7 @@ public class AsyncReceiver {
                         && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())
                         && alarmHistory.getDeviceId().equals(m.getValue().getDeviceId())) {
                     alarmHistory.setSlotId(m.getValue().getId());
+                    alarmHistory.setSlotCode(alarmReqDTO.getSlot());
                     break;
                 }
             }
@@ -223,6 +228,7 @@ public class AsyncReceiver {
                         && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())
                         && alarmHistory.getLineId().equals(m.getValue().getPositionId())) {
                     alarmHistory.setAlarmCode(m.getValue().getId());
+                    alarmHistory.setAlarmCodeId(alarmReqDTO.getAlarmCode());
                     alarmHistory.setAlarmName(m.getValue().getName());
                     alarmHistory.setAlarmReason(m.getValue().getReason());
                     break;

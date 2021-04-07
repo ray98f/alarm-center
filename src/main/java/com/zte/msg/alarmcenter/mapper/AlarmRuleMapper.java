@@ -7,6 +7,7 @@ import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -70,4 +71,11 @@ public interface AlarmRuleMapper {
      * @param content
      */
     void insertMsgPush(Long msgConfigId, String content);
+
+    /**
+     * 获取前转消息推送配置列表
+     *
+     * @return
+     */
+    List<MsgConfig> getMsgConfigs();
 }
