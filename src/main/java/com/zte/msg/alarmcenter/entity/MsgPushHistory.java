@@ -11,9 +11,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class MsgConfig extends BaseEntity {
-    @ApiModelProperty(value = "名称")
-    private String name;
+public class MsgPushHistory extends BaseEntity {
 
     @ApiModelProperty(value = "类型（1-短信，2-邮件，3-告警箱）")
     private Integer type;
@@ -27,6 +25,6 @@ public class MsgConfig extends BaseEntity {
     @ApiModelProperty(value = "告警箱")
     private String box;
 
-    @ApiModelProperty(value = "状态(0-启用;1-禁用)")
-    private Integer status;
+    @ApiModelProperty(value = "推送消息内容")
+    private String content;
 }

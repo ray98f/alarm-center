@@ -166,6 +166,7 @@ public class AsyncReceiver {
             if (null != DataCacheTask.subsystemData.get(alarmReqDTO.getSystem())) {
                 alarmHistory.setSubsystemId(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getId());
                 alarmHistory.setSubsystemCode(alarmReqDTO.getSystem());
+                alarmHistory.setSubsystemName(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getName());
             }
             if (alarmHistory.getSubsystemId() == null) {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "系统数据异常，未找到系统 | Data: " + JSON.toJSONString(alarmReqDTO));
@@ -175,6 +176,7 @@ public class AsyncReceiver {
                 if (m.getValue().getType().equals(2) && alarmReqDTO.getLine().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setLineId(m.getValue().getId());
                     alarmHistory.setLineCode(alarmReqDTO.getLine());
+                    alarmHistory.setLineName(m.getValue().getName());
                     break;
                 }
             }
@@ -187,6 +189,7 @@ public class AsyncReceiver {
                         && alarmReqDTO.getStation().equals(m.getValue().getPositionCode())) {
                     alarmHistory.setSiteId(m.getValue().getId());
                     alarmHistory.setSiteCode(alarmReqDTO.getStation());
+                    alarmHistory.setSiteName(m.getValue().getName());
                     break;
                 }
             }
@@ -201,6 +204,7 @@ public class AsyncReceiver {
                         && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())) {
                     alarmHistory.setDeviceId(m.getValue().getId());
                     alarmHistory.setDeviceCode(alarmReqDTO.getDevice());
+                    alarmHistory.setDeviceName(m.getValue().getName());
                     break;
                 }
             }
@@ -216,6 +220,7 @@ public class AsyncReceiver {
                         && alarmHistory.getDeviceId().equals(m.getValue().getDeviceId())) {
                     alarmHistory.setSlotId(m.getValue().getId());
                     alarmHistory.setSlotCode(alarmReqDTO.getSlot());
+                    alarmHistory.setSlotName(m.getValue().getName());
                     break;
                 }
             }
@@ -270,9 +275,21 @@ public class AsyncReceiver {
                     } else if (m.getValue().getType() == 7) {
                         if (m.getValue().getMsgConfigId() == null) {
                             alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
-                            continue;
                         } else {
-                            alarmRuleMapper.insertMsgPush(m.getValue().getMsgConfigId(), JSON.toJSONString(alarmReqDTO));
+                            String content = alarmHistory.getLineName() + "线路-" + alarmHistory.getSiteName() + "站点-" + alarmHistory.getSubsystemName() + "系统 产生";
+                            if (1 == alarmHistory.getAlarmLevel()) {
+                                content = content + "紧急告警";
+                            } else if (2 == alarmHistory.getAlarmLevel()) {
+                                content = content + "重要告警";
+                            } else if (3 == alarmHistory.getAlarmLevel()) {
+                                content = content + "一般告警";
+                            }
+                            content = content + " | Data: " + JSON.toJSONString(alarmReqDTO);
+                            MsgConfig msgConfig = alarmRuleMapper.selectMsgConfigById(m.getValue().getMsgConfigId());
+                            if (Objects.isNull(msgConfig)) {
+                                alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
+                            }
+                            alarmRuleMapper.insertMsgPush(msgConfig, content);
                         }
                         break;
                     }

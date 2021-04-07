@@ -23,11 +23,17 @@ public class AlarmHistory extends BaseEntity {
     @ApiModelProperty(value = "子系统码")
     private Integer subsystemCode;
 
+    @ApiModelProperty(value = "子系统名称")
+    private String subsystemName;
+
     @ApiModelProperty(value = "线路id")
     private Long lineId;
 
     @ApiModelProperty(value = "线路码")
     private Integer lineCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String lineName;
 
     @ApiModelProperty(value = "站点id")
     private Long siteId;
@@ -35,17 +41,26 @@ public class AlarmHistory extends BaseEntity {
     @ApiModelProperty(value = "站点码")
     private Integer siteCode;
 
+    @ApiModelProperty(value = "子系统名称")
+    private String siteName;
+
     @ApiModelProperty(value = "设备id")
     private Long deviceId;
 
     @ApiModelProperty(value = "设备码")
     private Integer deviceCode;
 
+    @ApiModelProperty(value = "子系统名称")
+    private String deviceName;
+
     @ApiModelProperty(value = "槽位id")
     private Long slotId;
 
     @ApiModelProperty(value = "槽位码")
     private Integer slotCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String slotName;
 
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;

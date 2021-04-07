@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zte.msg.alarmcenter.mapper.MsgMapper">
+    <select id="pageMsgConfig" resultType="com.zte.msg.alarmcenter.entity.MsgConfig">
+        select * from msg_config where is_deleted=0
+        <if test="name!=null and name!=''">
+            and name like concat('%',#{name},'%')
+        </if>
+        <if test="type!=null">
+            and type = #{type}
+        </if>
+    </select>
+
+    <insert id="insertMsgConfig" parameterType="com.zte.msg.alarmcenter.entity.MsgConfig">
+        insert into msg_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name!=null and name!=''">
+                name,
+            </if>
+            <if test="type!=null">
+                type,
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone,
+            </if>
+            <if test="email!=null and email!=''">
+                email,
+            </if>
+            <if test="box!=null and box!=''">
+                box,
+            </if>
+            <if test="status!=null">
+                status,
+            </if>
+            created_by,updated_by
+        </trim>
+        value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name!=null and name!=''">
+                #{name},
+            </if>
+            <if test="type!=null">
+                #{type},
+            </if>
+            <if test="phone!=null and phone!=''">
+                #{phone},
+            </if>
+            <if test="email!=null and email!=''">
+                #{email},
+            </if>
+            <if test="box!=null and box!=''">
+                #{box},
+            </if>
+            <if test="status!=null">
+                #{status},
+            </if>
+            #{createdBy},#{createdBy}
+        </trim>
+    </insert>
+
+    <update id="editMsgConfig">
+        update msg_config
+        <set>
+            <trim suffixOverrides="and">
+                <if test="name!=null and name!=''">
+                    name=#{name} and
+                </if>
+                <if test="type!=null">
+                    type=#{type} and
+                </if>
+                <if test="phone!=null and phone!=''">
+                    phone=#{phone} and
+                </if>
+                <if test="email!=null and email!=''">
+                    email=#{email} and
+                </if>
+                <if test="box!=null and box!=''">
+                    box=#{box} and
+                </if>
+                <if test="status!=null">
+                    status=#{status} and
+                </if>
+            </trim>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="deleteMsgConfig">
+        update msg_config set is_deleted=1 where id in(
+        <foreach collection="list" index="index" item="id" separator=",">
+            #{id}
+        </foreach>
+        ) and is_deleted=0
+    </update>
+
+    <select id="pageMsgHistory" resultType="com.zte.msg.alarmcenter.entity.MsgPushHistory">
+        select * from msg_push_history where is_delete=0
+    </select>
+</mapper>

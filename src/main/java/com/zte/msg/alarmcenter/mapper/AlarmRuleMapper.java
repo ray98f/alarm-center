@@ -67,10 +67,10 @@ public interface AlarmRuleMapper {
     /**
      * 新增前转告警推送记录
      *
-     * @param msgConfigId
+     * @param msgConfig
      * @param content
      */
-    void insertMsgPush(Long msgConfigId, String content);
+    void insertMsgPush(MsgConfig msgConfig, String content);
 
     /**
      * 获取前转消息推送配置列表
@@ -78,4 +78,12 @@ public interface AlarmRuleMapper {
      * @return
      */
     List<MsgConfig> getMsgConfigs();
+
+    /**
+     * 根据id获取前转配置信息
+     *
+     * @param msgConfigId
+     * @return
+     */
+    MsgConfig selectMsgConfigById(Long msgConfigId);
 }

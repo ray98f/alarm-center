@@ -60,7 +60,11 @@
         update `position`
         set
             is_deleted = 1
-        where id = #{id}
+        where id = #{id};
+        update `position`
+        set
+        is_deleted = 1
+        where p_id = #{id};
     </update>
     <select id="getPositionsCount" resultType="java.lang.Integer">
         select
