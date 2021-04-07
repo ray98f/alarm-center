@@ -53,10 +53,10 @@
             and ah.site_id=#{siteId}
         </if>
         <if test="alarmLevel!=null">
-            and ah.device_id=#{alarmLevel}
+            and ah.alarm_level=#{alarmLevel}
         </if>
         <if test="alarmCode!=null">
-            and ah.alarm_code=#{alarmCode}
+            and ah.alarm_code_id=#{alarmCode}
         </if>
         <if test="startTime!=null">
             and ah.final_time >= #{startTime}
@@ -87,10 +87,10 @@
             and ah.site_id=#{siteId}
         </if>
         <if test="alarmLevel!=null">
-            and ah.device_id=#{alarmLevel}
+            and ah.alarm_level=#{alarmLevel}
         </if>
         <if test="alarmCode!=null">
-            and ah.alarm_code=#{alarmCode}
+            and ah.alarm_code_id=#{alarmCode}
         </if>
         <if test="startTime!=null">
             and ah.final_time >= #{startTime}
@@ -107,7 +107,8 @@
 
     <insert id="editAlarmHistory">
         <foreach collection="list" item="alarmHistory" index="index" separator=";">
-            INSERT INTO alarm_history (subsystem_id, alarm_level, line_id, site_id, device_id, slot_id, alarm_code,
+            INSERT INTO alarm_history (subsystem_id, subsystem_code, alarm_level,
+            line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id,
             <if test="alarmHistory.alarmName!=null">
                 alarm_name,
             </if>
@@ -136,8 +137,10 @@
                 experience_time,
             </if>
             recovery_time)
-            SELECT #{alarmHistory.subsystemId}, #{alarmHistory.alarmLevel}, #{alarmHistory.lineId}, #{alarmHistory.siteId},
-            #{alarmHistory.deviceId}, #{alarmHistory.slotId}, #{alarmHistory.alarmCode},
+            SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
+            #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
+            #{alarmHistory.deviceId}, #{alarmHistory.deviceCode}, #{alarmHistory.slotId}, #{alarmHistory.slotCode},
+            #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId},
             <if test="alarmHistory.alarmName!=null">
                 #{alarmHistory.alarmName},
             </if>
@@ -172,12 +175,18 @@
             and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0);
             UPDATE alarm_history SET
             subsystem_id=#{alarmHistory.subsystemId},
+            subsystem_code=#{alarmHistory.subsystemCode},
             alarm_level=#{alarmHistory.alarmLevel},
             line_id=#{alarmHistory.lineId},
+            line_code=#{alarmHistory.lineCode},
             site_id=#{alarmHistory.siteId},
+            site_code=#{alarmHistory.siteCode},
             device_id=#{alarmHistory.deviceId},
+            device_code=#{alarmHistory.deviceCode},
             slot_id=#{alarmHistory.slotId},
+            slot_code=#{alarmHistory.slotCode},
             alarm_code=#{alarmHistory.alarmCode},
+            alarm_code_id=#{alarmHistory.alarmCodeId},
             <if test="alarmHistory.alarmName!=null">
                 alarm_name=#{alarmHistory.alarmName},
             </if>

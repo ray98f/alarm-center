@@ -52,6 +52,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
     map-underscore-to-camel-case: true
   global-config:
+    sql-parser-cache: true
     db-config:
       logic-delete-field: is_deleted
       logic-delete-value: 1

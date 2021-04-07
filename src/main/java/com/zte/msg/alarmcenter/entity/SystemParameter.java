@@ -19,7 +19,7 @@ public class SystemParameter extends BaseEntity {
     private String parameterDescribe;
 
     @ApiModelProperty(value = "参数值")
-    private String value;
+    private String parameterValue;
 
     @ApiModelProperty(value = "参数值描述")
     private String valueDescribe;
