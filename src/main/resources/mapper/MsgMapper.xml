@@ -58,27 +58,27 @@
         </trim>
     </insert>
 
-    <update id="editMsgConfig">
+    <update id="editMsgConfig" parameterType="com.zte.msg.alarmcenter.entity.MsgConfig">
         update msg_config
         <set>
-            <trim suffixOverrides="and">
+            <trim suffixOverrides=",">
                 <if test="name!=null and name!=''">
-                    name=#{name} and
+                    name=#{name},
                 </if>
                 <if test="type!=null">
-                    type=#{type} and
+                    type=#{type},
                 </if>
                 <if test="phone!=null and phone!=''">
-                    phone=#{phone} and
+                    phone=#{phone},
                 </if>
                 <if test="email!=null and email!=''">
-                    email=#{email} and
+                    email=#{email},
                 </if>
                 <if test="box!=null and box!=''">
-                    box=#{box} and
+                    box=#{box},
                 </if>
                 <if test="status!=null">
-                    status=#{status} and
+                    status=#{status},
                 </if>
             </trim>
         </set>

@@ -28,6 +28,7 @@ public class DataCacheTask {
     public static ConcurrentHashMap<Long, DeviceSlot> deviceSlotData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmCode> alarmCodeData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmRuleDataResDTO> alarmRuleData = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Long, AlarmHistory> frequencyAlarmHistoryData = new ConcurrentHashMap<>();
 
     /**
      * 数据库增量同步
@@ -43,6 +44,7 @@ public class DataCacheTask {
         List<DeviceSlot> deviceSlots;
         List<AlarmCode> alarmCodes;
         List<AlarmRuleDataResDTO> alarmRules;
+        List<AlarmHistory> alarmHistories;
         if (subsystemData.isEmpty()) {
             subsystems = dataCacheMapper.selectSubsystem();
             log.info("---------- 系统全量缓存开始 ----------");
@@ -85,11 +87,18 @@ public class DataCacheTask {
             alarmRules = dataCacheMapper.selectAlarmRuleByTime(startTime, endTime);
             log.info("---------- 告警规则增量缓存开始 ----------");
         }
-        addDate(subsystems, positions, devices, deviceSlots, alarmCodes, alarmRules);
+        if (frequencyAlarmHistoryData.isEmpty()) {
+            alarmHistories = dataCacheMapper.selectFrequencyAlarmHistory();
+            log.info("---------- 告警规则全量缓存开始 ----------");
+        } else {
+            alarmHistories = dataCacheMapper.selectFrequencyAlarmHistoryByTime(startTime, endTime);
+            log.info("---------- 告警规则增量缓存开始 ----------");
+        }
+        addDate(subsystems, positions, devices, deviceSlots, alarmCodes, alarmRules, alarmHistories);
     }
 
     private void addDate(List<Subsystem> subsystems, List<Position> positions, List<Device> devices, List<DeviceSlot> deviceSlots,
-                         List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules) {
+                         List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmHistories) {
         if (subsystems != null && subsystems.size() > 0) {
             for (Subsystem subsystem : subsystems) {
                 subsystemData.put(subsystem.getSid(), subsystem);
@@ -120,6 +129,11 @@ public class DataCacheTask {
                 alarmRuleData.put(alarmCode.getId(), alarmCode);
             }
         }
+        if (alarmHistories != null && alarmHistories.size() > 0) {
+            for (AlarmHistory alarmHistory : alarmHistories) {
+                frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
+            }
+        }
         log.info("------------ 缓存结束 ------------");
     }
 
@@ -136,12 +150,14 @@ public class DataCacheTask {
         List<DeviceSlot> deviceSlotList = dataCacheMapper.selectDeviceSlot();
         List<AlarmCode> alarmCodeList = dataCacheMapper.selectAlarmCode();
         List<AlarmRuleDataResDTO> alarmRuleDetailsResDTOList = dataCacheMapper.selectAlarmRule();
+        List<AlarmHistory> alarmHistoryList = dataCacheMapper.selectFrequencyAlarmHistory();
         subsystemData = new ConcurrentHashMap<>();
         positionData = new ConcurrentHashMap<>();
         deviceData = new ConcurrentHashMap<>();
         deviceSlotData = new ConcurrentHashMap<>();
         alarmCodeData = new ConcurrentHashMap<>();
         alarmRuleData = new ConcurrentHashMap<>();
+        frequencyAlarmHistoryData = new ConcurrentHashMap<>();
         for (Subsystem subsystem : subsystemList) {
             subsystemData.put(subsystem.getSid(), subsystem);
         }
@@ -159,6 +175,9 @@ public class DataCacheTask {
         }
         for (AlarmRuleDataResDTO alarmRuleDetailsResDTO : alarmRuleDetailsResDTOList) {
             alarmRuleData.put(alarmRuleDetailsResDTO.getId(), alarmRuleDetailsResDTO);
+        }
+        for (AlarmHistory alarmHistory : alarmHistoryList) {
+            frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
         }
     }
 }

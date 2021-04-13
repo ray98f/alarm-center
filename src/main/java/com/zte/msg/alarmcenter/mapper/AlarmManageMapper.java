@@ -81,16 +81,15 @@ public interface AlarmManageMapper {
 
     /**
      * 修改延迟参数
-     *
      */
     void updateDelayAlarmHistory();
 
     /**
      * 告警升级修改告警等级参数
      *
-     * @return
+     * @param alarmHistory
      */
-//    void updateFrequencyAlarmHistory();
+    void updateFrequencyAlarmHistory(AlarmHistory alarmHistory);
 
     /**
      * 告警升级修改告警等级参数

@@ -29,6 +29,9 @@ public class AlarmRuleDetailsResDTO {
     @ApiModelProperty(value = "告警升级规则告警经历时间")
     private Long experienceTime;
 
+    @ApiModelProperty(value = "告警前转规则信息id")
+    private Long msgConfigId;
+
     @ApiModelProperty(value = "告警前转规则信息类型")
     private Integer msgType;
 

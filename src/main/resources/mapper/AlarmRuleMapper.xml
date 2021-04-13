@@ -219,6 +219,7 @@
         ar.frequency,
         ar.frequency_time,
         ar.experience_time,
+        mc.id as msg_config_id,
         mc.type as msg_type,
         mc.phone as msg_phone,
         mc.email as msg_email,
@@ -227,10 +228,9 @@
         DATE_FORMAT(ar.updated_at, "%Y-%m-%d %T") as updatedAt,
         ar.created_by,
         ar.updated_by
-        from alarm_rule
-        where is_deleted = 0 as ar
+        from alarm_rule as ar
         left join msg_config as mc on mc.id=ar.msg_config_id and mc.is_deleted=0
-        and ar.id = #{id}
+        where ar.is_deleted = 0 and ar.id = #{id}
     </select>
     <select id="getSubsystemNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
@@ -284,9 +284,12 @@
         </trim>
     </select>
     <select id="getAlarmCodes" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
-        SELECT id,code as alarm_code,name as alarm_name FROM alarm_code
+        SELECT ac.id,ac.code as alarm_code,s.name as system_name,ac.level_id as alarm_level_id,
+        ac.name as alarm_name,al.name as alarm_level_name
+        FROM alarm_code as ac left join subsystem as s on s.id=ac.system_id and s.is_deleted=0
+        left join alarm_level as al on ac.level_id=al.code and al.is_deleted=0
         <if test="systemIds!=null and systemIds.size()>0">
-            where system_id in (
+            where ac.system_id in (
             <foreach collection="systemIds" index="index" item="systemId" separator=",">
                 #{systemId}
             </foreach>

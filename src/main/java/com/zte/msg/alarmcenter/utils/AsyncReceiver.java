@@ -7,25 +7,28 @@ import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
+import com.zte.msg.alarmcenter.dto.res.RedisUpdateFrequencyResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.*;
 import com.zte.msg.alarmcenter.utils.task.DataCacheTask;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author frp
@@ -48,6 +51,12 @@ public class AsyncReceiver {
 
     @Autowired
     private AlarmRuleMapper alarmRuleMapper;
+
+    @Autowired
+    private RedissonClient redissonClient;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     @RabbitListener(queues = RabbitMqConfig.STRING_QUEUE)
     @RabbitHandler
@@ -236,6 +245,7 @@ public class AsyncReceiver {
                     alarmHistory.setAlarmCodeId(alarmReqDTO.getAlarmCode());
                     alarmHistory.setAlarmName(m.getValue().getName());
                     alarmHistory.setAlarmReason(m.getValue().getReason());
+                    alarmHistory.setAlarmLevel(m.getValue().getLevelId());
                     break;
                 }
             }
@@ -243,7 +253,6 @@ public class AsyncReceiver {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警码数据异常，未找到告警码 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-
             alarmHistory.setAlarmState(0);
             for (Map.Entry<Long, AlarmRuleDataResDTO> m : DataCacheTask.alarmRuleData.entrySet()) {
                 if (m.getValue().getSystemIds().contains(alarmHistory.getSubsystemId())
@@ -271,6 +280,9 @@ public class AsyncReceiver {
                         alarmHistory.setAlarmFrequency(m.getValue().getFrequency());
                         alarmHistory.setFrequencyTime(m.getValue().getFrequencyTime());
                         alarmHistory.setExperienceTime(m.getValue().getExperienceTime());
+                        if (alarmHistory.getAlarmLevel() > 1) {
+                            frequencyAlarmHistory(alarmHistory);
+                        }
                         break;
                     } else if (m.getValue().getType() == 7) {
                         if (m.getValue().getMsgConfigId() == null) {
@@ -300,7 +312,6 @@ public class AsyncReceiver {
                     alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警状态数据异常，未找到告警状态 | Data: " + JSON.toJSONString(alarmReqDTO));
                     continue;
                 }
-                alarmHistory.setAlarmLevel(DataCacheTask.alarmCodeData.get(alarmHistory.getAlarmCode()).getLevelId());
                 if (alarmReqDTO.getRecovery()) {
                     alarmHistory.setRecoveryTime(new Timestamp(System.currentTimeMillis()));
                     alarmHistory.setAlarmState(7);
@@ -314,5 +325,38 @@ public class AsyncReceiver {
             }
         }
         return alarmHistories;
+    }
+
+    /**
+     * 单位时间内告警次数升级
+     */
+    private void frequencyAlarmHistory(AlarmHistory alarmHistory) {
+        String flag = "sysId:" + alarmHistory.getSubsystemId() +
+                "-lineId:" + alarmHistory.getLineId() +
+                "-siteId:" + alarmHistory.getSiteId() +
+                "-deviceId:" + alarmHistory.getDeviceId() +
+                "-slotId:" + alarmHistory.getSlotId() +
+                "-codeId:" + alarmHistory.getAlarmCode();
+        String updateKey = "update_frequency:" + flag;
+        String lockKey = "update_frequency_lock:" + flag;
+        RLock locker = redissonClient.getLock(lockKey);
+        try {
+            locker.lock();
+            long now = System.currentTimeMillis();
+            if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(updateKey))) {
+                return;
+            }
+            if (Objects.requireNonNull(stringRedisTemplate.opsForZSet().count(updateKey, now - alarmHistory.getFrequencyTime(), now)) + 1 < alarmHistory.getAlarmFrequency()) {
+                stringRedisTemplate.opsForZSet().add(updateKey, String.valueOf(alarmHistory.getAlarmFrequency()), now);
+                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, now);
+            } else {
+                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, now);
+                alarmManageMapper.updateFrequencyAlarmHistory(alarmHistory);
+            }
+        } catch (Exception e) {
+            log.error("告警升级失败: {}", e.getMessage());
+        } finally {
+            locker.unlock();
+        }
     }
 }

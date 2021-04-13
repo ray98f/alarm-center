@@ -1,7 +1,6 @@
 package com.zte.msg.alarmcenter.mapper;
 
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -111,5 +110,21 @@ public interface DataCacheMapper {
      * @return
      */
     List<Position> selectPositionByTime(Timestamp startTime, Timestamp endTime);
+
+    /**
+     * 全量获取升级告警记录
+     *
+     * @return
+     */
+    List<AlarmHistory> selectFrequencyAlarmHistory();
+
+    /**
+     * 增量获取升级告警记录
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<AlarmHistory> selectFrequencyAlarmHistoryByTime(Timestamp startTime, Timestamp endTime);
 
 }

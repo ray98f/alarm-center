@@ -94,4 +94,16 @@
         select * from position where is_deleted=0 and (#{endTime}>=created_at and created_at>=#{startTime}) or
         (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
+
+    <select id="selectFrequencyAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
+        select * from alarm_history where is_deleted=0 and alarm_state in (0,2,3) and alarm_frequency is not null
+        and frequency_time is not null and experience_time is null and alarm_level!=1
+    </select>
+
+    <select id="selectFrequencyAlarmHistoryByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
+        select * from alarm_history where is_deleted=0 and alarm_state in (0,2,3) and alarm_frequency is not null
+        and frequency_time is not null and experience_time is null and alarm_level!=1
+        and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
+    </select>
 </mapper>

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class AlarmHistory extends BaseEntity {
+public class AlarmHistory extends BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
