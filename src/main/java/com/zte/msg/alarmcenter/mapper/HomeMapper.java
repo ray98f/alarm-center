@@ -28,12 +28,14 @@ public interface HomeMapper {
 
     /**
      * 获取所有线路
+     *
      * @return
      */
     List<HomeStationSituationResDTO> selectAllLine();
 
     /**
      * 获取线路下站点信息
+     *
      * @param lineId
      * @return
      */
@@ -105,9 +107,17 @@ public interface HomeMapper {
 
     /**
      * 修改响铃
+     *
      * @param isRing
      * @param ids
      * @return
      */
     int updateIsRing(Integer isRing, List<Long> ids);
+
+    /**
+     * 获取首页地图地址
+     *
+     * @return
+     */
+    List<HomeMapPathResDTO> getHomeMapPath();
 }

@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.config.filter;
 
+import com.alibaba.fastjson.JSON;
 import com.zte.msg.alarmcenter.config.RequestHeaderContext;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
@@ -9,6 +10,8 @@ import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,9 @@ import java.util.Objects;
 @Slf4j
 public class JwtFilter implements Filter {
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
     /**
      * 排除拦截的请求
      */
@@ -34,7 +40,8 @@ public class JwtFilter implements Filter {
             "/api/v1/alarm/level/list",
             "/api/v1/home/alarm/export",
             "/api/v1/alarm/history/export",
-            "/api/v1/device/export"
+            "/api/v1/device/export",
+            "/api/v1/map",
     };
 
     @Override

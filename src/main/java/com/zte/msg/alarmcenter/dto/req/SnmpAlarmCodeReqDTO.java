@@ -17,11 +17,11 @@ import javax.validation.constraints.NotNull;
 @ApiModel
 public class SnmpAlarmCodeReqDTO {
 
-    @ApiModelProperty(value = "系统名称")
+    @ApiModelProperty(value = "系统编号")
     @NotNull(message = "32000006")
     private Long systemId;
 
-    @ApiModelProperty(value = "线路id")
+    @ApiModelProperty(value = "线路编号")
     private String positionId;
 
     @ApiModelProperty(value = "告警码")

@@ -2,6 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmCodeMapper">
 
+    <select id="selectAlarmLevelId" parameterType="java.lang.String" resultType="java.lang.Long">
+        select code from alarm_level where name=#{name} and is_deleted=0
+    </select>
+
     <insert id="importAlarmCode">
         insert into alarm_code
         (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
@@ -9,18 +13,21 @@
         <foreach collection ="list" item="item" index= "index" separator =",">
             (
             null,
-            (select id from subsystem where sid = #{item.systemId}),
-            (select id from `position` where position_code = #{item.positionId}),
+            (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
+            (select id from `position` where position_code = #{item.positionId} and type=2 and is_deleted=0),
             #{item.alarmCode},
             #{item.alarmName},
             #{item.reason},
-            {select id from alarm_level where id = #{item.alarmLevelId},
+            #{item.alarmLevelId},
             #{item.handlingOpinions},
             NOW(),
             #{userId}
             )
         </foreach>
     </insert>
+    <select id="selectAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.AlarmCodeReqDTO">
+        select id from alarm_code where system_id=#{systemId} AND position_id=#{positionId} AND code=#{alarmCode} AND is_deleted=0
+    </select>
     <insert id="addAlarmCode">
         insert into alarm_code
         (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
@@ -60,17 +67,19 @@
     </update>
     <select id="exportAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
         select
-            t.id,
-            t.system_id,
-            t1.name as systemName,
-            t.position_id,
-            t2.name as positionName,
-            t.`code` as alarmCode,
-            t.`name` as alarmName,
-            t.reason,
-            t.level_id as alarmLevelId,
-            t3.name as alarmLevelName,
-            t.handling_opinions
+        t.id,
+        t1.id as system_id,
+        t1.sid as system_code,
+        t1.name as systemName,
+        t2.id as position_id,
+        t2.position_code as position_code,
+        t2.name as positionName,
+        t.`code` as alarmCode,
+        t.`name` as alarmName,
+        t.reason,
+        t.level_id as alarmLevelId,
+        t3.name as alarmLevelName,
+        t.handling_opinions
         from alarm_code t
         join subsystem t1 on t1.id = t.system_id
         join `position` t2 on t2.id = t.position_id

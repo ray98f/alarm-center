@@ -46,7 +46,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         UserReqDTO userInfo = userMapper.selectUserInfo(loginReqDTO.getUserName());
         if (Objects.isNull(userInfo)) {
-            throw new CommonException(ErrorCode.USER_NOT_EXIST);
+            throw new CommonException(ErrorCode.LOGIN_PASSWORD_ERROR);
+        }
+        if (userInfo.getStatus() == 1) {
+            throw new CommonException(ErrorCode.USER_DISABLE);
         }
         if (!loginReqDTO.getPassword().equals(AesUtils.decrypt(userInfo.getPassword()))) {
             throw new CommonException(ErrorCode.LOGIN_PASSWORD_ERROR);
@@ -63,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         UserReqDTO userInfo = userMapper.selectUserInfo(userReqDTO.getUserName());
         if (!Objects.isNull(userInfo)) {
-            throw new CommonException(ErrorCode.DATA_EXIST);
+            throw new CommonException(ErrorCode.USER_EXIST);
         }
         String password = AesUtils.encrypt(userReqDTO.getPassword());
         userReqDTO.setPassword(password);
@@ -123,9 +126,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void deleteUser(List<Integer> ids) {
+    public void deleteUser(List<Integer> ids, String userId) {
         if (null == ids || ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        if (ids.contains(Integer.valueOf(userId))) {
+            throw new CommonException(ErrorCode.USER_LOGIN_CANT_DELETE);
         }
         int result = userMapper.deleteUser(ids);
         if (result > 0) {

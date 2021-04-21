@@ -46,12 +46,16 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
                 }
                 DeviceSlotReqDTO reqDTO = new DeviceSlotReqDTO();
                 cells.getCell(0).setCellType(CellType.STRING);
-                reqDTO.setSystemCode(cells.getCell(0).getStringCellValue());
-                reqDTO.setLineCode(cells.getCell(1).getStringCellValue());
-                reqDTO.setStationCode(cells.getCell(2).getStringCellValue());
+                reqDTO.setLineCode(cells.getCell(0).getStringCellValue());
+                cells.getCell(1).setCellType(CellType.STRING);
+                reqDTO.setStationCode(cells.getCell(1).getStringCellValue());
+                cells.getCell(2).setCellType(CellType.STRING);
+                reqDTO.setSystemCode(cells.getCell(2).getStringCellValue());
                 cells.getCell(3).setCellType(CellType.STRING);
                 reqDTO.setDeviceCode(cells.getCell(3).getStringCellValue());
+                cells.getCell(4).setCellType(CellType.STRING);
                 reqDTO.setSlotCode(cells.getCell(4).getStringCellValue());
+                cells.getCell(5).setCellType(CellType.STRING);
                 reqDTO.setSlotName(cells.getCell(5).getStringCellValue());
                 temp.add(reqDTO);
             }
@@ -69,18 +73,18 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     public void exportDevice(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
         List<String> listName = Arrays.asList("设备名称", "所属系统", "设备位置", "设备编号", "槽位编号", "槽位名称");
-        List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null,null);
+        List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null, null);
         // 列名 数据
         ArrayList<Map<String, String>> list = new ArrayList<>();
         if (null != deviceSlotResList) {
             for (DeviceSlotResDTO deviceSlotResDTO : deviceSlotResList) {
                 Map<String, String> map = new HashMap<>();
-                map.put("设备名称（必填）", deviceSlotResDTO.getDeviceName());
-                map.put("所属系统（必填）", deviceSlotResDTO.getSystemName());
-                map.put("设备位置（必填）", deviceSlotResDTO.getPositionName());
-                map.put("设备编号（必填）", deviceSlotResDTO.getDeviceCode());
-                map.put("槽位编号（必填）", deviceSlotResDTO.getSlotCode());
-                map.put("槽位名称（必填）", deviceSlotResDTO.getSlotName());
+                map.put("设备名称", deviceSlotResDTO.getDeviceName());
+                map.put("所属系统", deviceSlotResDTO.getSystemName());
+                map.put("设备位置", deviceSlotResDTO.getPositionName());
+                map.put("设备编号", deviceSlotResDTO.getDeviceCode());
+                map.put("槽位编号", deviceSlotResDTO.getSlotCode());
+                map.put("槽位名称", deviceSlotResDTO.getSlotName());
                 list.add(map);
             }
         }
@@ -118,15 +122,15 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     }
 
     @Override
-    public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page,Long size) {
+    public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         List<DeviceSlotResDTO> deviceReqDTOList = null;
-        int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceCode, deviceCode, systemId, positionId);
+        int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceName, deviceCode, systemId, positionId);
         Page<DeviceSlotResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
 //            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
             page = (page - 1) * size;
-            deviceReqDTOList = myDeviceSlotMapper.exportDevice(slotName, deviceCode, deviceCode, systemId, positionId, page,size);
+            deviceReqDTOList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, page, size);
             pageBean.setRecords(deviceReqDTOList);
         }
         return pageBean;

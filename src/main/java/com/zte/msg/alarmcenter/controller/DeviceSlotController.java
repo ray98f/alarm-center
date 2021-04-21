@@ -47,7 +47,7 @@ public class DeviceSlotController {
     public DataResponse<T> importDevice(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        mDeviceSlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserId());
+        mDeviceSlotService.importDevice(file, tokenInfo == null ? null : tokenInfo.getUserName());
         return DataResponse.success();
     }
 

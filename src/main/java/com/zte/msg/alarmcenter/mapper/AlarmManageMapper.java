@@ -63,6 +63,14 @@ public interface AlarmManageMapper {
     int editAlarmHistory(List<AlarmHistory> alarmHistories);
 
     /**
+     * 同步告警记录
+     *
+     * @param alarmHistories
+     * @return
+     */
+    int syncAlarmHistory(List<AlarmHistory> alarmHistories);
+
+    /**
      * 编辑告警记录附加信息
      *
      * @param alarmId
@@ -70,6 +78,15 @@ public interface AlarmManageMapper {
      * @return
      */
     int editAlarmMessage(Long alarmId, List<AlarmHistoryReqDTO.AlarmMessage> alarmMessages);
+
+    /**
+     * 同步告警记录附加信息
+     *
+     * @param alarmId
+     * @param alarmMessages
+     * @return
+     */
+    int syncAlarmMessage(Long alarmId, List<AlarmHistoryReqDTO.AlarmMessage> alarmMessages);
 
     /**
      * 获取告警记录id

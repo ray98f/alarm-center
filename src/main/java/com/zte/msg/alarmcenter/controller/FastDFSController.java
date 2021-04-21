@@ -42,38 +42,13 @@ public class FastDFSController {
     }
 
     @GetMapping("/downLoadImg")
-    public DataResponse<byte[]> downLoadFile(@RequestParam("imagePath") String imagePath) throws IOException {
+    public ResponseEntity<byte[]> downLoadFile(@RequestParam("imagePath") String imagePath) throws IOException {
         String group = imagePath.substring(0, imagePath.indexOf("/"));
         String path = imagePath.substring(imagePath.indexOf("/") + 1);
         byte[] bytes = storageClient.downloadFile(group, path, new DownloadByteArray());
-        OutputStream out = new FileOutputStream("d:/img.png");
-        InputStream is = new ByteArrayInputStream(bytes);
-        byte[] buff = new byte[1024];
-        int len = 0;
-        while((len=is.read(buff))!=-1){
-            out.write(buff, 0, len);
-        }
-        is.close();
-        out.close();
-        return DataResponse.success();
-    }
-
-    @GetMapping("/forwardImg")
-    public ResponseEntity<byte[]> downloadFile(@RequestParam("imagePath")String imagePath) throws IOException {
-        ByteArrayOutputStream bas = new ByteArrayOutputStream();
-        byte[] bytes = null;
-        try {
-            BufferedImage bi;
-            bi = ImageIO.read(new URL(imgPath + imagePath));
-            ImageIO.write(bi, "png", bas);
-            bytes = bas.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            bas.close();
-        }
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_PNG);
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
+
 }

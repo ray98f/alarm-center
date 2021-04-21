@@ -109,6 +109,10 @@ public class SystemParamServiceImpl implements SystemParamService {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
         systemParameter.setCreatedBy(TokenUtil.getCurrentUserName());
+        Long id = systemParamMapper.selectSystemParamIsExist(systemParameter);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.SYSTEM_PARAM_EXIST);
+        }
         int insertRole = systemParamMapper.insertSystemParam(systemParameter);
         if (insertRole <= 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);

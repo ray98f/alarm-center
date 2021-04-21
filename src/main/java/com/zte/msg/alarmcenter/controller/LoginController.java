@@ -4,9 +4,11 @@ import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.req.LoginReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
+import com.zte.msg.alarmcenter.dto.res.HomeMapPathResDTO;
 import com.zte.msg.alarmcenter.dto.res.MenuResDTO;
 import com.zte.msg.alarmcenter.entity.ChangeShifts;
 import com.zte.msg.alarmcenter.service.ChangeShiftsService;
+import com.zte.msg.alarmcenter.service.HomeService;
 import com.zte.msg.alarmcenter.service.MenuService;
 import com.zte.msg.alarmcenter.service.UserService;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
@@ -49,6 +51,9 @@ public class LoginController {
 
     @Resource
     private ChangeShiftsService changeShiftsService;
+
+    @Resource
+    private HomeService homeService;
 
     /**
      * 管理平台登录
@@ -125,5 +130,17 @@ public class LoginController {
         data.put("userRealName", userInfo.getUserRealName());
         log.info("交接班成功");
         return DataResponse.of(data);
+    }
+
+    /**
+     * 获取首页地图地址
+     *
+     * @return
+     * @throws Exception
+     */
+    @GetMapping("/map")
+    @ApiOperation(value = "获取首页地图地址")
+    public DataResponse<List<HomeMapPathResDTO>> homeMapPath() throws Exception {
+        return DataResponse.of(homeService.getHomeMapPath());
     }
 }

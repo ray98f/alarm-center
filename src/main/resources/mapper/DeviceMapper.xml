@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.DeviceMapper">
+
+    <select id="selectDeviceIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.DeviceReqDTO">
+        select id from device where name=#{name} and system_id=#{systemId} and position_id=#{positionId} and device_code=#{deviceCode} and is_deleted=0
+    </select>
     <insert id="importDevice"  parameterType="java.util.List">
         insert into device
         (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
@@ -45,16 +49,16 @@
 
     <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
         select
-            t.id,
-            t.`name`,
-            t.system_id,
-            t1.name as systemName,
-            t.position_id,
-            t2.name as positionName,
-            t.device_code,
-            t.brand,
-            t.serial_num,
-            t.description
+        t.id,
+        t.`name`,
+        t1.sid as system_id,
+        t1.name as systemName,
+        t2.position_code as position_id,
+        t2.name as positionName,
+        t.device_code,
+        t.brand,
+        t.serial_num,
+        t.description
         from device t
         join subsystem t1 on t1.id = t.system_id
         join `position` t2 on t2.id = t.position_id

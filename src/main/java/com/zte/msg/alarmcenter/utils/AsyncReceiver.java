@@ -124,10 +124,10 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始接收告警记录 ------");
+        log.info("------ 开始同步告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-        editData(alarmHistories);
-        log.info("------ 接收告警记录结束 ------");
+        syncData(alarmHistories);
+        log.info("------ 同步告警记录结束 ------");
     }
 
     /**
@@ -162,6 +162,26 @@ public class AsyncReceiver {
                 result = alarmManageMapper.editAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
                 if (result < 0) {
                     log.error("ID为{}的告警记录添加附加信息失败", alarmId);
+
+                }
+            }
+        }
+    }
+
+    private void syncData(List<AlarmHistory> alarmHistories) {
+        if (null == alarmHistories || alarmHistories.isEmpty()) {
+            log.error("告警记录接收为空");
+            return;
+        }
+        //todo
+
+        int result = alarmManageMapper.syncAlarmHistory(alarmHistories);
+        if (result >= 0) {
+            for (AlarmHistory alarmHistory : alarmHistories) {
+                Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
+                result = alarmManageMapper.syncAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
+                if (result < 0) {
+                    log.error("ID为{}的告警记录同步附加信息失败", alarmId);
 
                 }
             }
@@ -260,29 +280,21 @@ public class AsyncReceiver {
                         && m.getValue().getPositionIds().contains(alarmHistory.getSiteId())
                         && m.getValue().getAlarmIds().contains(alarmHistory.getAlarmCode())) {
                     // 根据告警规则获取告警状态
-                    if (m.getValue().getType() == 1) {
-                        alarmHistory.setAlarmState(1);
-                        alarmHistory.setDelayTime(new Timestamp(alarmReqDTO.getAlarmTime().getTime() + m.getValue().getDelayTime()));
-                        break;
-                    } else if (m.getValue().getType() == 2) {
+                    if (m.getValue().getType() == 2) {
                         alarmHistory = null;
                         break;
                     } else if (m.getValue().getType() == 3) {
                         alarmHistory.setAlarmState(5);
                         break;
-                    } else if (m.getValue().getType() == 4) {
-                        alarmHistory.setAlarmState(3);
-                        break;
                     } else if (m.getValue().getType() == 5) {
                         alarmHistory.setAlarmState(7);
                         break;
-                    } else if (m.getValue().getType() == 6) {
-                        alarmHistory.setAlarmFrequency(m.getValue().getFrequency());
-                        alarmHistory.setFrequencyTime(m.getValue().getFrequencyTime());
-                        alarmHistory.setExperienceTime(m.getValue().getExperienceTime());
-                        if (alarmHistory.getAlarmLevel() > 1) {
-                            frequencyAlarmHistory(alarmHistory);
-                        }
+                    } else if (m.getValue().getType() == 1) {
+                        alarmHistory.setAlarmState(1);
+                        alarmHistory.setDelayTime(new Timestamp(alarmReqDTO.getAlarmTime().getTime() + m.getValue().getDelayTime()));
+                        break;
+                    } else if (m.getValue().getType() == 4) {
+                        alarmHistory.setAlarmState(3);
                         break;
                     } else if (m.getValue().getType() == 7) {
                         if (m.getValue().getMsgConfigId() == null) {
@@ -302,6 +314,14 @@ public class AsyncReceiver {
                                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
                             }
                             alarmRuleMapper.insertMsgPush(msgConfig, content);
+                        }
+                        break;
+                    } else if (m.getValue().getType() == 6) {
+                        alarmHistory.setAlarmFrequency(m.getValue().getFrequency());
+                        alarmHistory.setFrequencyTime(m.getValue().getFrequencyTime());
+                        alarmHistory.setExperienceTime(m.getValue().getExperienceTime());
+                        if (alarmHistory.getAlarmLevel() > 1) {
+                            frequencyAlarmHistory(alarmHistory);
                         }
                         break;
                     }

@@ -18,6 +18,12 @@ public class SnmpAlarmCodeResDTO {
     @ApiModelProperty(value = "id")
     private String id;
 
+    @ApiModelProperty(value = "系统编号")
+    private String systemCode;
+
+    @ApiModelProperty(value = "线路编号")
+    private String positionCode;
+
     @ApiModelProperty(value = "系统id")
     private String systemId;
 

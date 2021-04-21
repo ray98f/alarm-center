@@ -16,6 +16,10 @@
         ORDER BY updated_at DESC
     </select>
 
+    <select id="selectRoleUse" resultType="java.lang.Integer">
+        select count(*) from user_role where role_id=#{id} and is_deleted=0
+    </select>
+
     <update id="deleteRole">
         update role set is_deleted=1 where id in (
         <foreach collection="list" item="id" index="index" separator=",">
@@ -23,6 +27,10 @@
         </foreach>
         ) and is_deleted=0
     </update>
+
+    <select id="selectRoleIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.RoleReqDTO">
+        select * from role where role_name=#{roleName} and role_str=#{roleStr} and is_deleted=0
+    </select>
 
     <insert id="insertRole" useGeneratedKeys="true" keyProperty="id" parameterType="com.zte.msg.alarmcenter.dto.req.RoleReqDTO">
         insert into role

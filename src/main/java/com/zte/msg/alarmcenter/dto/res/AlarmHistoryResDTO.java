@@ -87,7 +87,7 @@ public class AlarmHistoryResDTO {
     private Integer isRing;
 
     @ApiModelProperty(value = "告警状态(1待处理;2手动确认;3自动确认;4已清除;5手动过滤;6自动过滤)")
-    private String alarmState;
+    private Integer alarmState;
 
     @ApiModelProperty(value = "告警恢复时间")
     private Timestamp recoveryTime;

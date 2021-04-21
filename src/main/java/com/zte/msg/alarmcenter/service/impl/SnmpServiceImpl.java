@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.req.*;
 import com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.DeviceSlotMapper;
 import com.zte.msg.alarmcenter.mapper.SnmpMapper;
 import com.zte.msg.alarmcenter.service.SnmpService;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import com.zte.msg.alarmcenter.utils.FileUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -25,6 +27,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Service
+@Slf4j
 public class SnmpServiceImpl implements SnmpService {
 
     @Autowired
@@ -82,7 +85,7 @@ public class SnmpServiceImpl implements SnmpService {
             }
             int count = mySlotMapper.importDevice(temp, userId);
             if (count == 0) {
-                throw new CommonException(4000, "批量插入snmp槽位失败！");
+                log.warn("批量插入snmp槽位失败！");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,7 +107,7 @@ public class SnmpServiceImpl implements SnmpService {
                 map.put("线路编号（必填）", snmpSlotResDTO.getPositionId());
                 map.put("站点编号（必填）", snmpSlotResDTO.getSiteCode());
                 map.put("设备编号（必填）", snmpSlotResDTO.getDeviceCode());
-                map.put("槽位编号（必填）", snmpSlotResDTO.getSlotId());
+                map.put("槽位编号（必填）", snmpSlotResDTO.getSlotCode());
                 map.put("槽位名称（必填）", snmpSlotResDTO.getSlotName());
                 list.add(map);
             }
@@ -118,6 +121,10 @@ public class SnmpServiceImpl implements SnmpService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addSnmpSlot(SnmpSlotModifyReqDTO slotModifyReqDTO, String userId) {
+        Long id = mySlotMapper.selectSnmpSlotIsExist(slotModifyReqDTO);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.SNMP_SLOT_EXIST);
+        }
         int integer = mySlotMapper.addSnmpSlot(slotModifyReqDTO, userId);
         if (integer < 0) {
             throw new CommonException(4000, "新增失败！");
@@ -204,8 +211,8 @@ public class SnmpServiceImpl implements SnmpService {
         if (null != snmpAlarmCodeList) {
             for (SnmpAlarmCodeResDTO snmpAlarmCodeResDTO : snmpAlarmCodeList) {
                 HashMap<String, String> map = new HashMap<>();
-                map.put("系统编号（必填）", snmpAlarmCodeResDTO.getSystemId());
-                map.put("线路编号（必填）", snmpAlarmCodeResDTO.getPositionId());
+                map.put("系统编号（必填）", snmpAlarmCodeResDTO.getSystemCode());
+                map.put("线路编号（必填）", snmpAlarmCodeResDTO.getPositionCode());
                 map.put("告警码（必填）", snmpAlarmCodeResDTO.getCode());
                 map.put("网元类型", snmpAlarmCodeResDTO.getElementType());
                 map.put("SNMP码", snmpAlarmCodeResDTO.getSnmpCode());
@@ -222,6 +229,10 @@ public class SnmpServiceImpl implements SnmpService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addSSnmpAlarmCode(SnmpAlarmCodeReqDTO snmpAlarmCode, String userId) {
+        Long id = mySlotMapper.selectSnmpAlarmCodeIsExist(snmpAlarmCode);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.SNMP_ALARM_CODE_EXIST);
+        }
         int integer = mySlotMapper.addSSnmpAlarmCode(snmpAlarmCode, userId);
         if (integer < 0) {
             throw new CommonException(4000, "新增失败！");

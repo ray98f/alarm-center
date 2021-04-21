@@ -88,7 +88,6 @@ public class MySqlParserFilter implements ISqlParserFilter {
             }
             String join = StringUtils.join(joins, SPACE + AND + SPACE);
             StringBuilder sqlBuilder = new StringBuilder(sql);
-
             boolean where = StringUtils.containsIgnoreCase(sql, WHERE);
             boolean limit = StringUtils.containsIgnoreCase(sql, LIMIT);
             boolean group = StringUtils.containsIgnoreCase(sql, GROUP_BY);
@@ -98,8 +97,6 @@ public class MySqlParserFilter implements ISqlParserFilter {
                 return false;
             }
             if (where) {
-
-
                 sqlBuilder.insert(StringUtils.indexOfIgnoreCase(sql, WHERE) + 6, SPACE + join + SPACE + AND + SPACE);
             } else {
                 if (!limit && !group && !orderBy) {
@@ -115,10 +112,63 @@ public class MySqlParserFilter implements ISqlParserFilter {
                     sqlBuilder.insert(StringUtils.indexOfIgnoreCase(sql, LIMIT), SPACE + WHERE + SPACE + join + SPACE);
                 }
             }
+
+
             metaObject.setValue(PluginUtils.DELEGATE_BOUNDSQL_SQL, sqlBuilder.toString());
         }
         return false;
     }
 
+//    public static void fileSearch(Context context, String inputString) {
+//        String searchTxt = sqliteEscape(inputString);
+//        ContentResolver contentResolver = context.getContentResolver();
+//        String[] projection = {MediaStore.Files.FileColumns._ID, MediaStore.Files.FileColumns.DATA,
+//                MediaStore.Files.FileColumns.DATE_MODIFIED,
+//                MediaStore.Files.FileColumns.SIZE, MediaStore.Files.FileColumns.TITLE,
+//                MediaStore.Files.FileColumns.MIME_TYPE};
+//        String selection = MediaStore.Files.FileColumns.TITLE + " LIKE ? escape '/' ";
+//        String searchStr = "%"+searchTxt+"%";
+//        String[] selectionArgs = new String[]{searchStr};
+//        Cursor cursor = null;
+//        try {
+//            cursor = contentResolver.query(MediaStore.Files.getContentUri("external"), projection, selection, selectionArgs, MediaStore.Files.FileColumns.DATE_MODIFIED + " desc");
+//            if (cursor != null) {
+//                int fileId;
+//                String filePath;
+//                File file;
+//                long size;
+//                long modifiedTime;
+//                while (cursor.moveToNext()) {
+//                    //....
+//                }
+//            }
+//        } catch (Exception e) {
+//            if (DEBUG) {
+//                Log.e(TAG, "", e);
+//            }
+//        } finally {
+//            try {
+//                if (cursor != null) {
+//                    cursor.close();
+//                }
+//            } catch (Exception e) {
+//                if (DEBUG) {
+//                    Log.e(TAG, "", e);
+//                }
+//            }
+//        }
+//    }
 
+    private static String sqliteEscape(String keyWord) {
+        keyWord = keyWord.replace("/", "//");
+        keyWord = keyWord.replace("'", "''");
+        keyWord = keyWord.replace("[", "/[");
+        keyWord = keyWord.replace("]", "/]");
+        keyWord = keyWord.replace("%", "/%");
+        keyWord = keyWord.replace("&", "/&");
+        keyWord = keyWord.replace("_", "/_");
+        keyWord = keyWord.replace("(", "/(");
+        keyWord = keyWord.replace(")", "/)");
+        return keyWord;
+    }
 }

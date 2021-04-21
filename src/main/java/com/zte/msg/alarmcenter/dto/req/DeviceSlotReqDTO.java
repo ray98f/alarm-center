@@ -49,5 +49,11 @@ public class DeviceSlotReqDTO {
     @NotBlank(message = "32000006")
     private String systemCode;
 
+    @ApiModelProperty(value = "系统id")
+    private Long systemId;
+
+    @ApiModelProperty(value = "站点id")
+    private Long positionId;
+
 
 }

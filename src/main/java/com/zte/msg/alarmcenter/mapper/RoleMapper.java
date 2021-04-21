@@ -35,12 +35,28 @@ public interface RoleMapper extends BaseMapper<Role> {
     Page<Role> listRole(Page<Role> page, Integer status, String roleName);
 
     /**
+     * 查看角色是否使用
+     *
+     * @param id
+     * @return
+     */
+    int selectRoleUse(Long id);
+
+    /**
      * 删除角色
      *
      * @param ids
      * @return
      */
     int deleteRole(List<Long> ids);
+
+    /**
+     * 判断角色是否已存在
+     *
+     * @param role
+     * @return
+     */
+    Long selectRoleIsExist(RoleReqDTO role);
 
     /**
      * 新增角色

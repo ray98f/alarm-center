@@ -6,6 +6,7 @@ import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.HomeMapper;
 import com.zte.msg.alarmcenter.service.HomeService;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
+import com.zte.msg.alarmcenter.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -108,7 +109,7 @@ public class HomeServiceImpl implements HomeService {
         if (null != alarmHistory) {
             for (AlarmHistoryResDTO alarmHistoryResDTO : alarmHistory) {
                 Map<String, String> map = new HashMap<>(16);
-                String alarmLevelName, alarmStateName;
+                String alarmLevelName, alarmStateName = "";
                 if (alarmHistoryResDTO.getAlarmLevel() == 1) {
                     alarmLevelName = "紧急告警";
                 } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
@@ -116,12 +117,19 @@ public class HomeServiceImpl implements HomeService {
                 } else {
                     alarmLevelName = "一般告警";
                 }
-                if (alarmHistoryResDTO.getAlarmLevel() == 1) {
+                if (alarmHistoryResDTO.getAlarmState() == 0) {
                     alarmStateName = "待处理";
-                } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
+                } else if (alarmHistoryResDTO.getAlarmState() == 2) {
                     alarmStateName = "手动确认";
-                } else {
+                } else if (alarmHistoryResDTO.getAlarmState() == 3) {
                     alarmStateName = "自动确认";
+                }
+                if (alarmHistoryResDTO.getAlarmVolume().equals(Constants.ONE.toString())){
+                    alarmHistoryResDTO.setAlarmVolume("大");
+                }else if (alarmHistoryResDTO.getAlarmVolume().equals(Constants.TWO.toString())){
+                    alarmHistoryResDTO.setAlarmVolume("中");
+                }else {
+                    alarmHistoryResDTO.setAlarmVolume("小");
                 }
                 map.put("子系统", alarmHistoryResDTO.getSubsystemName());
                 map.put("告警等级", alarmLevelName);
@@ -130,7 +138,7 @@ public class HomeServiceImpl implements HomeService {
                 map.put("槽位", alarmHistoryResDTO.getSlotPosition());
                 map.put("告警码", alarmHistoryResDTO.getAlarmCode());
                 map.put("告警名称", (alarmHistoryResDTO.getAlarmName() == null ? "" : alarmHistoryResDTO.getAlarmName()));
-                map.put("告警原因", (alarmHistoryResDTO.getAlarmReason() == null ? "" : alarmHistoryResDTO.getAlarmName()));
+                map.put("告警原因", (alarmHistoryResDTO.getAlarmReason() == null ? "" : alarmHistoryResDTO.getAlarmReason()));
                 map.put("第一次告警时间", sdf.format(alarmHistoryResDTO.getFirstTime()));
                 map.put("最后告警时间", sdf.format(alarmHistoryResDTO.getFinalTime()));
                 map.put("告警次数", alarmHistoryResDTO.getFrequency().toString());
@@ -282,5 +290,19 @@ public class HomeServiceImpl implements HomeService {
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
+    }
+
+    /**
+     * 获取首页地图地址
+     *
+     * @return
+     */
+    @Override
+    public List<HomeMapPathResDTO> getHomeMapPath() {
+        List<HomeMapPathResDTO> data = homeMapper.getHomeMapPath();
+        if (null == data || data.isEmpty()) {
+            throw new CommonException(ErrorCode.RESOURCE_NOT_EXIST);
+        }
+        return data;
     }
 }

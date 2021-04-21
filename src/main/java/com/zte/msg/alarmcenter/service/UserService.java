@@ -62,8 +62,9 @@ public interface UserService extends IService<User> {
      * 删除用户
      *
      * @param ids
+     * @param userId
      */
-    void deleteUser(List<Integer> ids);
+    void deleteUser(List<Integer> ids, String userId);
 
     /**
      * 获取所有用户列表

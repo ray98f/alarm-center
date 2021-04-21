@@ -5,6 +5,7 @@ import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.DeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.DeviceReqModifyDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.DeviceMapper;
 import com.zte.msg.alarmcenter.service.DeviceService;
@@ -31,7 +32,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void exportDevice(String name, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("设备名称", "所属系统id", "设备位置id", "设备编号", "品牌型号", "设备串号", "设备描述");
+        List<String> listName = Arrays.asList("设备名称", "所属系统编号", "设备位置编号", "设备编号", "品牌型号", "设备串号", "设备描述");
         List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null,null);
         // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
@@ -39,8 +40,8 @@ public class DeviceServiceImpl implements DeviceService {
             for (DeviceResDTO deviceResDTO : deviceResList) {
                 Map<String, String> map = new HashMap<>();
                 map.put("设备名称", deviceResDTO.getName());
-                map.put("所属系统id", deviceResDTO.getSystemId().toString());
-                map.put("设备位置id", deviceResDTO.getPositionId().toString());
+                map.put("所属系统编号", deviceResDTO.getSystemId().toString());
+                map.put("设备位置编号", deviceResDTO.getPositionId().toString());
                 map.put("设备编号", deviceResDTO.getDeviceCode());
                 map.put("品牌型号", deviceResDTO.getBrand());
                 map.put("设备串号", deviceResDTO.getSerialNum());
@@ -121,6 +122,10 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addDevice(DeviceReqDTO deviceReqDTO, String userId) {
+        Long id = myDeviceMapper.selectDeviceIsExist(deviceReqDTO);
+        if (!Objects.isNull(id)){
+            throw new CommonException(ErrorCode.DEVICE_EXIST);
+        }
         List<DeviceReqDTO> temp = new ArrayList<>();
         temp.add(deviceReqDTO);
         int integer = myDeviceMapper.importDevice(temp, userId);

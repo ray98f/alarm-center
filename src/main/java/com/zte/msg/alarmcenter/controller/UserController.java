@@ -4,6 +4,7 @@ import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
+import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.dto.req.PasswordReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
 import com.zte.msg.alarmcenter.entity.User;
@@ -18,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
@@ -107,8 +110,10 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:remove"})
     @DeleteMapping
     @ApiOperation(value = "删除用户")
-    public <T> DataResponse<T> deleteUser(@Valid @RequestBody List<Integer> ids) {
-        userService.deleteUser(ids);
+    public <T> DataResponse<T> deleteUser(@Valid @RequestBody List<Integer> ids, ServletRequest request) {
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
+        userService.deleteUser(ids, tokenInfo == null ? null : tokenInfo.getUserId());
         return DataResponse.success();
     }
 

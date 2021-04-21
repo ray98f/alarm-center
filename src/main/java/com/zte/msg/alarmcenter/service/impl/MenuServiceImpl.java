@@ -52,6 +52,9 @@ public class MenuServiceImpl implements MenuService {
     public List<MenuResDTO> listLoginMenu() {
         Long id = userMapper.selectUserId(TokenUtil.getCurrentUserName());
         List<Long> userRoles = userMapper.selectUserRoles(id);
+        if (null == userRoles || userRoles.isEmpty()) {
+            throw new CommonException(ErrorCode.USER_NO_ROLE);
+        }
         return new ArrayList<>(menuService.listMenu(userRoles));
     }
 

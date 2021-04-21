@@ -42,15 +42,21 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Page<Role> listRole(Integer status,String roleName,PageReqDTO pageReqDTO) {
+    public Page<Role> listRole(Integer status, String roleName, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
-        return roleMapper.listRole(pageReqDTO.of(), status,roleName);
+        return roleMapper.listRole(pageReqDTO.of(), status, roleName);
     }
 
     @Override
     public void deleteRole(List<Long> ids) {
         if (null == ids || ids.isEmpty()) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        for (Long id : ids) {
+            int count = roleMapper.selectRoleUse(id);
+            if (count > 0) {
+                throw new CommonException(ErrorCode.ROLE_USE_CANT_DELETE);
+            }
         }
         int deleteRole = roleMapper.deleteRole(ids);
         if (deleteRole >= 0) {
@@ -66,8 +72,20 @@ public class RoleServiceImpl implements RoleService {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
         role.setCreatedBy(TokenUtil.getCurrentUserName());
+        Long id = roleMapper.selectRoleIsExist(role);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.ROLE_EXIST);
+        }
         int insertRole = roleMapper.insertRole(role);
         if (insertRole <= 0) {
+            throw new CommonException(ErrorCode.INSERT_ERROR);
+        }
+        if (null == role.getMenuIds() || role.getMenuIds().isEmpty()) {
+            log.warn("没有需要添加的角色权限信息");
+            return;
+        }
+        int insertRoleMenu = roleMapper.insertRoleMenu(role.getId(), role.getMenuIds(), role.getCreatedBy());
+        if (insertRoleMenu <= 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
         log.info("新增角色成功");

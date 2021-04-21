@@ -54,6 +54,10 @@ public class MsgServiceImpl implements MsgService {
         if (Objects.isNull(msgConfig)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
+        Long id = msgMapper.selectMsgConfigIsExist(msgConfig);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.MSG_CONFIG_EXIST);
+        }
         int result = msgMapper.insertMsgConfig(msgConfig);
         if (result < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);

@@ -33,7 +33,7 @@ public class Constants {
 
     public static String ZTE_NAME = "zte";
 
-    public static final String OPENAPI_URL = "/api/v1/open/";
+    public static final String OPENAPI_URL = "/api/v1/file/downLoadImg";
 
     public static final Integer NOT_RELATED = 0;
 
@@ -52,4 +52,8 @@ public class Constants {
     public static final String TOKEN_STRING = "token";
 
     public static final String UNDER_LINE = "_";
+
+    public static final Integer ONE = 1;
+
+    public static final Integer TWO = 2;
 }

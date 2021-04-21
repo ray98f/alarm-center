@@ -14,7 +14,7 @@
         ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as serious_alarm_num,
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
         from (SELECT p.id as pid,s.id as sid,p.sort as p_sort,s.sort as s_sort,s.name as subsystem_name,s.is_online
-        FROM position as p join subsystem as s where p.type=2 and p.is_deleted=0 and s.is_deleted=0) as a
+        FROM position as p join subsystem as s where p.type=2 and p.is_deleted=0 and s.is_deleted=0 and s.pid not in (0)) as a
         left join alarm_history as ah on a.sid=ah.subsystem_id and a.pid=ah.line_id and ah.is_deleted=0 group by a.subsystem_name
         order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,a.p_sort asc,a.s_sort asc
     </select>
@@ -56,12 +56,12 @@
         ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as sys_serious_alarm_num,
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as sys_general_alarm_num
         from subsystem as s left join alarm_history as ah on ah.subsystem_id=s.id and ah.site_id=#{stationId} and ah.line_id=#{lineId}
-        and ah.is_deleted=0 where s.is_deleted=0 group by s.id
+        and ah.is_deleted=0 where s.is_deleted=0 and s.pid not in (0) group by s.id
         order by s.sort asc
     </select>
 
     <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
-        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.site_id,p.name as site_name,
+        SELECT ah.id,ah.subsystem_id,ah.subsystem_code,s.name as subsystem_name,ah.site_id,p.name as site_name,ah.line_code,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.is_ring,ah.frequency,
         ah.alarm_volume,ah.alarm_state,ah.alarm_remark FROM alarm_history as ah
@@ -138,5 +138,9 @@
         </foreach>
         )
     </update>
+
+    <select id="getHomeMapPath" resultType="com.zte.msg.alarmcenter.dto.res.HomeMapPathResDTO">
+        SELECT id,name,topographic as path FROM position where type=1;
+    </select>
 
 </mapper>

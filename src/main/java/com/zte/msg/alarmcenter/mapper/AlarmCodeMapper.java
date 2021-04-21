@@ -12,6 +12,8 @@ import java.util.List;
 @Repository
 public interface AlarmCodeMapper {
 
+    Long selectAlarmLevelId(String name);
+
     Integer importAlarmCode(@Param("list") List<AlarmCodeReqDTO> list, @Param("userId") String userId);
 
     List<AlarmCodeResDTO> exportAlarmCode(@Param("alarmCode") Long alarmCode, @Param("alarmName") String alarmName, @Param("systemId") Long systemId, @Param("alarmLevelId") Long alarmLevelId, @Param("page") Long page, @Param("size") Long size);
@@ -21,6 +23,8 @@ public interface AlarmCodeMapper {
     Integer deleteAlarmCode(@Param("id") Long id);
 
     Integer getAlarmCodeCount(@Param("alarmCode") Long alarmCode, @Param("alarmName") String alarmName, @Param("systemId") Long systemId, @Param("alarmLevelId") Long alarmLevelId);
+
+    Long selectAlarmCodeIsExist(AlarmCodeReqDTO alarmCodeReqDTO);
 
     Integer addAlarmCode(@Param("alarmCodeReqDTO") AlarmCodeReqDTO alarmCodeReqDTO, @Param("userId") String userId);
 }

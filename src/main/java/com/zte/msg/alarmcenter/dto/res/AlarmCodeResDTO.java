@@ -17,11 +17,17 @@ public class AlarmCodeResDTO {
     @ApiModelProperty(value = "线路名称")
     private String positionName;
 
+    @ApiModelProperty(value = "线路编号")
+    private Integer positionCode;
+
     @ApiModelProperty(value = "系统id")
     private Long systemId;
 
     @ApiModelProperty(value = "系统名称")
     private String systemName;
+
+    @ApiModelProperty(value = "系统编号")
+    private Integer systemCode;
 
     @ApiModelProperty(value = "告警码")
     private String alarmCode;

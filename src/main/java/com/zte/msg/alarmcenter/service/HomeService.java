@@ -111,4 +111,11 @@ public interface HomeService {
      * @return
      */
     void updateIsRing(Integer isRing, List<Long> ids);
+
+    /**
+     * 获取首页地图地址
+     *
+     * @return
+     */
+    List<HomeMapPathResDTO> getHomeMapPath();
 }

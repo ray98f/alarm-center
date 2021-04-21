@@ -122,10 +122,15 @@ public enum ErrorCode {
     /**
      * 鉴权 32000060 - 32000079
      */
+    USER_EXIST(32000060, "user.exist"),
     USER_NOT_EXIST(32000060, "user.not.exist"),
+    USER_DISABLE(32000060, "user.disable"),
     LOGIN_PASSWORD_ERROR(32000061, "login.password.error"),
     USER_PWD_CHANGE_FAIL(32000062, "user.pwd.change.fail"),
     APP_ROLE_EDIT_ERROR(32000063, "app.role.edit.error"),
+    USER_NO_ROLE(32000064, "user.no.role"),
+    USER_LOGIN_CANT_DELETE(32000065, "user.login.cant.delete"),
+    ROLE_USE_CANT_DELETE(32000066, "role.use.cant.delete"),
 
     /**
      * 第三方供应商服务 32000080 - 32000089
@@ -158,7 +163,15 @@ public enum ErrorCode {
     USER_NOT_LOGIN_IN(32100002, "user.not.login.in"),
     PERMISSION_FAILED(32100003, "permission.failed"),
     SECRET_NOT_EXIST(32100004, "secret.not.exist"),
-    SYNC_ERROR(32100005, "sync.error");
+    SYNC_ERROR(32100005, "sync.error"),
+    ROLE_EXIST(32100006, "role.exist"),
+    ALARM_CODE_EXIST(32100006, "alarm.code.exist"),
+    SYSTEM_PARAM_EXIST(32100006, "system.param.exist"),
+    DEVICE_EXIST(32100006, "device.exist"),
+    MSG_CONFIG_EXIST(32100006, "msg.config.exist"),
+    SNMP_SLOT_EXIST(32100006, "snmp.slot.exist"),
+    SNMP_ALARM_CODE_EXIST(32100006, "snmp.alarm.code.exist"),
+    ALARM_LEVEL_NOT_EXIST(32100006, "alarm.level.not.exist");
 
     private Integer code;
 

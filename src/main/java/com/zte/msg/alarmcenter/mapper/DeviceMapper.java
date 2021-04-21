@@ -17,6 +17,8 @@ public interface DeviceMapper {
     List<DeviceResDTO> exportDevice(@Param("name") String name, @Param("deviceCode") String deviceCode,
                                     @Param("systemId") Long systemId, @Param("positionId") Long positionId, @Param("page") Long page, @Param("size") Long size);
 
+    Long selectDeviceIsExist(DeviceReqDTO deviceReqDTO);
+
     Integer importDevice(@Param("list") List<DeviceReqDTO> list, @Param("userId") String userId);
 
     Integer modifyDevice(@Param("reqModifyDTO") DeviceReqModifyDTO reqModifyDTO, @Param("id") Long id, @Param("userId") String userId);

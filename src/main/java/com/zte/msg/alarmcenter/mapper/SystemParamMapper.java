@@ -17,6 +17,7 @@ public interface SystemParamMapper extends BaseMapper<SystemParameter> {
 
     /**
      * 查询系统参数列表
+     *
      * @param page
      * @param parameter
      * @return
@@ -25,12 +26,14 @@ public interface SystemParamMapper extends BaseMapper<SystemParameter> {
 
     /**
      * 获取全部系统参数列表
+     *
      * @return
      */
     List<SystemParameter> listAllSystemParam();
 
     /**
      * 批量删除系统参数
+     *
      * @param ids
      * @return
      */
@@ -38,13 +41,23 @@ public interface SystemParamMapper extends BaseMapper<SystemParameter> {
 
     /**
      * 修改系统参数
+     *
      * @param systemParameter
      * @return
      */
     int updateSystemParam(SystemParameter systemParameter);
 
     /**
+     * 查询是否存在系统参数
+     *
+     * @param systemParameter
+     * @return
+     */
+    Long selectSystemParamIsExist(SystemParameter systemParameter);
+
+    /**
      * 新增系统参数
+     *
      * @param systemParameter
      * @return
      */

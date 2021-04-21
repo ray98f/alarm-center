@@ -209,9 +209,6 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
      */
     @Override
     public List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds) {
-        if (null == systemIds || systemIds.isEmpty()) {
-            throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
-        }
         List<AlarmCodeResDTO> alarmCodeResDTOList = alarmRuleMapper.getAlarmCodes(systemIds);
         if (null == alarmCodeResDTOList || alarmCodeResDTOList.isEmpty()) {
             log.warn("告警码下拉列表获取为空");

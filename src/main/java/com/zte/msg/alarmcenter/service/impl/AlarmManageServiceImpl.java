@@ -10,6 +10,7 @@ import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
 import com.zte.msg.alarmcenter.service.AlarmManageService;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +71,7 @@ public class AlarmManageServiceImpl implements AlarmManageService {
         if (null != alarmHistory) {
             for (AlarmHistoryResDTO alarmHistoryResDTO : alarmHistory) {
                 Map<String, String> map = new HashMap<>(16);
-                String alarmLevelName, alarmStateName;
+                String alarmLevelName, alarmStateName = "待处理";
                 if (alarmHistoryResDTO.getAlarmLevel() == 1) {
                     alarmLevelName = "紧急告警";
                 } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
@@ -78,18 +79,20 @@ public class AlarmManageServiceImpl implements AlarmManageService {
                 } else {
                     alarmLevelName = "一般告警";
                 }
-                if (alarmHistoryResDTO.getAlarmLevel() == 1) {
-                    alarmStateName = "待处理";
-                } else if (alarmHistoryResDTO.getAlarmLevel() == 2) {
+                if (alarmHistoryResDTO.getAlarmState() == 1) {
+                    alarmStateName = "延迟告警";
+                } else if (alarmHistoryResDTO.getAlarmState() == 2) {
                     alarmStateName = "手动确认";
-                } else if (alarmHistoryResDTO.getAlarmLevel() == 3) {
+                } else if (alarmHistoryResDTO.getAlarmState() == 3) {
                     alarmStateName = "自动确认";
-                } else if (alarmHistoryResDTO.getAlarmLevel() == 4) {
-                    alarmStateName = "已清除";
-                } else if (alarmHistoryResDTO.getAlarmLevel() == 5) {
+                } else if (alarmHistoryResDTO.getAlarmState() == 6) {
+                    alarmStateName = "手动清除";
+                } else if (alarmHistoryResDTO.getAlarmState() == 4) {
                     alarmStateName = "手动过滤";
-                } else {
+                } else if (alarmHistoryResDTO.getAlarmState() == 5) {
                     alarmStateName = "自动过滤";
+                } else if (alarmHistoryResDTO.getAlarmState() == 7) {
+                    alarmStateName = "自动清除";
                 }
                 map.put("系统", alarmHistoryResDTO.getSubsystemName());
                 map.put("告警等级", alarmLevelName);
@@ -99,10 +102,10 @@ public class AlarmManageServiceImpl implements AlarmManageService {
                 map.put("告警码", alarmHistoryResDTO.getAlarmCode());
                 map.put("告警名称", alarmHistoryResDTO.getAlarmName());
                 map.put("告警原因", alarmHistoryResDTO.getAlarmReason());
-                map.put("第一次告警时间", sdf.format(alarmHistoryResDTO.getFirstTime()));
-                map.put("最后告警时间", sdf.format(alarmHistoryResDTO.getFinalTime()));
+                map.put("第一次告警时间", null == alarmHistoryResDTO.getFirstTime() ? null : sdf.format(alarmHistoryResDTO.getFirstTime()));
+                map.put("最后告警时间", null == alarmHistoryResDTO.getFinalTime() ? null : sdf.format(alarmHistoryResDTO.getFinalTime()));
                 map.put("告警状态", alarmStateName);
-                map.put("告警恢复时间", sdf.format(alarmHistoryResDTO.getRecoveryTime()));
+                map.put("告警恢复时间", null == alarmHistoryResDTO.getRecoveryTime() ? null : sdf.format(alarmHistoryResDTO.getRecoveryTime()));
                 map.put("备注", alarmHistoryResDTO.getAlarmRemark());
                 list.add(map);
             }

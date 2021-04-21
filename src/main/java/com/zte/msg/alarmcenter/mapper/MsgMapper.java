@@ -25,6 +25,14 @@ public interface MsgMapper {
     Page<MsgConfig> pageMsgConfig(Page<MsgConfig> page, String name, Integer type);
 
     /**
+     * 判断前转规则是否存在
+     *
+     * @param msgConfig
+     * @return
+     */
+    Long selectMsgConfigIsExist(MsgConfig msgConfig);
+
+    /**
      * 新增前转配置
      *
      * @param msgConfig

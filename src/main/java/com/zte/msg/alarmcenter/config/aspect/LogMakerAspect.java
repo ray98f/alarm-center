@@ -93,7 +93,7 @@ public class LogMakerAspect {
             operationLog.setOperationType(syslog.value());
             //请求的参数
             if (result.getCode().equals(0)){
-                operationLog.setParams(syslog.value() + "成功," + "参数=" + JSONObject.toJSONString(params));
+                operationLog.setParams(syslog.value() + "成功");
             }else {
                 operationLog.setParams(syslog.value() + "失败," + "参数=" + JSONObject.toJSONString(params));
             }

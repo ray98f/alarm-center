@@ -266,20 +266,28 @@
     </select>
     <select id="getDevices" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
         select id, name from device
-        <trim prefix="where " suffixOverrides="or">
+        <trim prefix="where " suffixOverrides="and">
             <if test="systemIds!=null and systemIds.size()>0">
                 system_id in (
                 <foreach collection="systemIds" index="index" item="systemId" separator=",">
                     #{systemId}
                 </foreach>
-                ) or
+                ) and
             </if>
             <if test="stationIds!=null and stationIds.size()>0">
                 position_id in (
                 <foreach collection="stationIds" index="index" item="stationId" separator=",">
                     #{stationId}
                 </foreach>
-                ) or
+                ) and
+            </if>
+            <if test="(systemIds==null or systemIds.size()==0) and (stationIds==null or stationIds.size()==0)">
+                <if test="systemIds==null or systemIds.size()==0">
+                    system_id=null and
+                </if>
+                <if test="stationIds==null or stationIds.size()==0">
+                    position_id=null and
+                </if>
             </if>
         </trim>
     </select>
@@ -294,6 +302,9 @@
                 #{systemId}
             </foreach>
             )
+        </if>
+        <if test="systemIds==null or systemIds.size()==0">
+            where ac.system_id=null
         </if>
     </select>
     <insert id="insertMsgPush">

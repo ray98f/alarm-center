@@ -32,8 +32,8 @@ public class SnmpSlotResDTO {
     @ApiModelProperty(value = "设备编号")
     private String deviceCode;
 
-    @ApiModelProperty(value = "槽位编号")
-    private String slotId;
+    @ApiModelProperty(value = "槽位id")
+    private Long slotId;
 
     @ApiModelProperty(value = "槽位名称")
     private String slotName;
@@ -46,4 +46,7 @@ public class SnmpSlotResDTO {
 
     @ApiModelProperty(value = "设备名称")
     private String deviceName;
+
+    @ApiModelProperty(value = "槽位编号")
+    private String slotCode;
 }

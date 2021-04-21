@@ -3,9 +3,9 @@
 <mapper namespace="com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper">
     <select id="totalAlarmData" resultType="com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO">
         select cs.id as subsystem_id,cs.name as subsystem_name,p.id as site_id,p.name as site_name,
-        ah.alarm_name,ah.alarm_reason,count(ah.id) as alarm_num from alarm_history as ah
+        ah.alarm_name,ah.alarm_reason,sum(ah.frequency) as alarm_num from alarm_history as ah
         left join subsystem as cs on ah.subsystem_id=cs.id left join position as p on p.id=ah.site_id
-        where ah.is_deleted=0
+        where ah.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="systemId!=null">
             and cs.id=#{systemId}
         </if>
@@ -26,9 +26,9 @@
 
     <select id="exportTotalAlarmData" resultType="com.zte.msg.alarmcenter.dto.res.TotalAlarmDataResDTO">
         select cs.id as subsystem_id,cs.name as subsystem_name,p.id as site_id,p.name as site_name,
-        ah.alarm_name,ah.alarm_reason,count(ah.id) as alarm_num from alarm_history as ah
+        ah.alarm_name,ah.alarm_reason,sum(ah.frequency) as alarm_num from alarm_history as ah
         left join subsystem as cs on ah.subsystem_id=cs.id left join position as p on p.id=ah.site_id
-        where ah.is_deleted=0
+        where ah.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="systemId!=null">
             and cs.id=#{systemId}
         </if>
@@ -49,7 +49,7 @@
 
     <select id="statisticsByLine" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
         select p.id as site_id,p.name as site_name,
-        ah.alarm_level,count(ah.id) as alarm_num from position as p
+        ah.alarm_level,sum(ah.frequency) as alarm_num from position as p
         left join alarm_history as ah on p.id=ah.site_id and ah.is_deleted=0
         <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
@@ -64,7 +64,7 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where p.is_deleted=0 and p.type=3
+        where p.is_deleted=0 and p.type=3 and ah.alarm_state in (4,5,6,7)
         <if test="siteIds!=null and siteIds.size()>0">
             and p.id in(
             <foreach collection="siteIds" index="index" item="siteId" separator=",">
@@ -78,7 +78,7 @@
 
     <select id="statisticsBySystem" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
         select cs.id as subsystem_id,cs.name as subsystem_name,
-        ah.alarm_level,count(ah.id) as alarm_num from subsystem as cs
+        ah.alarm_level,sum(ah.frequency) as alarm_num from subsystem as cs
         left join alarm_history as ah on ah.subsystem_id=cs.id and ah.is_deleted=0
         <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
@@ -93,7 +93,7 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where cs.is_deleted=0
+        where cs.is_deleted=0 and ah.alarm_state in (4,5,6,7) and cs.pid not in (0)
         <if test="systemIds!=null and systemIds.size()>0">
             and cs.id in(
             <foreach collection="systemIds" index="index" item="systemId" separator=",">
@@ -105,8 +105,8 @@
     </select>
 
     <select id="statisticsByAlarmLevel" resultType="com.zte.msg.alarmcenter.dto.res.StatisticsByAnyResDTO">
-        select ah.alarm_level,count(ah.id) as alarm_num from alarm_history as ah
-        where ah.is_deleted=0
+        select ah.alarm_level,sum(ah.frequency) as alarm_num from alarm_history as ah
+        where ah.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
@@ -124,7 +124,7 @@
     </select>
 
     <select id="lineAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        select ah.alarm_level,sum(ah.frequency) as alarm_num,DATE_FORMAT(ah.final_time,
         <if test="statisticsCycle==1">
             '%Y年%m月%d日'
         </if>
@@ -149,7 +149,7 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where p.is_deleted=0 and p.type=3
+        where p.is_deleted=0 and p.type=3 and ah.alarm_state in (4,5,6,7)
         <if test="siteId!=null">
             and p.id=#{siteId}
         </if>
@@ -157,7 +157,7 @@
     </select>
 
     <select id="levelAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        select ah.alarm_level,sum(ah.frequency) as alarm_num,DATE_FORMAT(ah.final_time,
         <if test="statisticsCycle==1">
             '%Y年%m月%d日'
         </if>
@@ -168,7 +168,7 @@
             '%Y年%m月'
         </if>
         ) as statistics_date from alarm_history as ah
-        where ah.is_deleted=0
+        where ah.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
@@ -186,7 +186,7 @@
     </select>
 
     <select id="systemAlarmTrend" resultType="com.zte.msg.alarmcenter.dto.res.AnyAlarmTrendResDTO">
-        select ah.alarm_level,count(ah.id) as alarm_num,DATE_FORMAT(ah.final_time,
+        select ah.alarm_level,sum(ah.frequency) as alarm_num,DATE_FORMAT(ah.final_time,
         <if test="statisticsCycle==1">
             '%Y年%m月%d日'
         </if>
@@ -211,7 +211,7 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where cs.is_deleted=0
+        where cs.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="systemId!=null">
             and cs.id=#{systemId}
         </if>
@@ -230,7 +230,7 @@
             '%Y年%m月'
         </if>
         ) as statistics_date from alarm_history as ah
-        where ah.is_deleted=0
+        where ah.is_deleted=0 and ah.alarm_state in (4,5,6,7)
         <if test="alarmLevels!=null and alarmLevels.size()>0">
             and ah.alarm_level in(
             <foreach collection="alarmLevels" index="index" item="level" separator=",">
