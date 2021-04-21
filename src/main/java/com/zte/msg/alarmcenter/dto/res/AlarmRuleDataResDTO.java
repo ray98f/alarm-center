@@ -17,6 +17,7 @@ public class AlarmRuleDataResDTO {
     private Integer frequency;
     private Long frequencyTime;
     private Long experienceTime;
+    private Long msgConfigId;
     private List<Long> systemIds;
     private List<Long> positionIds;
     private List<Long> deviceIds;

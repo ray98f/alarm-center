@@ -28,9 +28,7 @@ public class DataCacheTask {
     public static ConcurrentHashMap<Long, DeviceSlot> deviceSlotData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmCode> alarmCodeData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmRuleDataResDTO> alarmRuleData = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<Long, AlarmHistory> alarmDelayHistoryData = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<Long, AlarmHistory> alarmUpdateFrequencyHistoryData = new ConcurrentHashMap<>();
-    public static ConcurrentHashMap<Long, AlarmHistory> alarmUpdateExperienceHistoryData = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Long, AlarmHistory> frequencyAlarmHistoryData = new ConcurrentHashMap<>();
 
     /**
      * 数据库增量同步
@@ -46,9 +44,7 @@ public class DataCacheTask {
         List<DeviceSlot> deviceSlots;
         List<AlarmCode> alarmCodes;
         List<AlarmRuleDataResDTO> alarmRules;
-        List<AlarmHistory> alarmDelayHistories;
-        List<AlarmHistory> alarmUpdateFrequencyHistories;
-        List<AlarmHistory> alarmUpdateExperienceHistories;
+        List<AlarmHistory> alarmHistories;
         if (subsystemData.isEmpty()) {
             subsystems = dataCacheMapper.selectSubsystem();
             log.info("---------- 系统全量缓存开始 ----------");
@@ -91,33 +87,18 @@ public class DataCacheTask {
             alarmRules = dataCacheMapper.selectAlarmRuleByTime(startTime, endTime);
             log.info("---------- 告警规则增量缓存开始 ----------");
         }
-        if (alarmDelayHistoryData.isEmpty()) {
-            alarmDelayHistories = dataCacheMapper.selectDelayAlarmHistory();
+        if (frequencyAlarmHistoryData.isEmpty()) {
+            alarmHistories = dataCacheMapper.selectFrequencyAlarmHistory();
             log.info("---------- 告警规则全量缓存开始 ----------");
         } else {
-            alarmDelayHistories = dataCacheMapper.selectDelayAlarmHistoryByTime(startTime, endTime);
+            alarmHistories = dataCacheMapper.selectFrequencyAlarmHistoryByTime(startTime, endTime);
             log.info("---------- 告警规则增量缓存开始 ----------");
         }
-        if (alarmUpdateFrequencyHistoryData.isEmpty()) {
-            alarmUpdateFrequencyHistories = dataCacheMapper.selectUpdateFrequencyAlarmHistory();
-            log.info("---------- 告警规则全量缓存开始 ----------");
-        } else {
-            alarmUpdateFrequencyHistories = dataCacheMapper.selectUpdateFrequencyAlarmHistoryByTime(startTime, endTime);
-            log.info("---------- 告警规则增量缓存开始 ----------");
-        }
-        if (alarmUpdateExperienceHistoryData.isEmpty()) {
-            alarmUpdateExperienceHistories = dataCacheMapper.selectUpdateExperienceAlarmHistory();
-            log.info("---------- 告警规则全量缓存开始 ----------");
-        } else {
-            alarmUpdateExperienceHistories = dataCacheMapper.selectUpdateExperienceAlarmHistoryByTime(startTime, endTime);
-            log.info("---------- 告警规则增量缓存开始 ----------");
-        }
-        addDate(subsystems, positions, devices, deviceSlots, alarmCodes, alarmRules, alarmDelayHistories, alarmUpdateFrequencyHistories, alarmUpdateExperienceHistories);
+        addDate(subsystems, positions, devices, deviceSlots, alarmCodes, alarmRules, alarmHistories);
     }
 
     private void addDate(List<Subsystem> subsystems, List<Position> positions, List<Device> devices, List<DeviceSlot> deviceSlots,
-                         List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmDelayHistories,
-                         List<AlarmHistory> alarmUpdateFrequencyHistories, List<AlarmHistory> alarmUpdateExperienceHistories) {
+                         List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmHistories) {
         if (subsystems != null && subsystems.size() > 0) {
             for (Subsystem subsystem : subsystems) {
                 subsystemData.put(subsystem.getSid(), subsystem);
@@ -148,19 +129,9 @@ public class DataCacheTask {
                 alarmRuleData.put(alarmCode.getId(), alarmCode);
             }
         }
-        if (alarmDelayHistories != null && alarmDelayHistories.size() > 0) {
-            for (AlarmHistory alarmDelayHistory : alarmDelayHistories) {
-                alarmDelayHistoryData.put(alarmDelayHistory.getId(), alarmDelayHistory);
-            }
-        }
-        if (alarmUpdateFrequencyHistories != null && alarmUpdateFrequencyHistories.size() > 0) {
-            for (AlarmHistory alarmUpdateFrequencyHistory : alarmUpdateFrequencyHistories) {
-                alarmDelayHistoryData.put(alarmUpdateFrequencyHistory.getId(), alarmUpdateFrequencyHistory);
-            }
-        }
-        if (alarmUpdateExperienceHistories != null && alarmUpdateExperienceHistories.size() > 0) {
-            for (AlarmHistory alarmUpdateExperienceHistory : alarmUpdateExperienceHistories) {
-                alarmDelayHistoryData.put(alarmUpdateExperienceHistory.getId(), alarmUpdateExperienceHistory);
+        if (alarmHistories != null && alarmHistories.size() > 0) {
+            for (AlarmHistory alarmHistory : alarmHistories) {
+                frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
             }
         }
         log.info("------------ 缓存结束 ------------");
@@ -179,18 +150,14 @@ public class DataCacheTask {
         List<DeviceSlot> deviceSlotList = dataCacheMapper.selectDeviceSlot();
         List<AlarmCode> alarmCodeList = dataCacheMapper.selectAlarmCode();
         List<AlarmRuleDataResDTO> alarmRuleDetailsResDTOList = dataCacheMapper.selectAlarmRule();
-        List<AlarmHistory> alarmDelayHistoryList = dataCacheMapper.selectDelayAlarmHistory();
-        List<AlarmHistory> alarmUpdateFrequencyHistoryList = dataCacheMapper.selectUpdateFrequencyAlarmHistory();
-        List<AlarmHistory> alarmUpdateExperienceHistoryList = dataCacheMapper.selectUpdateExperienceAlarmHistory();
+        List<AlarmHistory> alarmHistoryList = dataCacheMapper.selectFrequencyAlarmHistory();
         subsystemData = new ConcurrentHashMap<>();
         positionData = new ConcurrentHashMap<>();
         deviceData = new ConcurrentHashMap<>();
         deviceSlotData = new ConcurrentHashMap<>();
         alarmCodeData = new ConcurrentHashMap<>();
         alarmRuleData = new ConcurrentHashMap<>();
-        alarmDelayHistoryData = new ConcurrentHashMap<>();
-        alarmUpdateFrequencyHistoryData = new ConcurrentHashMap<>();
-        alarmUpdateExperienceHistoryData = new ConcurrentHashMap<>();
+        frequencyAlarmHistoryData = new ConcurrentHashMap<>();
         for (Subsystem subsystem : subsystemList) {
             subsystemData.put(subsystem.getSid(), subsystem);
         }
@@ -209,14 +176,8 @@ public class DataCacheTask {
         for (AlarmRuleDataResDTO alarmRuleDetailsResDTO : alarmRuleDetailsResDTOList) {
             alarmRuleData.put(alarmRuleDetailsResDTO.getId(), alarmRuleDetailsResDTO);
         }
-        for (AlarmHistory alarmDelayHistory : alarmDelayHistoryList) {
-            alarmDelayHistoryData.put(alarmDelayHistory.getId(), alarmDelayHistory);
-        }
-        for (AlarmHistory alarmUpdateFrequencyHistory : alarmUpdateFrequencyHistoryList) {
-            alarmDelayHistoryData.put(alarmUpdateFrequencyHistory.getId(), alarmUpdateFrequencyHistory);
-        }
-        for (AlarmHistory alarmUpdateExperienceHistory : alarmUpdateExperienceHistoryList) {
-            alarmDelayHistoryData.put(alarmUpdateExperienceHistory.getId(), alarmUpdateExperienceHistory);
+        for (AlarmHistory alarmHistory : alarmHistoryList) {
+            frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
         }
     }
 }

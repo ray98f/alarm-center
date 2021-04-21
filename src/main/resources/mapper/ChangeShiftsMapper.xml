@@ -3,6 +3,6 @@
 <mapper namespace="com.zte.msg.alarmcenter.mapper.ChangeShiftsMapper">
     <insert id="addChangeShifts" parameterType="com.zte.msg.alarmcenter.entity.ChangeShifts">
         insert into change_shifts(by_user_name,to_user_name,remark,created_by,updated_by)
-        value(#{byUserName},#{toUserName},#{remark},#{userName},#{userName})
+        value(#{byUserName},#{toUserName},#{remark},#{toUserName},#{toUserName})
     </insert>
 </mapper>

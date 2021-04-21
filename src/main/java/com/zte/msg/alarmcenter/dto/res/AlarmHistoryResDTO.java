@@ -23,6 +23,9 @@ public class AlarmHistoryResDTO {
     @ApiModelProperty(value = "子系统名称")
     private String subsystemName;
 
+    @ApiModelProperty(value = "子系统Code")
+    private Integer subsystemCode;
+
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;
 
@@ -31,6 +34,9 @@ public class AlarmHistoryResDTO {
 
     @ApiModelProperty(value = "线路名称")
     private String lineName;
+
+    @ApiModelProperty(value = "线路Code")
+    private Integer lineCode;
 
     @ApiModelProperty(value = "站点id")
     private Long siteId;

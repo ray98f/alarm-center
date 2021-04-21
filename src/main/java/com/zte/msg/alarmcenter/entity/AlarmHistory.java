@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -15,28 +16,61 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ApiModel
-public class AlarmHistory extends BaseEntity {
+public class AlarmHistory extends BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
 
+    @ApiModelProperty(value = "子系统码")
+    private Integer subsystemCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String subsystemName;
+
     @ApiModelProperty(value = "线路id")
     private Long lineId;
+
+    @ApiModelProperty(value = "线路码")
+    private Integer lineCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String lineName;
 
     @ApiModelProperty(value = "站点id")
     private Long siteId;
 
+    @ApiModelProperty(value = "站点码")
+    private Integer siteCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String siteName;
+
     @ApiModelProperty(value = "设备id")
     private Long deviceId;
+
+    @ApiModelProperty(value = "设备码")
+    private Integer deviceCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String deviceName;
 
     @ApiModelProperty(value = "槽位id")
     private Long slotId;
 
+    @ApiModelProperty(value = "槽位码")
+    private Integer slotCode;
+
+    @ApiModelProperty(value = "子系统名称")
+    private String slotName;
+
     @ApiModelProperty(value = "告警等级")
     private Integer alarmLevel;
 
-    @ApiModelProperty(value = "告警码")
+    @ApiModelProperty(value = "告警码id")
     private Long alarmCode;
+
+    @ApiModelProperty(value = "告警码")
+    private Integer alarmCodeId;
 
     @ApiModelProperty(value = "告警名称")
     private String alarmName;
@@ -77,8 +111,11 @@ public class AlarmHistory extends BaseEntity {
     @ApiModelProperty(value = "告警升级频次单位时间")
     private Long frequencyTime;
 
-    @ApiModelProperty(value = "告警升级精力时间")
+    @ApiModelProperty(value = "告警升级经历时间")
     private Long experienceTime;
+
+    @ApiModelProperty(value = "告警升级等级")
+    private Integer alarmUpdateLevel;
 
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;

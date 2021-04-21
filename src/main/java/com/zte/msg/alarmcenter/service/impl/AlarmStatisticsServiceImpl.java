@@ -96,7 +96,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             return null;
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
-        List<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSiteName).collect(Collectors.toList());
+        Set<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSiteName).collect(Collectors.toSet());
         for (String name : names) {
             StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
             data.setSiteName(name);
@@ -105,11 +105,14 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             data.setSeriousAlarmNum(0L);
             for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
                 if (statisticsByAnyResDTO.getSiteName().equals(name)) {
+                    if (statisticsByAnyResDTO.getAlarmLevel() == null) {
+                        continue;
+                    }
                     if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
                     } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
-                    } else {
+                    } else if (3 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
                     }
                 }
@@ -133,7 +136,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             return null;
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
-        List<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSubsystemName).collect(Collectors.toList());
+        Set<String> names = statisticsByAnyResDTOList.stream().map(StatisticsByAnyResDTO::getSubsystemName).collect(Collectors.toSet());
         for (String name : names) {
             StatisticsByAnyResDTO data = new StatisticsByAnyResDTO();
             data.setSiteName(name);
@@ -142,11 +145,14 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             data.setSeriousAlarmNum(0L);
             for (StatisticsByAnyResDTO statisticsByAnyResDTO : statisticsByAnyResDTOList) {
                 if (statisticsByAnyResDTO.getSubsystemName().equals(name)) {
+                    if (statisticsByAnyResDTO.getAlarmLevel() == null) {
+                        continue;
+                    }
                     if (1 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
                     } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
-                    } else {
+                    } else if (3 == statisticsByAnyResDTO.getAlarmLevel()) {
                         data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
                     }
                 }
@@ -179,7 +185,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
                 data.setEmergencyAlarmNum(statisticsByAnyResDTO.getAlarmNum());
             } else if (2 == statisticsByAnyResDTO.getAlarmLevel()) {
                 data.setGeneralAlarmNum(statisticsByAnyResDTO.getAlarmNum());
-            } else {
+            } else if (3 == statisticsByAnyResDTO.getAlarmLevel()) {
                 data.setSeriousAlarmNum(statisticsByAnyResDTO.getAlarmNum());
             }
         }
@@ -201,7 +207,8 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             return null;
         }
         List<AnyAlarmTrendResDTO> list = new ArrayList<>();
-        List<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toList());
+        Set<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toSet());
+        names.remove(null);
         for (String name : names) {
             AnyAlarmTrendResDTO data = new AnyAlarmTrendResDTO();
             data.setStatisticsDate(name);
@@ -209,12 +216,18 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             data.setGeneralAlarmNum(0L);
             data.setSeriousAlarmNum(0L);
             for (AnyAlarmTrendResDTO anyAlarmTrendResDTO : anyAlarmTrendResDTOList) {
+                if (anyAlarmTrendResDTO.getStatisticsDate() == null) {
+                    continue;
+                }
                 if (anyAlarmTrendResDTO.getStatisticsDate().equals(name)) {
+                    if (anyAlarmTrendResDTO.getAlarmLevel() == null) {
+                        continue;
+                    }
                     if (1 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
-                    } else {
+                    } else if (3 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     }
                 }
@@ -251,7 +264,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
                         data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
-                    } else {
+                    } else if (3 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     }
                 }
@@ -275,7 +288,8 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             return null;
         }
         List<AnyAlarmTrendResDTO> list = new ArrayList<>();
-        List<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toList());
+        Set<String> names = anyAlarmTrendResDTOList.stream().map(AnyAlarmTrendResDTO::getStatisticsDate).collect(Collectors.toSet());
+        names.remove(null);
         for (String name : names) {
             AnyAlarmTrendResDTO data = new AnyAlarmTrendResDTO();
             data.setStatisticsDate(name);
@@ -283,12 +297,18 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
             data.setGeneralAlarmNum(0L);
             data.setSeriousAlarmNum(0L);
             for (AnyAlarmTrendResDTO anyAlarmTrendResDTO : anyAlarmTrendResDTOList) {
+                if (anyAlarmTrendResDTO.getStatisticsDate() == null) {
+                    continue;
+                }
                 if (anyAlarmTrendResDTO.getStatisticsDate().equals(name)) {
+                    if (anyAlarmTrendResDTO.getAlarmLevel() == null) {
+                        continue;
+                    }
                     if (1 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setEmergencyAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     } else if (2 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setGeneralAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
-                    } else {
+                    } else if (3 == anyAlarmTrendResDTO.getAlarmLevel()) {
                         data.setSeriousAlarmNum(anyAlarmTrendResDTO.getAlarmNum());
                     }
                 }
@@ -325,7 +345,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
                         data.setEmergencyDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
                     } else if (2 == alarmResolutionEfficiencyResDTO.getAlarmLevel()) {
                         data.setGeneralDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
-                    } else {
+                    } else if (3 == alarmResolutionEfficiencyResDTO.getAlarmLevel()) {
                         data.setSeriousDisposalTime(alarmResolutionEfficiencyResDTO.getDisposalTime());
                     }
                 }

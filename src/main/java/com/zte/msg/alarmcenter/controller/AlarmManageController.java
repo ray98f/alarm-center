@@ -41,7 +41,7 @@ public class AlarmManageController {
                                                              @RequestParam(required = false)
                                                                  @ApiParam("站点") Long siteId,
                                                              @RequestParam(required = false)
-                                                                 @ApiParam("站点") Integer alarmLevel,
+                                                                 @ApiParam("告警级别") Integer alarmLevel,
                                                              @RequestParam(required = false)
                                                                  @ApiParam("告警码") Integer alarmCode,
                                                              @RequestParam(required = false)
@@ -73,7 +73,7 @@ public class AlarmManageController {
 
     @PostMapping("/history/{id}")
     @ApiOperation("告警历史-添加备注")
-    public <T> DataResponse<T> editRemark(@ApiParam(value = "告警历史id", required = true) @PathVariable(value = "id") Long id,
+    public DataResponse<T> editRemark(@ApiParam(value = "告警历史id", required = true) @PathVariable(value = "id") Long id,
                                           @RequestBody Map<String, Object> map) {
         String alarmRemark = (String) map.get("alarmRemark");
         alarmManageService.editRemark(alarmRemark, id);

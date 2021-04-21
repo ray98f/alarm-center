@@ -6,11 +6,10 @@ import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
 import com.zte.msg.alarmcenter.dto.req.*;
 import com.zte.msg.alarmcenter.dto.res.*;
-import com.zte.msg.alarmcenter.service.AlarmLevelService;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 import com.zte.msg.alarmcenter.service.AlarmRuleService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -20,7 +19,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 /**
  * description:
@@ -92,4 +90,9 @@ public class AlarmRuleController {
         return DataResponse.of(alarmRuleService.getAlarmCodes(alarmRuleDeviceReqDTO.getSystemIds()));
     }
 
+    @PostMapping("/msg")
+    @ApiOperation(value = "获取前转消息推送配置列表")
+    public DataResponse<List<MsgConfig>> getMsgConfigs() {
+        return DataResponse.of(alarmRuleService.getMsgConfigs());
+    }
 }

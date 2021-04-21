@@ -5,8 +5,10 @@
         <id property="id" column="id"/>
         <result property="subsystemId" column="subsystem_id"/>
         <result property="subsystemName" column="subsystem_name"/>
+        <result property="subsystemCode" column="subsystem_code"/>
         <result property="lineId" column="line_id"/>
         <result property="lineName" column="line_name"/>
+        <result property="lineCode" column="line_code"/>
         <result property="siteId" column="site_id"/>
         <result property="siteName" column="site_name"/>
         <result property="deviceId" column="device_id"/>
@@ -34,7 +36,8 @@
     </select>
 
     <select id="pageAlarmHistory" resultMap="sAlarmHistory">
-        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.line_id,p1.name as line_name,ah.site_id,p2.name as site_name,
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.subsystem_code,ah.line_id,p1.name as line_name,
+        ah.line_code,ah.site_id,p2.name as site_name,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
         FROM alarm_history as ah
@@ -53,10 +56,10 @@
             and ah.site_id=#{siteId}
         </if>
         <if test="alarmLevel!=null">
-            and ah.device_id=#{alarmLevel}
+            and ah.alarm_level=#{alarmLevel}
         </if>
         <if test="alarmCode!=null">
-            and ah.alarm_code=#{alarmCode}
+            and ah.alarm_code_id=#{alarmCode}
         </if>
         <if test="startTime!=null">
             and ah.final_time >= #{startTime}
@@ -68,7 +71,8 @@
     </select>
 
     <select id="exportAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
-        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.line_id,p1.name as line_name,ah.site_id,p2.name as site_name,
+        SELECT ah.id,ah.subsystem_id,s.name as subsystem_name,ah.subsystem_code,ah.line_id,p1.name as line_name,
+        ah.line_code,ah.site_id,p2.name as site_name,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.alarm_state,ah.recovery_time,ah.alarm_remark
         FROM alarm_history as ah
@@ -87,10 +91,10 @@
             and ah.site_id=#{siteId}
         </if>
         <if test="alarmLevel!=null">
-            and ah.device_id=#{alarmLevel}
+            and ah.alarm_level=#{alarmLevel}
         </if>
         <if test="alarmCode!=null">
-            and ah.alarm_code=#{alarmCode}
+            and ah.alarm_code_id=#{alarmCode}
         </if>
         <if test="startTime!=null">
             and ah.final_time >= #{startTime}
@@ -107,7 +111,8 @@
 
     <insert id="editAlarmHistory">
         <foreach collection="list" item="alarmHistory" index="index" separator=";">
-            INSERT INTO alarm_history (subsystem_id, alarm_level, line_id, site_id, device_id, slot_id, alarm_code,
+            INSERT INTO alarm_history (subsystem_id, subsystem_code, alarm_level,
+            line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id,
             <if test="alarmHistory.alarmName!=null">
                 alarm_name,
             </if>
@@ -136,8 +141,10 @@
                 experience_time,
             </if>
             recovery_time)
-            SELECT #{alarmHistory.subsystemId}, #{alarmHistory.alarmLevel}, #{alarmHistory.lineId}, #{alarmHistory.siteId},
-            #{alarmHistory.deviceId}, #{alarmHistory.slotId}, #{alarmHistory.alarmCode},
+            SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
+            #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
+            #{alarmHistory.deviceId}, #{alarmHistory.deviceCode}, #{alarmHistory.slotId}, #{alarmHistory.slotCode},
+            #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId},
             <if test="alarmHistory.alarmName!=null">
                 #{alarmHistory.alarmName},
             </if>
@@ -172,12 +179,17 @@
             and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0);
             UPDATE alarm_history SET
             subsystem_id=#{alarmHistory.subsystemId},
-            alarm_level=#{alarmHistory.alarmLevel},
+            subsystem_code=#{alarmHistory.subsystemCode},
             line_id=#{alarmHistory.lineId},
+            line_code=#{alarmHistory.lineCode},
             site_id=#{alarmHistory.siteId},
+            site_code=#{alarmHistory.siteCode},
             device_id=#{alarmHistory.deviceId},
+            device_code=#{alarmHistory.deviceCode},
             slot_id=#{alarmHistory.slotId},
+            slot_code=#{alarmHistory.slotCode},
             alarm_code=#{alarmHistory.alarmCode},
+            alarm_code_id=#{alarmHistory.alarmCodeId},
             <if test="alarmHistory.alarmName!=null">
                 alarm_name=#{alarmHistory.alarmName},
             </if>
@@ -226,7 +238,19 @@
         and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0
     </select>
 
-    <update id="updateDelayHistory">
-        UPDATE alarm_history SET alarm_state=0 where id=#{id}
+    <update id="updateDelayAlarmHistory">
+        UPDATE alarm_history SET alarm_state=0 where alarm_state=1 and delay_time is not null
+        and now()>=delay_time and is_deleted=0
+    </update>
+
+    <update id="updateFrequencyAlarmHistory" parameterType="com.zte.msg.alarmcenter.entity.AlarmHistory">
+        UPDATE alarm_history SET alarm_level=alarm_level-1 where alarm_level!=1 and
+        subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId} and device_id=#{deviceId} and
+        slot_id=#{slotId} and alarm_code=#{alarmCode} and is_deleted=0
+    </update>
+
+    <update id="updateExperienceAlarmHistory">
+        UPDATE alarm_history SET alarm_level=alarm_level-1 where is_deleted=0 and experience_time is not null
+        and alarm_level!=1 and now()>=date_add(first_time,interval experience_time minute_second)
     </update>
 </mapper>

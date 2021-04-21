@@ -12,6 +12,21 @@
             is_filter_position,
             is_filter_device,
             is_filter_alarm,
+            <if test="delayTime!=null">
+                delay_time,
+            </if>
+            <if test="frequency!=null">
+                frequency,
+            </if>
+            <if test="frequencyTime!=null">
+                frequency_time,
+            </if>
+            <if test="experienceTime!=null">
+                experience_time,
+            </if>
+            <if test="msgConfigId!=null">
+                msg_config_id,
+            </if>
             is_enable,
             created_at,
             created_by
@@ -25,6 +40,21 @@
             #{positionId},
             #{deviceId},
             #{alarmId},
+            <if test="delayTime!=null">
+                #{delayTime},
+            </if>
+            <if test="frequency!=null">
+                #{frequency},
+            </if>
+            <if test="frequencyTime!=null">
+                #{frequencyTime},
+            </if>
+            <if test="experienceTime!=null">
+                #{experienceTime},
+            </if>
+            <if test="msgConfigId!=null">
+                #{msgConfigId},
+            </if>
             #{isEnable},
             NOW(),
             #{userId}
@@ -90,15 +120,30 @@
     <update id="modifyAlarmRule">
         update alarm_rule
         set
-            `type` = #{alarmRuleReqDTO.type},
-            `name` = #{alarmRuleReqDTO.name},
-            is_filter_system = #{alarmRuleReqDTO.systemId},
-            is_filter_position = #{alarmRuleReqDTO.positionId},
-            is_filter_device = #{alarmRuleReqDTO.deviceId},
-            is_filter_alarm = #{alarmRuleReqDTO.alarmId},
-            is_enable = #{alarmRuleReqDTO.isEnable},
-            updated_at = NOW(),
-            updated_by = #{userId}
+        `type` = #{alarmRuleReqDTO.type},
+        `name` = #{alarmRuleReqDTO.name},
+        is_filter_system = #{alarmRuleReqDTO.systemId},
+        is_filter_position = #{alarmRuleReqDTO.positionId},
+        is_filter_device = #{alarmRuleReqDTO.deviceId},
+        is_filter_alarm = #{alarmRuleReqDTO.alarmId},
+        is_enable = #{alarmRuleReqDTO.isEnable},
+        <if test="alarmRuleReqDTO.delayTime!=null">
+            delay_time=#{alarmRuleReqDTO.delayTime},
+        </if>
+        <if test="alarmRuleReqDTO.frequency!=null">
+            frequency=#{alarmRuleReqDTO.frequency},
+        </if>
+        <if test="alarmRuleReqDTO.frequencyTime!=null">
+            frequency_time=#{alarmRuleReqDTO.frequencyTime},
+        </if>
+        <if test="alarmRuleReqDTO.experienceTime!=null">
+            experience_time=#{alarmRuleReqDTO.experienceTime},
+        </if>
+        <if test="alarmRuleReqDTO.msgConfigId!=null">
+            msg_config_id=#{alarmRuleReqDTO.msgConfigId},
+        </if>
+        updated_at = NOW(),
+        updated_by = #{userId}
         WHERE id= #{id}
     </update>
     <delete id="deleteFilter">
@@ -134,40 +179,58 @@
     </select>
     <select id="getAlarmRule" resultType="com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO">
         select
-            id,
-            `type`,
-            `name`,
-            is_enable,
-            DATE_FORMAT(created_at, "%Y-%m-%d %T") as createdAt,
-            DATE_FORMAT(updated_at, "%Y-%m-%d %T") as updatedAt,
-            created_by,
-            updated_by
-        from alarm_rule
-        where is_deleted = 0
+        ar.id,
+        ar.type,
+        ar.name,
+        ar.is_enable,
+        ar.delay_time,
+        ar.frequency,
+        ar.frequency_time,
+        ar.experience_time,
+        mc.type as msg_type,
+        mc.phone as msg_phone,
+        mc.email as msg_email,
+        mc.box as msg_box,
+        DATE_FORMAT(ar.created_at, "%Y-%m-%d %T") as createdAt,
+        DATE_FORMAT(ar.updated_at, "%Y-%m-%d %T") as updatedAt,
+        ar.created_by,
+        ar.updated_by
+        from alarm_rule as ar
+        left join msg_config as mc on mc.id=ar.msg_config_id and mc.is_deleted=0
+        where ar.is_deleted = 0
         <if test="isEnable!=null">
-            and is_enable = #{isEnable}
+            and ar.is_enable = #{isEnable}
         </if>
         <if test="type!=null">
-            and `type` = #{type}
+            and ar.type = #{type}
         </if>
         <if test="name!=null and name!=''">
-            and `name` like concat('%',#{name},'%')
+            and ar.name like concat('%',#{name},'%')
         </if>
         limit #{page},#{size}
     </select>
     <select id="lookOverAlarmRuleDetails" resultType="com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO">
         select
-            id,
-            `type`,
-            `name`,
-            is_enable,
-            DATE_FORMAT(created_at, "%Y-%m-%d %T") as createdAt,
-            DATE_FORMAT(updated_at, "%Y-%m-%d %T") as updatedAt,
-            created_by,
-            updated_by
-        from alarm_rule
-        where is_deleted = 0
-        and id = #{id}
+        ar.id,
+        ar.type,
+        ar.name,
+        ar.is_enable,
+        ar.delay_time,
+        ar.frequency,
+        ar.frequency_time,
+        ar.experience_time,
+        mc.id as msg_config_id,
+        mc.type as msg_type,
+        mc.phone as msg_phone,
+        mc.email as msg_email,
+        mc.box as msg_box,
+        DATE_FORMAT(ar.created_at, "%Y-%m-%d %T") as createdAt,
+        DATE_FORMAT(ar.updated_at, "%Y-%m-%d %T") as updatedAt,
+        ar.created_by,
+        ar.updated_by
+        from alarm_rule as ar
+        left join msg_config as mc on mc.id=ar.msg_config_id and mc.is_deleted=0
+        where ar.is_deleted = 0 and ar.id = #{id}
     </select>
     <select id="getSubsystemNameList" resultType="com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO">
         select
@@ -212,7 +275,7 @@
                 ) or
             </if>
             <if test="stationIds!=null and stationIds.size()>0">
-                station_id in (
+                position_id in (
                 <foreach collection="stationIds" index="index" item="stationId" separator=",">
                     #{stationId}
                 </foreach>
@@ -221,13 +284,60 @@
         </trim>
     </select>
     <select id="getAlarmCodes" resultType="com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO">
-        SELECT id,code as alarm_code,name as alarm_name FROM alarm_code
+        SELECT ac.id,ac.code as alarm_code,s.name as system_name,ac.level_id as alarm_level_id,
+        ac.name as alarm_name,al.name as alarm_level_name
+        FROM alarm_code as ac left join subsystem as s on s.id=ac.system_id and s.is_deleted=0
+        left join alarm_level as al on ac.level_id=al.code and al.is_deleted=0
         <if test="systemIds!=null and systemIds.size()>0">
-            where system_id in (
+            where ac.system_id in (
             <foreach collection="systemIds" index="index" item="systemId" separator=",">
                 #{systemId}
             </foreach>
             )
         </if>
+    </select>
+    <insert id="insertMsgPush">
+        INSERT into msg_push_history
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="msgConfig.type!=null">
+                type,
+            </if>
+            <if test="msgConfig.phone!=null">
+                phone,
+            </if>
+            <if test="msgConfig.email!=null">
+                email,
+            </if>
+            <if test="msgConfig.box!=null">
+                box,
+            </if>
+            <if test="content!=null">
+                content,
+            </if>
+        </trim>
+        VALUE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="msgConfig.type!=null">
+                #{msgConfig.type},
+            </if>
+            <if test="msgConfig.phone!=null">
+                #{msgConfig.phone},
+            </if>
+            <if test="msgConfig.email!=null">
+                #{msgConfig.email},
+            </if>
+            <if test="msgConfig.box!=null">
+                #{msgConfig.box},
+            </if>
+            <if test="content!=null">
+                #{content},
+            </if>
+        </trim>
+    </insert>
+    <select id="getMsgConfigs" resultType="com.zte.msg.alarmcenter.entity.MsgConfig">
+        select * from msg_config where is_deleted=0
+    </select>
+    <select id="selectMsgConfigById" resultType="com.zte.msg.alarmcenter.entity.MsgConfig">
+        select * from msg_config where is_deleted=0 and id=#{msgConfigId}
     </select>
 </mapper>

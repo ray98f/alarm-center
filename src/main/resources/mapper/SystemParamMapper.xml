@@ -29,8 +29,8 @@
             <if test="parameterDescribe!=null and parameterDescribe!=''">
                 parameter_describe=#{parameterDescribe},
             </if>
-            <if test="value!=null and value!=''">
-                value=#{value},
+            <if test="parameterValue!=null and parameterValue!=''">
+                parameter_value=#{parameterValue},
             </if>
             <if test="valueDescribe!=null and valueDescribe!=''">
                 value_describe=#{valueDescribe},
@@ -49,8 +49,8 @@
             <if test="parameterDescribe!=null and parameterDescribe!=''">
                 parameter_describe,
             </if>
-            <if test="value!=null and value!=''">
-                value,
+            <if test="parameterValue!=null and parameterValue!=''">
+                parameter_value,
             </if>
             <if test="valueDescribe!=null and valueDescribe!=''">
                 value_describe,
@@ -65,8 +65,8 @@
             <if test="parameterDescribe!=null and parameterDescribe!=''">
                 #{parameterDescribe},
             </if>
-            <if test="value!=null and value!=''">
-                #{value},
+            <if test="parameterValue!=null and parameterValue!=''">
+                #{parameterValue},
             </if>
             <if test="valueDescribe!=null and valueDescribe!=''">
                 #{valueDescribe},

@@ -4,10 +4,10 @@ import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.AlarmRuleReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDetailsResDTO;
-import com.zte.msg.alarmcenter.dto.req.AlarmRuleDeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.DataIdAndNameResDTO;
+import com.zte.msg.alarmcenter.entity.MsgConfig;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -63,4 +63,27 @@ public interface AlarmRuleMapper {
      * @return
      */
     List<AlarmCodeResDTO> getAlarmCodes(@Param("systemIds") List<Long> systemIds);
+
+    /**
+     * 新增前转告警推送记录
+     *
+     * @param msgConfig
+     * @param content
+     */
+    void insertMsgPush(MsgConfig msgConfig, String content);
+
+    /**
+     * 获取前转消息推送配置列表
+     *
+     * @return
+     */
+    List<MsgConfig> getMsgConfigs();
+
+    /**
+     * 根据id获取前转配置信息
+     *
+     * @param msgConfigId
+     * @return
+     */
+    MsgConfig selectMsgConfigById(Long msgConfigId);
 }

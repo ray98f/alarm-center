@@ -64,4 +64,19 @@ public class AlarmRuleReqDTO {
 
     @ApiModelProperty(value = "id")
     private Long id;
+
+    @ApiModelProperty(value = "告警延迟规则告警延迟时间")
+    private Long delayTime;
+
+    @ApiModelProperty(value = "告警升级规则单位时间内告警次数")
+    private Integer frequency;
+
+    @ApiModelProperty(value = "告警升级规则告警单位时间")
+    private Long frequencyTime;
+
+    @ApiModelProperty(value = "告警升级规则告警经历时间")
+    private Long experienceTime;
+
+    @ApiModelProperty(value = "告警前转规则信息配置id")
+    private Long msgConfigId;
 }
