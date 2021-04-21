@@ -6,6 +6,7 @@ import com.zte.msg.alarmcenter.config.RabbitMqConfig;
 import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO;
+import com.zte.msg.alarmcenter.dto.req.SnmpAlarmDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.dto.res.RedisUpdateFrequencyResDTO;
 import com.zte.msg.alarmcenter.entity.*;
@@ -24,8 +25,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -48,6 +47,9 @@ public class AsyncReceiver {
 
     @Autowired
     private ChildSystemMapper childSystemMapper;
+
+    @Autowired
+    private SnmpAlarmMapper snmpAlarmMapper;
 
     @Autowired
     private AlarmRuleMapper alarmRuleMapper;
@@ -124,10 +126,93 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
+        //TODO 确认是否更新当前系统所有当前告警，删除不在列表中的报警
         log.info("------ 开始同步告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
         log.info("------ 同步告警记录结束 ------");
+    }
+
+    /**
+     * SNMP 告警数据处理
+     *
+     * @param json
+     */
+    @RabbitListener(queues = RabbitMqConfig.SNMP_ALARM_QUEUE)
+    @RabbitHandler
+    @Async
+    public void snmpAlarmProcess(String json) {
+        JSONArray jsonArray = JSONArray.parseArray(json);
+        List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
+        if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
+            log.warn("消息队列中信息为空");
+            return;
+        }
+        log.info("------ 开始接收告警记录 ------");
+        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
+        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+        editData(alarmHistories);
+        log.info("------ 接收告警记录结束 ------");
+    }
+
+    /**
+     * SNMP 告警同步数据处理
+     *
+     * @param json
+     */
+    @RabbitListener(queues = RabbitMqConfig.SNMP_SYNC_ALARM_QUEUE)
+    @RabbitHandler
+    @Async
+    public void snmpSyncAlarmProcess(String json) {
+        JSONArray jsonArray = JSONArray.parseArray(json);
+        List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
+        if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
+            log.warn("消息队列中信息为空");
+            return;
+        }
+        log.info("------ 开始接收告警记录 ------");
+        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
+        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+        //TODO 确认是否更新所有当前告警，删除不在列表中的报警
+        editData(alarmHistories);
+        log.info("------ 接收告警记录结束 ------");
+    }
+
+    /**
+     * SNMP告警转换为通用告警数据
+     *
+     * @param snmpAlarmDTOS
+     * @return
+     */
+    private List<AlarmHistoryReqDTO> transferSnmpToAlarmHistory(List<SnmpAlarmDTO> snmpAlarmDTOS) {
+        List<AlarmHistoryReqDTO> alarmHistoryReqDTOS = new ArrayList<>();
+        for (SnmpAlarmDTO snmpAlarmDTO : snmpAlarmDTOS) {
+
+            Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarmDTO.getSystemCode(), snmpAlarmDTO.getLineCode());
+            if (systemId == null || systemId <= 0) {
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                continue;
+            }
+
+            AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarmDTO.getAlarmManagedObjectInstanceName());
+            if (alarmHistoryReqDTO == null) {
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                continue;
+            }
+
+            Integer alarmCode = snmpAlarmMapper.getAlarmCodeBySnmpInfo(systemId, snmpAlarmDTO.getEmsAlarmCode(), snmpAlarmDTO.getAlarmNetype(), snmpAlarmDTO.getAlarmSpecificProblem());
+            if (alarmCode == null) {
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                continue;
+            }
+
+            alarmHistoryReqDTO.setAlarmCode(alarmCode);
+            alarmHistoryReqDTO.setRecovery(snmpAlarmDTO.isCleared());
+            alarmHistoryReqDTO.setAlarmTime(snmpAlarmDTO.getAlarmTime());
+            alarmHistoryReqDTO.setAlarmMessageList(snmpAlarmDTO.getMessages());
+            alarmHistoryReqDTOS.add(alarmHistoryReqDTO);
+        }
+        return alarmHistoryReqDTOS;
     }
 
     /**

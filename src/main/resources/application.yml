@@ -18,7 +18,14 @@ spring:
       enabled: true
 swagger:
     enable: true
-
+jetcache:
+  statIntervalMinutes: 15
+  areaInCacheName: false
+  local:
+    default:
+      type: linkedhashmap
+      keyConvertor: fastjson
+      limit: 100
 #  jackson:
 #    time-zone: GMT+8
 

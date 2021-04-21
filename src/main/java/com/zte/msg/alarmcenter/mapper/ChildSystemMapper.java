@@ -1,5 +1,7 @@
 package com.zte.msg.alarmcenter.mapper;
 
+import com.alicp.jetcache.anno.CacheType;
+import com.alicp.jetcache.anno.Cached;
 import com.zte.msg.alarmcenter.dto.req.ChildSystemConfigReqDTO;
 import com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO;
 import com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO;
@@ -70,4 +72,7 @@ public interface ChildSystemMapper {
      * @return
      */
     void offline();
+
+    @Cached(expire = 3600, cacheType = CacheType.LOCAL)
+    Integer getIdBySidAndPositionCode(@Param("sid") int sid, @Param("positionCode") int positionCode);
 }

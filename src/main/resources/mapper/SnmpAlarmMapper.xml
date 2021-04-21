@@ -2,290 +2,33 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.SnmpAlarmMapper">
 
-    <insert id="importDevice">
-        insert into snmp_slot
-        (
-            id,
-            system_id,
-            position_id,
-            slot_id,
-            `name`,
-            created_at,
-            created_by
-        )
-        values
-        <foreach collection ="list" item="item" index= "index" separator =",">
-        (
-            null,
-            (select id from subsystem where sid = #{item.systemId}),
-            (
-                select
-                    id
-                from  alarm_center.`position` t1
-                where position_code = #{item.LineCode}
-                  and type = 1
-                  and exists (
-                        select
-                            id
-                        from alarm_center.`position` t2
-                        where position_code = #{item.siteCode}
-                          and type = 3
-                          and t1.p_id = t2.id)
-            ),
-            #{item.slotCode},
-            #{item.slotName},
-            NOW(),
-            #{userId}
-        )
-        </foreach>
-    </insert>
-    <insert id="addSnmpSlot">
-        insert into snmp_slot
-        (
-            id,
-            system_id,
-            position_id,
-            slot_id,
-            `name`,
-            created_at,
-            created_by
-        )
-        values
-        (
-            null,
-            #{slotModifyReqDTO.systemId},
-            #{slotModifyReqDTO.positionId},
-            #{slotModifyReqDTO.slotId},
-            #{slotModifyReqDTO.name},
-            NOW(),
-            #{userId}
-        )
-    </insert>
-    <insert id="importSnmpAlarmCode">
-        insert into snmp_alarm_code
-        (
-            id,
-            system_id,
-            positionId,
-            element_type,
-            snmp_code,
-            code,
-            reason,
-            created_at,
-            created_by
-        )
-        values
-        <foreach collection ="list" item="item" index= "index" separator =",">
-        (
-            null,
-            (select id from subsystem where sid = #{item.systemId}),
-            (select id from position where type = 1 and position_code = #{item.positionId}),
-            #{item.elementType},
-            #{item.snmpCode},
-            #{item.code},
-            #{item.reason},
-            NOW(),
-            #{userId}
-        )
-        </foreach>
-    </insert>
-    <insert id="addSSnmpAlarmCode">
-        insert into snmp_alarm_code
-        (
-            id,
-            system_id,
-            positionId,
-            element_type,
-            snmp_code,
-            code,
-            reason,
-            created_at,
-            created_by
-        )
-        values
-        (
-            null,
-            #{snmpAlarmCode.systemId},
-            #{snmpAlarmCode.positionId},
-            #{snmpAlarmCode.elementType},
-            #{snmpAlarmCode.snmpCode},
-            #{snmpAlarmCode.code},
-            #{snmpAlarmCode.reason},
-            NOW(),
-            #{userId}
-        )
-    </insert>
-    <update id="modifySnmpSlot">
-        update snmp_slot
-        set
-            system_id = #{slotModifyReqDTO.systemId},
-            position_id = #{slotModifyReqDTO.positionId},
-            slot_id = #{slotModifyReqDTO.slotId},
-            `name` = #{slotModifyReqDTO.name},
-            updated_at = NOW(),
-            updated_by = #{userId}
-        WHERE id = #{id}
-    </update>
-    <update id="deleteSnmpSlot">
-        update snmp_slot
-        set
-            is_deleted = 1
-        where id = #{id}
-    </update>
-    <update id="modifySnmpAlarmCode">
-        update snmp_alarm_code
-        set
-            system_id = #{snmpAlarmCode.systemId},
-            positionId = #{snmpAlarmCode.positionId},
-            element_type = #{snmpAlarmCode.elementType},
-            snmp_code = #{snmpAlarmCode.snmpCode},
-            code = #{snmpAlarmCode.code},
-            reason = #{snmpAlarmCode.reason},
-            updated_at = NOW(),
-            updated_by = #{userId}
-        where id = #{id}
-    </update>
-    <update id="deleteSnmpAlarmCode">
-        update snmp_alarm_code
-        set
-            is_deleted = 1
-        where id = #{id}
-    </update>
-    <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO">
+    <select id="getAlarmHistoryBySnmpName" resultType="com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO">
+        select  t2.slot_code slot,t3.device_code device,t4.position_code station,t5.position_code line,t6.sid system
+        from snmp_slot t1
+        left join device_slot t2 on t1.slot_id = t2.id
+        left join device t3 on t2.device_id  = t3.id
+        left join `position` t4 on t3.position_id  = t4.id
+        left join `position` t5 on t4.p_id = t5.id
+        left join subsystem t6 on t1.system_id  = t6.id
+        where t1.is_deleted  = 0
+        and t1.name = #{snmpName}
+    </select>
+
+    <select id="getAlarmCodeBySnmpInfo" resultType="java.lang.Integer">
         select
-            t.id,
-            t.`name` as snmpSlotName,
-            t1.id as systemId,
-            t2.p_id as positionId,
-            t2.id as siteCode,
-            t4.device_code as deviceCode,
-            t3.id as slotCode,
-            t3.`name` as slotName
-        from snmp_slot t
-        join subsystem t1 on t.system_id = t1.id
-        join `position` t2 on t.position_id = t2.id
-        join device_slot t3 on t.slot_id = t3.id
-        join device t4 on t3.device_id = t4.id
-        where t.is_deleted = 0
-        <if test="snmpSlotName!=null and snmpSlotName!=''">
-            t.`name` like concat('%',#{snmpSlotName},'%')
+        code
+        from snmp_alarm_code
+        where is_deleted = 0
+        and system_id = #{systemId}
+        <if test="emsAlarmCode!=null and emsAlarmCode!=''">
+            and `snmp_code` = #{emsAlarmCode}
         </if>
-        <if test="systemId!=null">
-            t.system_id = #{systemId}
+        <if test="alarmNetype!=null and alarmNetype!=''">
+            and element_type = #{alarmNetype}
         </if>
-        <if test="siteId!=null">
-            t.position_id = #{siteId}
-        </if>
-        <if test="pageReq!=null">
-            limit #{pageReq.page},#{pageReq.size}
+        <if test="reason!=null and reason!=''">
+            and reason = #{reason}
         </if>
     </select>
-    <select id="getSnmpSlotCount" resultType="java.lang.Integer">
-        select
-            count(1)
-        from snmp_slot t
-        join subsystem t1 on t.system_id = t1.id
-        join `position` t2 on t.position_id = t2.id
-        join device_slot t3 on t.slot_id = t3.id
-        join device t4 on t3.device_id = t4.id
-        where t.is_deleted = 0
-        <if test="snmpSlotName!=null and snmpSlotName!=''">
-            and t.`name` like concat('%',#{snmpSlotName},'%')
-        </if>
-        <if test="systemId!=null">
-            and t.system_id = #{systemId}
-        </if>
-        <if test="siteId!=null">
-            and t.position_id = #{siteId}
-        </if>
-    </select>
-    <select id="getSnmpSlot" resultType="com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO">
-        select
-            t.id,
-            t.system_id,
-            t.`name` as snmpSlotName,
-            t.position_id,
-            t1.`name` as systemName,
-            t.slot_id,
-            t2.`name` as siteName,
-            t4.`name` as deviceName,
-            t3.id as slotCode,
-            t3.`name` as slotName
-        from snmp_slot t
-        join subsystem t1 on t.system_id = t1.id
-        join `position` t2 on t.position_id = t2.id
-        join device_slot t3 on t.slot_id = t3.id
-        join device t4 on t3.device_id = t4.id
-        where t.is_deleted = 0
-        <if test="snmpSlotName!=null and snmpSlotName!=''">
-            and t.`name` like concat('%',#{snmpSlotName},'%')
-        </if>
-        <if test="systemId!=null">
-            and t.system_id = #{systemId}
-        </if>
-        <if test="siteId!=null">
-            and t.position_id = #{siteId}
-        </if>
-        <if test="page!=null and size!=null">
-            limit #{page},#{size}
-        </if>
-    </select>
-    <select id="exportSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
-        select
-            t1.sid,
-            t2.position_code,
-            t.element_type,
-            t.snmp_code,
-            t.code,
-            t.reason
-        from snmp_alarm_code t
-        join subsystem t1 on t1.id = t.system_id
-        join `position` t2 on t2.id = t.positionId
-        where t.is_deleted = 0
-        <if test="alarmCode!=null and alarmCode!=''">
-            and t.code = #{alarmCode}
-        </if>
-        <if test="systemId!=null">
-            and t.system_id = #{systemId}
-        </if>
-    </select>
-    <select id="getSnmpAlarmCodeCount" resultType="java.lang.Integer">
-        select
-            count(1)
-        from snmp_alarm_code t
-        join subsystem t1 on t1.id = t.system_id
-        join `position` t2 on t2.id = t.positionId
-        where t.is_deleted = 0
-        <if test="code!=null and code!=''">
-            and t.code = #{code}
-        </if>
-        <if test="systemId!=null">
-            and t.system_id = #{systemId}
-        </if>
-    </select>
-    <select id="getSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
-        select
-            t.id,
-            t.system_id,
-            t.positionId,
-            t1.`name` as systemName,
-            t2.`name` as positionName,
-            t.element_type,
-            t.snmp_code,
-            t.code,
-            t.reason
-        from snmp_alarm_code t
-        join subsystem t1 on t1.id = t.system_id
-        join `position` t2 on t2.id = t.positionId
-        where t.is_deleted = 0
-        <if test="code!=null and code!=''">
-            and t.code = #{code}
-        </if>
-        <if test="systemId!=null">
-            and t.system_id = #{systemId}
-        </if>
-        <if test="page!=null and size!=null">
-            limit #{page},#{size}
-        </if>
-    </select>
+
 </mapper>

@@ -93,6 +93,16 @@
         WHERE is_deleted = 0 and pid = #{id}
     </select>
 
+    <select id="getIdBySidAndPositionCode" resultType="java.lang.Integer">
+        select t1.id
+        from subsystem t1
+        left join `position` t2 on t2.id  = t1.position_id
+        where t1.is_deleted =0
+        and t1.sid = #{sid}
+        and t2.`type`  = 2
+        and t2.position_code = #{positionCode}
+    </select>
+
     <resultMap id="BaseResultMap" type="com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO">
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="pid" jdbcType="BIGINT" property="pid" />
