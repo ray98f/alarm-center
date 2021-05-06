@@ -5,9 +5,11 @@ import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.DeviceSlotReqDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceResDTO;
 import com.zte.msg.alarmcenter.dto.res.DeviceSlotResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.DeviceSlotMapper;
 import com.zte.msg.alarmcenter.service.DeviceSlotService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import com.zte.msg.alarmcenter.utils.FileUtils;
 import org.apache.poi.ss.usermodel.CellType;
@@ -62,7 +64,7 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
             fileInputStream.close();
             int integer = myDeviceSlotMapper.importDevice(temp, userId);
             if (integer == 0) {
-                throw new CommonException(4000, "批量插入失败！");
+                throw new CommonException(ErrorCode.IMPORT_DATA_EXIST);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -97,33 +99,52 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDevice(Long id) {
+        int result1 = myDeviceSlotMapper.selectIsDeviceSlotUse(id);
+        int result2 = myDeviceSlotMapper.selectIsDeviceSlotUse2(id);
+        if (result1 != 0 || result2 !=0) {
+            throw new CommonException(ErrorCode.RESOURCE_USE);
+        }
         int integer = myDeviceSlotMapper.deleteDevice(id);
         if (integer == 0) {
-            throw new CommonException(4000, "删除失败！");
+            throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addDeviceSlot(DeviceSlotReqDTO deviceSlotReqDTO, String userId) {
+        Integer result = myDeviceSlotMapper.selectIsDeviceSlotExist(deviceSlotReqDTO,null);
+        if (!Objects.isNull(result)) {
+            throw new CommonException(ErrorCode.DEVICE_SLOT_EXIST);
+        }
         int integer = myDeviceSlotMapper.addDeviceSlot(deviceSlotReqDTO, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "新增失败！");
+            throw new CommonException(ErrorCode.INSERT_ERROR);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyDevice(Long id, DeviceSlotReqDTO deviceSlotReqDTO, String userId) {
+        Integer result = myDeviceSlotMapper.selectIsDeviceSlotExist(deviceSlotReqDTO,id);
+        if (!Objects.isNull(result)) {
+            throw new CommonException(ErrorCode.DEVICE_SLOT_EXIST);
+        }
         int integer = myDeviceSlotMapper.modifyDevice(id, deviceSlotReqDTO, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "编辑失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
     public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         List<DeviceSlotResDTO> deviceReqDTOList = null;
+        if (slotName.contains(Constants.PERCENT_SIGN)) {
+            slotName = "尼玛死了";
+        }
+        if (deviceName.contains(Constants.PERCENT_SIGN)) {
+            deviceName = "尼玛死了";
+        }
         int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceName, deviceCode, systemId, positionId);
         Page<DeviceSlotResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
@@ -135,5 +156,4 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
         }
         return pageBean;
     }
-
 }

@@ -18,6 +18,8 @@ import java.util.List;
 @Repository
 public interface AlarmRuleMapper {
 
+    Integer selectRuleExist(AlarmRuleReqDTO alarmRuleReqDTO, Long id);
+
     Integer addAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO);
 
     Integer addAlarmRuleOnSystem(@Param("ruleId") Long ruleId, @Param("systemId") Integer systemId);

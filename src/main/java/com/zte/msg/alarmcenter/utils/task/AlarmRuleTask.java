@@ -40,23 +40,23 @@ public class AlarmRuleTask {
     /**
      * 告警延迟规则
      */
-    @Scheduled(cron = "30 */1 * * * ?")
+    @Scheduled(cron = "*/1 * * * * ?")
     @Async
     public void alarmDelayRuleTask() {
-        log.info("-----------  告警延迟规则修改开始  -----------");
+//        log.info("-----------  告警延迟规则修改开始  -----------");
         alarmManageMapper.updateDelayAlarmHistory();
-        log.info("-----------  告警延迟规则修改结束  -----------");
+//        log.info("-----------  告警延迟规则修改结束  -----------");
     }
 
     /**
      * 告警经历时间升级规则
      */
-    @Scheduled(cron = "30 */1 * * * ?")
+    @Scheduled(cron = "*/1 * * * * ?")
     @Async
     public void alarmUpdateExperienceRuleTask() {
-        log.info("-----------  告警经历时间升级规则  -----------");
+//        log.info("-----------  告警经历时间升级规则  -----------");
         alarmManageMapper.updateExperienceAlarmHistory();
-        log.info("-----------  告警经历时间升级规则  -----------");
+//        log.info("-----------  告警经历时间升级规则  -----------");
     }
 
     /**

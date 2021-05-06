@@ -13,8 +13,10 @@ import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.UserMapper;
 import com.zte.msg.alarmcenter.service.UserService;
 import com.zte.msg.alarmcenter.utils.AesUtils;
+import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (Objects.isNull(loginReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        UserReqDTO userInfo = userMapper.selectUserInfo(loginReqDTO.getUserName());
+        UserReqDTO userInfo = userMapper.selectUserInfo(null, loginReqDTO.getUserName());
         if (Objects.isNull(userInfo)) {
             throw new CommonException(ErrorCode.LOGIN_PASSWORD_ERROR);
         }
@@ -64,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (Objects.isNull(userReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        UserReqDTO userInfo = userMapper.selectUserInfo(userReqDTO.getUserName());
+        UserReqDTO userInfo = userMapper.selectUserInfo(null, userReqDTO.getUserName());
         if (!Objects.isNull(userInfo)) {
             throw new CommonException(ErrorCode.USER_EXIST);
         }
@@ -112,6 +114,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (Objects.isNull(userReqDTO)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
+        UserReqDTO userInfo = userMapper.selectUserInfo(userReqDTO.getId(), userReqDTO.getUserName());
+        if (!Objects.isNull(userInfo)) {
+            throw new CommonException(ErrorCode.USER_EXIST);
+        }
         int result = userMapper.editUser(userReqDTO, TokenUtil.getCurrentUserName());
         if (result > 0) {
             userMapper.deleteUserRole(userReqDTO.getId());
@@ -153,6 +159,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public Page<User> listUser(Integer status, String userRealName, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        if (userRealName != null && userRealName.contains(Constants.PERCENT_SIGN)) {
+            userRealName = "尼玛死了";
+        }
         Page<User> userPage = userMapper.listUser(pageReqDTO.of(), status, userRealName);
         userPage.getRecords().sort(Comparator.comparing(User::getUpdatedAt).reversed());
         return userPage;

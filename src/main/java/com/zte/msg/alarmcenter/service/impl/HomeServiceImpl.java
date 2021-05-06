@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.service.impl;
 
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.entity.AlarmHistory;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.HomeMapper;
@@ -9,6 +10,7 @@ import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import com.zte.msg.alarmcenter.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -30,6 +32,9 @@ public class HomeServiceImpl implements HomeService {
 
     @Autowired
     private HomeMapper homeMapper;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 项目情况查询
@@ -221,6 +226,17 @@ public class HomeServiceImpl implements HomeService {
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
+        for (Integer id : ids) {
+            AlarmHistory alarmHistory = homeMapper.selectAlarmHistoryById(id);
+            String flag = "sysId:" + alarmHistory.getSubsystemId() +
+                    "-lineId:" + alarmHistory.getLineId() +
+                    "-siteId:" + alarmHistory.getSiteId() +
+                    "-deviceId:" + alarmHistory.getDeviceId() +
+                    "-slotId:" + alarmHistory.getSlotId() +
+                    "-codeId:" + alarmHistory.getAlarmCode();
+            String updateKey = "update_frequency:" + flag;
+            stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, System.currentTimeMillis());
+        }
     }
 
     /**
@@ -254,6 +270,17 @@ public class HomeServiceImpl implements HomeService {
         int result = homeMapper.filterAlarm(ids);
         if (result < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
+        }
+        for (Integer id : ids) {
+            AlarmHistory alarmHistory = homeMapper.selectAlarmHistoryById(id);
+            String flag = "sysId:" + alarmHistory.getSubsystemId() +
+                    "-lineId:" + alarmHistory.getLineId() +
+                    "-siteId:" + alarmHistory.getSiteId() +
+                    "-deviceId:" + alarmHistory.getDeviceId() +
+                    "-slotId:" + alarmHistory.getSlotId() +
+                    "-codeId:" + alarmHistory.getAlarmCode();
+            String updateKey = "update_frequency:" + flag;
+            stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, System.currentTimeMillis());
         }
     }
 

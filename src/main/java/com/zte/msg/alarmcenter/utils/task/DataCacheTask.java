@@ -33,10 +33,10 @@ public class DataCacheTask {
     /**
      * 数据库增量同步
      */
-    @Scheduled(cron = "0 */1 * * * ? ")
+    @Scheduled(cron = "*/2 * * * * ? ")
     @Async
     public void cacheOne() {
-        Timestamp startTime = new Timestamp(System.currentTimeMillis() - 60000);
+        Timestamp startTime = new Timestamp(System.currentTimeMillis() - 10000);
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
         List<Subsystem> subsystems;
         List<Position> positions;
@@ -47,52 +47,52 @@ public class DataCacheTask {
         List<AlarmHistory> alarmHistories;
         if (subsystemData.isEmpty()) {
             subsystems = dataCacheMapper.selectSubsystem();
-            log.info("---------- 系统全量缓存开始 ----------");
+//            log.info("---------- 系统全量缓存开始 ----------");
         } else {
             subsystems = dataCacheMapper.selectSubsystemByTime(startTime, endTime);
-            log.info("---------- 系统增量缓存开始 ----------");
+//            log.info("---------- 系统增量缓存开始 ----------");
         }
         if (positionData.isEmpty()) {
             positions = dataCacheMapper.selectPosition();
-            log.info("---------- 系统全量缓存开始 ----------");
+//            log.info("---------- 系统全量缓存开始 ----------");
         } else {
             positions = dataCacheMapper.selectPositionByTime(startTime, endTime);
-            log.info("---------- 系统增量缓存开始 ----------");
+//            log.info("---------- 系统增量缓存开始 ----------");
         }
         if (deviceData.isEmpty()) {
             devices = dataCacheMapper.selectDevice();
-            log.info("---------- 设备全量缓存开始 ----------");
+//            log.info("---------- 设备全量缓存开始 ----------");
         } else {
             devices = dataCacheMapper.selectDeviceByTime(startTime, endTime);
-            log.info("---------- 设备增量缓存开始 ----------");
+//            log.info("---------- 设备增量缓存开始 ----------");
         }
         if (deviceSlotData.isEmpty()) {
             deviceSlots = dataCacheMapper.selectDeviceSlot();
-            log.info("---------- 设备槽位全量缓存开始 ----------");
+//            log.info("---------- 设备槽位全量缓存开始 ----------");
         } else {
             deviceSlots = dataCacheMapper.selectDeviceSlotByTime(startTime, endTime);
-            log.info("---------- 设备槽位增量缓存开始 ----------");
+//            log.info("---------- 设备槽位增量缓存开始 ----------");
         }
         if (alarmCodeData.isEmpty()) {
             alarmCodes = dataCacheMapper.selectAlarmCode();
-            log.info("---------- 告警码全量缓存开始 ----------");
+//            log.info("---------- 告警码全量缓存开始 ----------");
         } else {
             alarmCodes = dataCacheMapper.selectAlarmCodeByTime(startTime, endTime);
-            log.info("---------- 告警码增量缓存开始 ----------");
+//            log.info("---------- 告警码增量缓存开始 ----------");
         }
         if (alarmRuleData.isEmpty()) {
             alarmRules = dataCacheMapper.selectAlarmRule();
-            log.info("---------- 告警规则全量缓存开始 ----------");
+//            log.info("---------- 告警规则全量缓存开始 ----------");
         } else {
             alarmRules = dataCacheMapper.selectAlarmRuleByTime(startTime, endTime);
-            log.info("---------- 告警规则增量缓存开始 ----------");
+//            log.info("---------- 告警规则增量缓存开始 ----------");
         }
         if (frequencyAlarmHistoryData.isEmpty()) {
             alarmHistories = dataCacheMapper.selectFrequencyAlarmHistory();
-            log.info("---------- 告警规则全量缓存开始 ----------");
+//            log.info("---------- 告警规则全量缓存开始 ----------");
         } else {
             alarmHistories = dataCacheMapper.selectFrequencyAlarmHistoryByTime(startTime, endTime);
-            log.info("---------- 告警规则增量缓存开始 ----------");
+//            log.info("---------- 告警规则增量缓存开始 ----------");
         }
         addDate(subsystems, positions, devices, deviceSlots, alarmCodes, alarmRules, alarmHistories);
     }

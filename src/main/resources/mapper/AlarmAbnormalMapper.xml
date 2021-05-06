@@ -74,10 +74,10 @@
             and system_code = #{systemCode}
         </if>
         <if test="startTime!=null and startTime!=''">
-            and alarm_time &gt;= #{startTime}
+            and alarm_time >= #{startTime}
         </if>
         <if test="endTime!=null and endTime!=''">
-            and alarm_time &lt;= #{endTime}
+            and #{endTime} >= alarm_time
         </if>
     </select>
     <select id="getAlarmAbnormal" resultType="com.zte.msg.alarmcenter.dto.res.AlarmAbnormalResDTO">
@@ -85,17 +85,27 @@
         t.id,
         t.alarm_time,
         t.system_code,
-        t.system_code as system_name,
+        (select name from subsystem where sid=t.system_code and is_deleted=0) as system_name,
         t.line_code,
-        t.line_code as line_name,
+        (select name from position where position_code=t.line_code and type=2 and is_deleted=0) as line_name,
         t.position_code,
-        t.position_code as position_name,
+        (select name from position where position_code=t.position_code and is_deleted=0 and type=3 and
+        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) as position_name,
         t.device_code,
-        t.device_code as device_name,
+        (select name from device where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
+        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
+        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and device_code=t.device_code and is_deleted=0) as device_name,
         t.slot_code,
-        t.slot_code as slot_name,
+        (select name from device_slot where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
+        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
+        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and slot_code=t.slot_code
+        and device_id=(select id from device where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
+        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
+        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and device_code=t.device_code and is_deleted=0) and is_deleted=0) as slot_name,
         t.alarm_code,
-        t.alarm_code as alarm_name,
+        (select name from alarm_code where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
+        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
+        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and is_deleted=0 and code=t.alarm_code) as alarm_name,
         t.ip,
         t.created_at,
         t.error_content
@@ -105,10 +115,10 @@
             and t.system_code = #{systemCode}
         </if>
         <if test="startTime!=null and startTime!=''">
-            and t.alarm_time &gt;= #{startTime}
+            and t.alarm_time >= #{startTime}
         </if>
         <if test="endTime!=null and endTime!=''">
-            and t.alarm_time &lt;= #{endTime}
+            and #{endTime} >= t.alarm_time
         </if>
         order by t.created_at desc,t.id desc
         limit #{page},#{size}

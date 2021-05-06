@@ -17,6 +17,8 @@ public interface PositionMapper {
 
     Integer modifyPosition(@Param("id") Long id, @Param("reqDTO") PositionReqDTO reqDTO);
 
+    Integer selectIsPositionUse(@Param("id") Long id);
+
     Integer deletePosition(@Param("id") Long id);
 
     Integer getPositionsCount();

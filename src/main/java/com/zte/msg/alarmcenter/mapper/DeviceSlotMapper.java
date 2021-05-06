@@ -17,11 +17,17 @@ public interface DeviceSlotMapper {
                                         @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId,
                                         @Param("positionId") Long positionId, @Param("page") Long page, @Param("size") Long size);
 
+    Integer selectIsDeviceSlotUse(@Param("id") Long id);
+
+    Integer selectIsDeviceSlotUse2(@Param("id") Long id);
+
     Integer deleteDevice(@Param("id") Long id);
 
     Integer importDevice(@Param("list") List<DeviceSlotReqDTO> list, @Param("userId") String userId);
 
     Integer importOneDevice(@Param("device") DeviceSlotReqDTO device, @Param("userId") String userId);
+
+    Integer selectIsDeviceSlotExist(DeviceSlotReqDTO deviceSlotReqDTO,Long id);
 
     Integer addDeviceSlot(@Param("deviceSlotReqDTO") DeviceSlotReqDTO deviceSlotReqDTO, @Param("userId") String userId);
 

@@ -2,6 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.DeviceSlotMapper">
     <insert id="importDevice">
+        <foreach collection ="list" item="item" index= "index" separator =";">
         insert into device_slot
         (
             id,
@@ -13,23 +14,30 @@
             created_at,
             created_by
         )
-        values
-        <foreach collection ="list" item="item" index= "index" separator =",">
-            (
-            null,
-            #{item.slotCode},
-            #{item.slotName},
-            (select id from subsystem where sid = #{item.systemCode} and is_deleted=0),
-            (select t1.id from position t1 left join position t2
-            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
-            and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode}),
-            (select id from device where system_id=(select id from subsystem where sid = #{item.systemCode} and is_deleted=0)
-            and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
-            where t1.is_deleted=0 and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode})
-            and device_code=#{item.deviceCode}),
-            NOW(),
-            #{userId}
-            )
+        select
+        null,
+        #{item.slotCode},
+        #{item.slotName},
+        (select id from subsystem where sid = #{item.systemCode} and is_deleted=0),
+        (select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode}),
+        (select id from device where system_id=(select id from subsystem where sid = #{item.systemCode} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+        where t1.is_deleted=0 and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode})
+        and device_code=#{item.deviceCode}),
+        NOW(),
+        #{userId}
+        FROM DUAL
+        WHERE NOT exists (SELECT id FROM device_slot WHERE slot_code=#{item.slotCode}
+        and system_id=(select id from subsystem where sid = #{item.systemCode} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode})
+        and device_id=(select id from device where system_id=(select id from subsystem where sid = #{item.systemCode} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+        where t1.is_deleted=0 and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode})
+        and device_code=#{item.deviceCode}) and is_deleted=0)
         </foreach>
     </insert>
 
@@ -79,31 +87,63 @@
         );
         select @@IDENTITY as id;
     </insert>
-
+    <select id="selectIsDeviceSlotExist" parameterType="com.zte.msg.alarmcenter.dto.req.DeviceSlotReqDTO" resultType="java.lang.Integer">
+        select id from device_slot where system_id=#{deviceSlotReqDTO.systemId} and position_id=#{deviceSlotReqDTO.positionId} and slot_code=#{deviceSlotReqDTO.slotCode} and device_id=#{deviceSlotReqDTO.deviceId} and is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
+    </select>
     <insert id="addDeviceSlot">
         insert into device_slot
         (
             id,
+        <if test="deviceSlotReqDTO.systemId!=null and deviceSlotReqDTO.systemId!=''">
             system_id,
+        </if>
+        <if test="deviceSlotReqDTO.positionId!=null and deviceSlotReqDTO.positionId!=''">
             position_id,
+        </if>
+        <if test="deviceSlotReqDTO.slotCode!=null and deviceSlotReqDTO.slotCode!=''">
             slot_code,
-            `name`,
+        </if>
+        <if test="deviceSlotReqDTO.slotName!=null and deviceSlotReqDTO.slotName!=''">
+            name,
+        </if>
+        <if test="deviceSlotReqDTO.deviceId!=null and deviceSlotReqDTO.deviceId!=''">
             device_id,
+        </if>
             created_at,
             created_by
         )
         values
         (
             null,
+        <if test="deviceSlotReqDTO.systemId!=null and deviceSlotReqDTO.systemId!=''">
             #{deviceSlotReqDTO.systemId},
+        </if>
+        <if test="deviceSlotReqDTO.positionId!=null and deviceSlotReqDTO.positionId!=''">
             #{deviceSlotReqDTO.positionId},
+        </if>
+        <if test="deviceSlotReqDTO.slotCode!=null and deviceSlotReqDTO.slotCode!=''">
             #{deviceSlotReqDTO.slotCode},
+        </if>
+        <if test="deviceSlotReqDTO.slotName!=null and deviceSlotReqDTO.slotName!=''">
             #{deviceSlotReqDTO.slotName},
+        </if>
+        <if test="deviceSlotReqDTO.deviceId!=null and deviceSlotReqDTO.deviceId!=''">
             #{deviceSlotReqDTO.deviceId},
+        </if>
             NOW(),
             #{userId}
         )
     </insert>
+    <select id="selectIsDeviceSlotUse" resultType="java.lang.Integer">
+        select count(*) from snmp_alarm_code as sac left join device_slot as ds on ds.system_id=sac.system_id and sac.positionId=ds.position_id and ds.is_deleted=0
+        where sac.is_deleted=0 and ds.id=#{id}
+    </select>
+    <select id="selectIsDeviceSlotUse2" resultType="java.lang.Integer">
+        select count(*) from snmp_slot where is_deleted=0 and slot_id=#{id}
+    </select>
     <update id="deleteDevice">
         update device_slot
         set is_deleted = 1

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.PositionReqDTO;
 import com.zte.msg.alarmcenter.dto.res.PositionResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.PositionMapper;
 import com.zte.msg.alarmcenter.service.PositionService;
@@ -24,7 +25,7 @@ public class PositionServiceImpl implements PositionService {
     public void addPosition(PositionReqDTO reqDTO) {
         int integer = myPositionMapper.addPosition(reqDTO);
         if (integer == 0) {
-            throw new CommonException(4000, "新增失败！");
+            throw new CommonException(ErrorCode.INSERT_ERROR);
         }
     }
 
@@ -33,16 +34,20 @@ public class PositionServiceImpl implements PositionService {
     public void modifyPosition(Long id, PositionReqDTO reqDTO) {
         int integer = myPositionMapper.modifyPosition(id, reqDTO);
         if (integer == 0) {
-            throw new CommonException(4000, "修改失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deletePosition(Long id) {
+        int result = myPositionMapper.selectIsPositionUse(id);
+        if (result != 0) {
+            throw new CommonException(ErrorCode.RESOURCE_USE);
+        }
         int integer = myPositionMapper.deletePosition(id);
         if (integer == 0) {
-            throw new CommonException(4000, "删除失败！");
+            throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
 

@@ -7,11 +7,10 @@
     </select>
 
     <insert id="importAlarmCode">
-        insert into alarm_code
-        (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
-        values
-        <foreach collection ="list" item="item" index= "index" separator =",">
-            (
+        <foreach collection ="list" item="item" index= "index" separator =";">
+            insert into alarm_code
+            (id,system_id,position_id,`code`,`name`,reason,level_id,handling_opinions,created_at,created_by)
+            select
             null,
             (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
             (select id from `position` where position_code = #{item.positionId} and type=2 and is_deleted=0),
@@ -22,11 +21,17 @@
             #{item.handlingOpinions},
             NOW(),
             #{userId}
-            )
+            FROM DUAL
+            WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from `position` where position_code = #{item.positionId} and type=2 and is_deleted=0)
+            and code=#{item.alarmCode} and level_id=#{item.alarmLevelId} and is_deleted=0)
         </foreach>
     </insert>
     <select id="selectAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.AlarmCodeReqDTO">
-        select id from alarm_code where system_id=#{systemId} AND position_id=#{positionId} AND code=#{alarmCode} AND is_deleted=0
+        select id from alarm_code where system_id=#{alarmCodeReqDTO.systemId} AND position_id=#{alarmCodeReqDTO.positionId} AND code=#{alarmCodeReqDTO.alarmCode} AND is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
     </select>
     <insert id="addAlarmCode">
         insert into alarm_code
@@ -59,6 +64,9 @@
             updated_by = #{userId}
         where id = #{id}
     </update>
+    <select id="selectIsAlarmCodeUse" resultType="java.lang.Integer">
+        select count(*) from filter_alarm as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.alarm_code_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
+    </select>
     <update id="deleteAlarmCode">
         update alarm_code
         set

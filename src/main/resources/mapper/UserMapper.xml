@@ -2,7 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.zte.msg.alarmcenter.mapper.UserMapper">
     <select id="selectUserInfo" resultType="com.zte.msg.alarmcenter.dto.req.UserReqDTO">
-        select * from user where user_name=#{userName}
+        select * from user where user_name=#{userName} and is_deleted=0
+        <if test="id!=null and id!=''">
+            and id!=#{id}
+        </if>
     </select>
 
     <select id="selectUserRoles" resultType="java.lang.Long">
@@ -109,7 +112,7 @@
             and u.status=#{status}
         </if>
         <if test="userRealName!=null and userRealName!=''">
-            and u.user_real_name like '%${userRealName}%'
+            and u.user_real_name like CONCAT('%',#{userRealName},'%')
         </if>
         group by u.id
     </select>

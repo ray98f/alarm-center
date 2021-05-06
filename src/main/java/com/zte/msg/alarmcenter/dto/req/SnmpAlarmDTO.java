@@ -52,7 +52,7 @@ public class SnmpAlarmDTO {
     /**
      * 告警时间
      */
-    private Timestamp alarmTime;
+    private String alarmTime;
 
     /**
      * 附加信息

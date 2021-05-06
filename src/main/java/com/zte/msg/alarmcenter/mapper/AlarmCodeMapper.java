@@ -20,11 +20,13 @@ public interface AlarmCodeMapper {
 
     Integer modifyAlarmCode(@Param("alarmCodeReqDTO") AlarmCodeReqDTO alarmCodeReqDTO, @Param("id") Long id, @Param("userId") String userId);
 
+    Integer selectIsAlarmCodeUse(@Param("id") Long id);
+
     Integer deleteAlarmCode(@Param("id") Long id);
 
     Integer getAlarmCodeCount(@Param("alarmCode") Long alarmCode, @Param("alarmName") String alarmName, @Param("systemId") Long systemId, @Param("alarmLevelId") Long alarmLevelId);
 
-    Long selectAlarmCodeIsExist(AlarmCodeReqDTO alarmCodeReqDTO);
+    Long selectAlarmCodeIsExist(AlarmCodeReqDTO alarmCodeReqDTO,Long id);
 
     Integer addAlarmCode(@Param("alarmCodeReqDTO") AlarmCodeReqDTO alarmCodeReqDTO, @Param("userId") String userId);
 }

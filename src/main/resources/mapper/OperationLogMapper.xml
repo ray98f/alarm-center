@@ -4,10 +4,10 @@
     <select id="listOperationLog" resultType="com.zte.msg.alarmcenter.entity.OperationLog">
         select * from operation_log where is_deleted=0
         <if test="userName!=null and userName!=''">
-            and user_name like "%"#{userName}"%"
+            and user_name like CONCAT('%',#{userName},'%')
         </if>
         <if test="operationType!=null and operationType!=''">
-            and operation_type like "%"#{operationType}"%"
+            and operation_type=#{operationType}
         </if>
         <if test="startTime!=null">
             and operation_time >= #{startTime}

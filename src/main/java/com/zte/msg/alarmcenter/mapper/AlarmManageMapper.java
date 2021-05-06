@@ -97,6 +97,14 @@ public interface AlarmManageMapper {
     Long getAlarmHistoryId(AlarmHistory alarmHistory);
 
     /**
+     * 获取告警记等级
+     *
+     * @param alarmHistory
+     * @return
+     */
+    Integer getUpdateLevel(AlarmHistory alarmHistory);
+
+    /**
      * 修改延迟参数
      */
     void updateDelayAlarmHistory();
@@ -114,4 +122,11 @@ public interface AlarmManageMapper {
      * @return
      */
     void updateExperienceAlarmHistory();
+
+    /**
+     * 同步恢复告警
+     *
+     * @return
+     */
+    void updateSyncAlarmHistory(List<AlarmHistoryResDTO> alarmHistoryResDTOList);
 }

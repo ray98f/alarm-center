@@ -140,6 +140,9 @@
             <if test="alarmHistory.experienceTime!=null">
                 experience_time,
             </if>
+            <if test="alarmHistory.isRing!=null">
+                is_ring,
+            </if>
             recovery_time)
             SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
             #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
@@ -172,11 +175,21 @@
             <if test="alarmHistory.experienceTime!=null">
                 #{alarmHistory.experienceTime},
             </if>
+            <if test="alarmHistory.isRing!=null">
+                #{alarmHistory.isRing},
+            </if>
             #{alarmHistory.recoveryTime}
             FROM DUAL
             WHERE not exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
-            and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_level=#{alarmHistory.alarmLevel}
-            and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0);
+            and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
+            and alarm_code=#{alarmHistory.alarmCode}
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+                and alarm_state=#{alarmHistory.alarmState}
+            </if>
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+                and alarm_state in (0,1,2,3)
+            </if>
+            and is_deleted=0);
             UPDATE alarm_history SET
             subsystem_id=#{alarmHistory.subsystemId},
             subsystem_code=#{alarmHistory.subsystemCode},
@@ -200,7 +213,12 @@
                 final_time=#{alarmHistory.finalTime},
             </if>
             frequency=frequency+1,
-            is_ring=1,
+            <if test="alarmHistory.isRing!=null">
+                is_ring=#{alarmHistory.isRing},
+            </if>
+            <if test="alarmHistory.isRing==null">
+                is_ring=1,
+            </if>
             <if test="alarmHistory.alarmState!=null">
                 alarm_state=#{alarmHistory.alarmState},
             </if>
@@ -219,14 +237,20 @@
             recovery_time=#{alarmHistory.recoveryTime}
             WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
             and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode}
-            and alarm_state=#{alarmHistory.alarmState} and is_deleted=0;
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+                and alarm_state=#{alarmHistory.alarmState}
+            </if>
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+                and alarm_state in (0,1,2,3)
+            </if>
+            and is_deleted=0
         </foreach>
     </insert>
 
     <insert id="syncAlarmHistory">
         <foreach collection="list" item="alarmHistory" index="index" separator=";">
             INSERT INTO alarm_history (subsystem_id, subsystem_code, alarm_level,
-            line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id,
+            line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id, frequency,
             <if test="alarmHistory.alarmName!=null">
                 alarm_name,
             </if>
@@ -254,11 +278,14 @@
             <if test="alarmHistory.experienceTime!=null">
                 experience_time,
             </if>
+            <if test="alarmHistory.isRing!=null">
+                is_ring,
+            </if>
             recovery_time)
             SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
             #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
             #{alarmHistory.deviceId}, #{alarmHistory.deviceCode}, #{alarmHistory.slotId}, #{alarmHistory.slotCode},
-            #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId},
+            #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId}, 1,
             <if test="alarmHistory.alarmName!=null">
                 #{alarmHistory.alarmName},
             </if>
@@ -286,52 +313,76 @@
             <if test="alarmHistory.experienceTime!=null">
                 #{alarmHistory.experienceTime},
             </if>
+            <if test="alarmHistory.isRing!=null">
+                #{alarmHistory.isRing},
+            </if>
             #{alarmHistory.recoveryTime}
             FROM DUAL
             WHERE NOT exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
-            and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_level=#{alarmHistory.alarmLevel}
-            and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0);
+            and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
+            and alarm_code=#{alarmHistory.alarmCode}
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+                and alarm_state=#{alarmHistory.alarmState}
+            </if>
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+                and alarm_state in (0,1,2,3)
+            </if>
+            and is_deleted=0)
         </foreach>
     </insert>
 
     <insert id="editAlarmMessage">
-        <foreach collection="alarmMessages" index="index" item="alarmMessage" separator=";">
-            INSERT INTO alarm_message (alarm_id, title, content)
-            SELECT #{alarmId}, #{alarmMessage.title}, #{alarmMessage.content} FROM DUAL
-            WHERE NOT exists (SELECT id FROM alarm_message WHERE alarm_id=#{alarmId} and title=#{alarmMessage.title}
-            and content=#{alarmMessage.content} and is_deleted=0);
-            UPDATE alarm_message SET alarm_id=#{alarmId}, title=#{alarmMessage.title}, content=#{alarmMessage.content}
-            WHERE alarm_id=#{alarmId} and title=#{alarmMessage.title} and content=#{alarmMessage.content} and is_deleted=0
+        UPDATE alarm_message SET is_deleted=1
+        WHERE alarm_id=#{alarmId} and is_deleted=0;
+        INSERT INTO alarm_message (alarm_id, title, content)
+        values
+        <foreach collection="alarmMessages" index="index" item="alarmMessage" separator=",">
+            (#{alarmId}, #{alarmMessage.title}, #{alarmMessage.content})
         </foreach>
     </insert>
 
     <insert id="syncAlarmMessage">
-        <foreach collection="alarmMessages" index="index" item="alarmMessage" separator=";">
-            INSERT INTO alarm_message (alarm_id, title, content)
-            SELECT #{alarmId}, #{alarmMessage.title}, #{alarmMessage.content} FROM DUAL
-            WHERE NOT exists (SELECT id FROM alarm_message WHERE alarm_id=#{alarmId} and title=#{alarmMessage.title}
-            and content=#{alarmMessage.content} and is_deleted=0);
+        UPDATE alarm_message SET is_deleted=1
+        WHERE alarm_id=#{alarmId} and is_deleted=0;
+        INSERT INTO alarm_message (alarm_id, title, content)
+        values
+        <foreach collection="alarmMessages" index="index" item="alarmMessage" separator=",">
+            (#{alarmId}, #{alarmMessage.title}, #{alarmMessage.content})
         </foreach>
     </insert>
 
     <select id="getAlarmHistoryId" resultType="java.lang.Long">
-        select id from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
+        select max(id) as id from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
         and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0
     </select>
 
+    <select id="getUpdateLevel" resultType="java.lang.Integer">
+        select min(alarm_level) as alarm_level from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
+        and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0 and alarm_state in (0,1,2,3)
+    </select>
+
     <update id="updateDelayAlarmHistory">
-        UPDATE alarm_history SET alarm_state=0 where alarm_state=1 and delay_time is not null
+        UPDATE alarm_history SET alarm_state=0,is_ring=1 where alarm_state=1 and delay_time is not null
         and now()>=delay_time and is_deleted=0
     </update>
 
     <update id="updateFrequencyAlarmHistory" parameterType="com.zte.msg.alarmcenter.entity.AlarmHistory">
-        UPDATE alarm_history SET alarm_level=alarm_level-1 where alarm_level!=1 and
+        UPDATE alarm_history SET alarm_level=alarm_level-1,is_upgrade=0 where alarm_level!=1 and
         subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId} and device_id=#{deviceId} and
-        slot_id=#{slotId} and alarm_code=#{alarmCode} and is_deleted=0
+        slot_id=#{slotId} and alarm_code=#{alarmCode} and is_deleted=0 and alarm_state in (0,1,2,3)
     </update>
 
     <update id="updateExperienceAlarmHistory">
-        UPDATE alarm_history SET alarm_level=alarm_level-1 where is_deleted=0 and experience_time is not null
-        and alarm_level!=1 and now()>=date_add(first_time,interval experience_time minute_second)
+        UPDATE alarm_history SET alarm_level=alarm_level-1,is_upgrade=0 where is_deleted=0 and experience_time is not null
+        and alarm_level!=1 and now()>=date_add(first_time,interval experience_time minute_second) and is_upgrade=1 and alarm_state in (0,1,2,3);
+        UPDATE alarm_history SET alarm_level=alarm_level-1,is_upgrade=0 where is_deleted=0 and experience_time is not null
+        and alarm_level!=1 and now()>=date_add(date_add(first_time,interval experience_time minute_second),interval experience_time minute_second) and is_upgrade=0
+        and alarm_state in (0,1,2,3);
+    </update>
+
+    <update id="updateSyncAlarmHistory">
+        <foreach collection="list" index="index" item="alarmHistoryResDTO" separator=";">
+            update alarm_history set alarm_state=7,recovery_time=now() where id=#{alarmHistoryResDTO.id} and is_deleted=0
+        </foreach>
     </update>
 </mapper>

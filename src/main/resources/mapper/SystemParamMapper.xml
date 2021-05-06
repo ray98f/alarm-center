@@ -41,7 +41,10 @@
     </update>
 
     <select id="selectSystemParamIsExist" parameterType="com.zte.msg.alarmcenter.entity.SystemParameter" resultType="java.lang.Long">
-        select id from system_parameter where parameter=#{parameter} and parameter_describe=#{parameterDescribe} and parameter_value=#{parameterValue} and value_describe=#{valueDescribe} and is_deleted=0
+        select id from system_parameter where parameter=#{parameter} and parameter_value=#{parameterValue} and is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
     </select>
 
     <insert id="insertSystemParam" parameterType="com.zte.msg.alarmcenter.entity.SystemParameter">

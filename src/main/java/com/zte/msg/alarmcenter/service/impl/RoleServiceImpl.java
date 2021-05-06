@@ -9,6 +9,7 @@ import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.RoleMapper;
 import com.zte.msg.alarmcenter.service.RoleService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +45,9 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Page<Role> listRole(Integer status, String roleName, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        if (roleName != null && roleName.contains(Constants.PERCENT_SIGN)) {
+            roleName = "尼玛死了";
+        }
         return roleMapper.listRole(pageReqDTO.of(), status, roleName);
     }
 
@@ -97,6 +101,10 @@ public class RoleServiceImpl implements RoleService {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
         role.setCreatedBy(TokenUtil.getCurrentUserName());
+        Long id = roleMapper.selectRoleIsExist(role);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.ROLE_EXIST);
+        }
         int updateRole = roleMapper.updateRole(role);
         if (updateRole <= 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);

@@ -13,7 +13,7 @@
             and p.id=#{siteId}
         </if>
         <if test="alarmReason!=null and alarmReason!=''">
-            and ah.alarm_reason=#{alarmReason}
+            and ah.alarm_reason like concat('%',#{alarmReason},'%')
         </if>
         <if test="startTime!=null">
             and ah.final_time>=#{startTime}

@@ -6,35 +6,42 @@
         <foreach collection ="list" item="item" index= "index" separator=";">
             insert into snmp_slot
             (
-                id,
                 system_id,
                 position_id,
                 slot_id,
-                `name`,
-                created_at,
+                name,
                 created_by
             )
-            SELECT null,
-            (select id from subsystem where sid = #{item.systemId}),
-            (select id from position where p_id=2 and type=3 and position_code=4 and is_deleted=0),
-            #{item.slotCode},
-            #{item.slotName},
-            NOW(),
+            select
+            (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
+            (select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0),
+            (select id from device_slot where system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0)
+            and device_id=(select id from device where system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0)
+            and device_code=#{item.deviceCode} and is_deleted=0) and slot_code=#{item.slotCode} and is_deleted=0),
+            #{item.snmpSlotName},
             #{userId}
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM snmp_slot WHERE system_id=(select id from subsystem where sid = #{item.systemId})
-            and position_id=(select id from position where p_id=2 and type=3 and position_code=4 and is_deleted=0)
-            and slot_id=#{item.slotCode} and name=#{item.slotName} and is_deleted=0)
+            WHERE NOT exists (SELECT id FROM snmp_slot WHERE system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0)
+            and slot_id=(select id from device_slot where system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0)
+            and device_id=(select id from device where system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(select id from position where type=2 and position_code=#{item.LineCode} and is_deleted=0) and type=3 and position_code=#{item.siteCode} and is_deleted=0)
+            and device_code=#{item.deviceCode} and is_deleted=0) and slot_code=#{item.slotCode} and is_deleted=0) and name=#{item.snmpSlotName} and is_deleted=0)
         </foreach>
     </insert>
 
     <select id="selectSnmpSlotIsExist" parameterType="com.zte.msg.alarmcenter.dto.req.SnmpSlotModifyReqDTO" resultType="java.lang.Long">
-        select id from snmp_slot where system_id=#{systemId} and position_id=#{positionId} and slot_id=#{slotId} and name=#{name} and is_deleted=0
+        select id from snmp_slot where system_id=#{slotModifyReqDTO.systemId} and position_id=#{slotModifyReqDTO.positionId} and slot_id=#{slotModifyReqDTO.slotId} and name=#{slotModifyReqDTO.name} and is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
     </select>
     <insert id="addSnmpSlot">
         insert into snmp_slot
         (
-            id,
             system_id,
             position_id,
             slot_id,
@@ -44,7 +51,6 @@
         )
         values
         (
-            null,
             #{slotModifyReqDTO.systemId},
             #{slotModifyReqDTO.positionId},
             #{slotModifyReqDTO.slotId},
@@ -57,25 +63,21 @@
         <foreach collection ="list" item="item" index= "index" separator =";">
             insert into snmp_alarm_code
             (
-                id,
                 system_id,
                 positionId,
                 element_type,
                 snmp_code,
                 code,
                 reason,
-                created_at,
                 created_by
             )
             SELECT
-                null,
-                (select id from subsystem where sid = #{item.systemId}),
+                (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
                 (select id from position where type = 2 and position_code = #{item.positionId}),
                 #{item.elementType},
                 #{item.snmpCode},
                 #{item.code},
                 #{item.reason},
-                NOW(),
                 #{userId}
             FROM DUAL
             WHERE NOT exists (SELECT id FROM snmp_alarm_code WHERE system_id=(select id from subsystem where sid = #{item.systemId})
@@ -84,7 +86,10 @@
         </foreach>
     </insert>
     <select id="selectSnmpAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.SnmpAlarmCodeReqDTO">
-        select id from snmp_alarm_code where system_id=#{systemId} and positionId=#{positionId} and element_type=#{elementType} and snmp_code=#{snmpCode} and is_deleted=0
+        select id from snmp_alarm_code where element_type=#{snmpAlarmCode.elementType} and snmp_code=#{snmpAlarmCode.snmpCode} and reason=#{snmpAlarmCode.reason} and is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
     </select>
     <insert id="addSSnmpAlarmCode">
         insert into snmp_alarm_code
@@ -166,13 +171,13 @@
         join device t4 on t3.device_id = t4.id and t4.is_deleted=0
         where t.is_deleted = 0
         <if test="snmpSlotName!=null and snmpSlotName!=''">
-            t.`name` like concat('%',#{snmpSlotName},'%')
+            and t.`name` like concat('%',#{snmpSlotName},'%')
         </if>
         <if test="systemId!=null">
-            t.system_id = #{systemId}
+            and t.system_id = #{systemId}
         </if>
         <if test="siteId!=null">
-            t.position_id = #{siteId}
+            and t.position_id = #{siteId}
         </if>
         <if test="pageReq!=null">
             limit #{pageReq.page},#{pageReq.size}
@@ -182,10 +187,10 @@
         select
             count(1)
         from snmp_slot t
-        join subsystem t1 on t.system_id = t1.id
-        join `position` t2 on t.position_id = t2.id
-        join device_slot t3 on t.slot_id = t3.id
-        join device t4 on t3.device_id = t4.id
+        left join subsystem t1 on t.system_id = t1.id and t1.is_deleted=0
+        left join `position` t2 on t.position_id = t2.id and t2.is_deleted=0
+        left join device_slot t3 on t.slot_id = t3.id and t3.is_deleted=0
+        left join device t4 on t3.device_id = t4.id and t4.is_deleted=0
         where t.is_deleted = 0
         <if test="snmpSlotName!=null and snmpSlotName!=''">
             and t.`name` like concat('%',#{snmpSlotName},'%')
@@ -210,10 +215,10 @@
             t3.slot_code as slotCode,
             t3.`name` as slotName
         from snmp_slot t
-        join subsystem t1 on t.system_id = t1.id
-        join `position` t2 on t.position_id = t2.id
-        join device_slot t3 on t.slot_id = t3.id
-        join device t4 on t3.device_id = t4.id
+        left join subsystem t1 on t.system_id = t1.id and t1.is_deleted=0
+        left join `position` t2 on t.position_id = t2.id and t2.is_deleted=0
+        left join device_slot t3 on t.slot_id = t3.id and t3.is_deleted=0
+        left join device t4 on t3.device_id = t4.id and t4.is_deleted=0
         where t.is_deleted = 0
         <if test="snmpSlotName!=null and snmpSlotName!=''">
             and t.`name` like concat('%',#{snmpSlotName},'%')

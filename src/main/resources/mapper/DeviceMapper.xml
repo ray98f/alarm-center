@@ -4,13 +4,15 @@
 
     <select id="selectDeviceIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.DeviceReqDTO">
         select id from device where name=#{name} and system_id=#{systemId} and position_id=#{positionId} and device_code=#{deviceCode} and is_deleted=0
+        <if test="id!=null">
+            and id!=#{id}
+        </if>
     </select>
-    <insert id="importDevice"  parameterType="java.util.List">
-        insert into device
-        (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
-        values
-        <foreach collection ="list" item="item" index= "index" separator =",">
-            (
+    <insert id="importDevice" parameterType="java.util.List">
+        <foreach collection ="list" item="item" index= "index" separator =";">
+            insert into device
+            (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
+            select
              null,
             #{item.name},
             #{item.systemId},
@@ -21,7 +23,9 @@
             #{item.description},
             NOW(),
             #{userId}
-            )
+            FROM DUAL
+            WHERE NOT exists (SELECT id FROM device WHERE system_id= #{item.systemId} and position_id=#{item.positionId}
+            and device_code=#{item.deviceCode} and name=#{item.name} and is_deleted=0)
         </foreach>
     </insert>
     <update id="modifyDevice">
@@ -40,6 +44,9 @@
         </if>
         where id = #{id}
     </update>
+    <select id="selectIsDeviceUse" resultType="java.lang.Integer">
+        select count(*) from filter_device as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.device_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
+    </select>
     <update id="deleteDevice">
         update device
         set
@@ -50,10 +57,12 @@
     <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.DeviceResDTO">
         select
         t.id,
-        t.`name`,
-        t1.sid as system_id,
+        t.name,
+        t.system_id,
+        t1.sid as system_code,
         t1.name as systemName,
-        t2.position_code as position_id,
+        t.position_id,
+        t2.position_code as position_code,
         t2.name as positionName,
         t.device_code,
         t.brand,
@@ -61,7 +70,7 @@
         t.description
         from device t
         join subsystem t1 on t1.id = t.system_id
-        join `position` t2 on t2.id = t.position_id
+        join position t2 on t2.id = t.position_id
         where t.is_deleted = 0
         <if test="name!=null and name!=''">
             and t.`name` like concat('%',#{name},'%')
@@ -76,7 +85,7 @@
             and t.position_id = #{positionId}
         </if>
         <if test="page!=null and size!=null">
-            limit #{page},#{size}
+            limit ${page},${size}
         </if>
     </select>
     <select id="getDevicesCount" resultType="java.lang.Integer">
@@ -84,7 +93,7 @@
             count(1)
         from device t
         join subsystem t1 on t1.id = t.system_id
-        join `position` t2 on t2.id = t.position_id
+        join position t2 on t2.id = t.position_id
         where t.is_deleted = 0
         <if test="name!=null and name!=''">
             and t.`name` like concat('%',#{name},'%')

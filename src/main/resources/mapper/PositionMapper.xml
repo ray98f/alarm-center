@@ -56,6 +56,9 @@
         </if>
         where id = #{id}
     </update>
+    <select id="selectIsPositionUse" resultType="java.lang.Integer">
+        select count(*) from filter_position as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.position_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
+    </select>
     <update id="deletePosition">
         update `position`
         set

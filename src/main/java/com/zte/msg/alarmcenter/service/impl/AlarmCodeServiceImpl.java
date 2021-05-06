@@ -65,7 +65,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
             fileInputStream.close();
             int integer = alarmCodeMapper.importAlarmCode(temp, userId);
             if (integer == 0) {
-                throw new CommonException(4000, "批量插入失败！");
+                throw new CommonException(ErrorCode.IMPORT_DATA_EXIST);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -101,28 +101,35 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addAlarmCode(AlarmCodeReqDTO alarmCodeReqDTO, String userId) {
-        Long id = alarmCodeMapper.selectAlarmCodeIsExist(alarmCodeReqDTO);
+        Long id = alarmCodeMapper.selectAlarmCodeIsExist(alarmCodeReqDTO,null);
         if (!Objects.isNull(id)) {
             throw new CommonException(ErrorCode.ALARM_CODE_EXIST);
         }
         int integer = alarmCodeMapper.addAlarmCode(alarmCodeReqDTO, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "新增失败！");
+            throw new CommonException(ErrorCode.INSERT_ERROR);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyAlarmCode(AlarmCodeReqDTO alarmCodeReqDTO, Long id, String userId) {
+        Long result = alarmCodeMapper.selectAlarmCodeIsExist(alarmCodeReqDTO, id);
+        if (!Objects.isNull(result)) {
+            throw new CommonException(ErrorCode.ALARM_CODE_EXIST);
+        }
         int integer = alarmCodeMapper.modifyAlarmCode(alarmCodeReqDTO, id, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "修改失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
     public Page<AlarmCodeResDTO> getAlarmCode(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, Long page, Long size) {
         List<AlarmCodeResDTO> deviceReqDTOList = null;
+        if (alarmName.contains(Constants.PERCENT_SIGN)) {
+            alarmName = "尼玛死了";
+        }
         int count = alarmCodeMapper.getAlarmCodeCount(alarmCode, alarmName, systemId, alarmLevelId);
         Page<AlarmCodeResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
@@ -137,9 +144,13 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteAlarmCode(Long id) {
+        int result = alarmCodeMapper.selectIsAlarmCodeUse(id);
+        if (result != 0) {
+            throw new CommonException(ErrorCode.RESOURCE_USE);
+        }
         int integer = alarmCodeMapper.deleteAlarmCode(id);
         if (integer == 0) {
-            throw new CommonException(4000, "删除失败！");
+            throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
 }

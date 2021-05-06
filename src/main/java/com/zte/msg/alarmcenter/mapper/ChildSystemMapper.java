@@ -50,6 +50,8 @@ public interface ChildSystemMapper {
      */
     Integer modifyChildSystemConfig(@Param("id") Long id, @Param("childSystemConfigReqDTO") ChildSystemConfigReqDTO childSystemConfigReqDTO);
 
+    int selectIsChildSystemUse(@Param("id") Long id);
+
     /**
      * 删除子系统
      *

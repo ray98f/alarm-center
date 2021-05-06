@@ -1,6 +1,8 @@
 package com.zte.msg.alarmcenter.mapper;
 
 import com.zte.msg.alarmcenter.dto.res.*;
+import com.zte.msg.alarmcenter.entity.AlarmHistory;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -120,4 +122,12 @@ public interface HomeMapper {
      * @return
      */
     List<HomeMapPathResDTO> getHomeMapPath();
+
+    /**
+     * 根据id查询告警历史
+     *
+     * @param id
+     * @return
+     */
+    AlarmHistory selectAlarmHistoryById(Integer id);
 }

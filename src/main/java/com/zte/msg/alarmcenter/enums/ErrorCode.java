@@ -170,8 +170,13 @@ public enum ErrorCode {
     DEVICE_EXIST(32100006, "device.exist"),
     MSG_CONFIG_EXIST(32100006, "msg.config.exist"),
     SNMP_SLOT_EXIST(32100006, "snmp.slot.exist"),
+    DEVICE_SLOT_EXIST(32100006, "device.slot.exist"),
     SNMP_ALARM_CODE_EXIST(32100006, "snmp.alarm.code.exist"),
-    ALARM_LEVEL_NOT_EXIST(32100006, "alarm.level.not.exist");
+    ALARM_LEVEL_NOT_EXIST(32100006, "alarm.level.not.exist"),
+    RULE_EXIST(3210006, "rule.exist"),
+    IMPORT_DATA_EXIST(3210007, "import.data.exist"),
+    RESOURCE_USE(3210008, "resource.use"),
+    TIME_WRONG(3210009, "time.wrong");
 
     private Integer code;
 

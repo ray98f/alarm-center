@@ -44,17 +44,26 @@ public class AlarmHistoryResDTO {
     @ApiModelProperty(value = "站点名称")
     private String siteName;
 
+    @ApiModelProperty(value = "站点编号")
+    private Integer siteCode;
+
     @ApiModelProperty(value = "设备id")
     private Long deviceId;
 
     @ApiModelProperty(value = "设备名称")
     private String deviceName;
 
+    @ApiModelProperty(value = "设备编号")
+    private Integer deviceCode;
+
     @ApiModelProperty(value = "槽位id")
     private Long slotId;
 
     @ApiModelProperty(value = "槽位名称")
     private String slotPosition;
+
+    @ApiModelProperty(value = "槽位编号")
+    private Integer slotPositionCode;
 
     @ApiModelProperty(value = "告警码")
     private String alarmCode;

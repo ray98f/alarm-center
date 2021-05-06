@@ -61,7 +61,7 @@
     </select>
 
     <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
-        SELECT ah.id,ah.subsystem_id,ah.subsystem_code,s.name as subsystem_name,ah.site_id,p.name as site_name,ah.line_code,
+        SELECT ah.id,ah.subsystem_id,ah.subsystem_code,s.name as subsystem_name,ah.site_id,ah.site_code,p.name as site_name,ah.line_code,ah.device_code,ah.slot_code as slot_position_code,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
         ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.is_ring,ah.frequency,
         ah.alarm_volume,ah.alarm_state,ah.alarm_remark FROM alarm_history as ah
@@ -143,4 +143,7 @@
         SELECT id,name,topographic as path FROM position where type=1;
     </select>
 
+    <select id="selectAlarmHistoryById" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
+        SELECT * FROM alarm_history where id=#{id};
+    </select>
 </mapper>

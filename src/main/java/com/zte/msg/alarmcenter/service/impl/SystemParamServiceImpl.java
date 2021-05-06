@@ -89,6 +89,10 @@ public class SystemParamServiceImpl implements SystemParamService {
         if (Objects.isNull(systemParameter)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
+        Long id = systemParamMapper.selectSystemParamIsExist(systemParameter);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.SYSTEM_PARAM_EXIST);
+        }
         systemParameter.setUpdatedBy(TokenUtil.getCurrentUserName());
         int updateRole = systemParamMapper.updateSystemParam(systemParameter);
         if (updateRole <= 0) {

@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.pagehelper.PageHelper;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.DeviceReqDTO;
 import com.zte.msg.alarmcenter.dto.req.DeviceReqModifyDTO;
@@ -9,6 +10,7 @@ import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.DeviceMapper;
 import com.zte.msg.alarmcenter.service.DeviceService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import com.zte.msg.alarmcenter.utils.FileUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -40,8 +42,8 @@ public class DeviceServiceImpl implements DeviceService {
             for (DeviceResDTO deviceResDTO : deviceResList) {
                 Map<String, String> map = new HashMap<>();
                 map.put("设备名称", deviceResDTO.getName());
-                map.put("所属系统编号", deviceResDTO.getSystemId().toString());
-                map.put("设备位置编号", deviceResDTO.getPositionId().toString());
+                map.put("所属系统编号", deviceResDTO.getSystemCode().toString());
+                map.put("设备位置编号", deviceResDTO.getPositionCode().toString());
                 map.put("设备编号", deviceResDTO.getDeviceCode());
                 map.put("品牌型号", deviceResDTO.getBrand());
                 map.put("设备串号", deviceResDTO.getSerialNum());
@@ -68,22 +70,27 @@ public class DeviceServiceImpl implements DeviceService {
                     continue;
                 }
                 DeviceReqDTO reqDTO = new DeviceReqDTO();
+                cells.getCell(0).setCellType(CellType.STRING);
                 reqDTO.setName(cells.getCell(0).getStringCellValue());
                 // 将列设置为字符串类型
                 cells.getCell(1).setCellType(CellType.STRING);
                 reqDTO.setSystemId(Long.valueOf(cells.getCell(1).getStringCellValue()));
                 cells.getCell(2).setCellType(CellType.STRING);
                 reqDTO.setPositionId(Long.valueOf(cells.getCell(2).getStringCellValue()));
+                cells.getCell(3).setCellType(CellType.STRING);
                 reqDTO.setDeviceCode(cells.getCell(3).getStringCellValue());
+                cells.getCell(4).setCellType(CellType.STRING);
                 reqDTO.setBrand(cells.getCell(4).getStringCellValue());
+                cells.getCell(5).setCellType(CellType.STRING);
                 reqDTO.setSerialNum(cells.getCell(5).getStringCellValue());
+                cells.getCell(6).setCellType(CellType.STRING);
                 reqDTO.setDescription(cells.getCell(6).getStringCellValue());
                 temp.add(reqDTO);
             }
             fileInputStream.close();
             int integer = myDeviceMapper.importDevice(temp, userId);
             if (integer == 0) {
-                throw new CommonException(4000, "批量插入失败！");
+                throw new CommonException(ErrorCode.IMPORT_DATA_EXIST);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -122,7 +129,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addDevice(DeviceReqDTO deviceReqDTO, String userId) {
-        Long id = myDeviceMapper.selectDeviceIsExist(deviceReqDTO);
+        Long id = myDeviceMapper.selectDeviceIsExist(deviceReqDTO.getName(), deviceReqDTO.getSystemId(),deviceReqDTO.getPositionId(),deviceReqDTO.getDeviceCode(),null);
         if (!Objects.isNull(id)){
             throw new CommonException(ErrorCode.DEVICE_EXIST);
         }
@@ -130,21 +137,29 @@ public class DeviceServiceImpl implements DeviceService {
         temp.add(deviceReqDTO);
         int integer = myDeviceMapper.importDevice(temp, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "新增失败！");
+            throw new CommonException(ErrorCode.INSERT_ERROR);
         }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyDevice(DeviceReqModifyDTO reqModifyDTO, Long id, String userId) {
+        Long result = myDeviceMapper.selectDeviceIsExist(reqModifyDTO.getName(), reqModifyDTO.getSystemId(),reqModifyDTO.getPositionId(),reqModifyDTO.getDeviceCode(),id);
+        if (!Objects.isNull(result)){
+            throw new CommonException(ErrorCode.DEVICE_EXIST);
+        }
         int integer = myDeviceMapper.modifyDevice(reqModifyDTO,id, userId);
         if (integer == 0) {
-            throw new CommonException(4000, "修改失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
     public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page,Long size) {
+        if (name.contains(Constants.PERCENT_SIGN)) {
+            name = "尼玛死了";
+        }
+        PageHelper.startPage(page.intValue(), size.intValue());
         List<DeviceResDTO> deviceReqDTOList = null;
         int count = myDeviceMapper.getDevicesCount(name, deviceCode, systemId, positionId);
         Page<DeviceResDTO> pageBean = new Page<>();
@@ -160,9 +175,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDevice(Long id) {
+        Integer result = myDeviceMapper.selectIsDeviceUse(id);
+        if (result != 0) {
+            throw new CommonException(ErrorCode.RESOURCE_USE);
+        }
         int integer = myDeviceMapper.deleteDevice(id);
         if (integer == 0) {
-            throw new CommonException(4000, "删除失败！");
+            throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
 }

@@ -3,6 +3,7 @@ package com.zte.msg.alarmcenter.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.req.ChildSystemConfigReqDTO;
 import com.zte.msg.alarmcenter.dto.res.ChildSystemConfigResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.ChildSystemMapper;
 import com.zte.msg.alarmcenter.service.ChildSystemService;
@@ -65,6 +66,10 @@ public class ChildSystemServiceImpl implements ChildSystemService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void removeChildSystem(Long id) {
+        int result = myChildSystemMapper.selectIsChildSystemUse(id);
+        if (result!=0) {
+            throw new CommonException(ErrorCode.RESOURCE_USE);
+        }
         int integer = myChildSystemMapper.removeChildSystem(id);
         if (integer == 0) {
             throw new CommonException(4000, "删除失败！");

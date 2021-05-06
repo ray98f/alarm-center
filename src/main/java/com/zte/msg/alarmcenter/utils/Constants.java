@@ -43,6 +43,8 @@ public class Constants {
 
     public static final String COMMA_EN = ",";
 
+    public static final String PERCENT_SIGN = "%";
+
     public static final String ROLE_STRING = "role";
 
     public static final String APP_KEY_STRING = "appKey";

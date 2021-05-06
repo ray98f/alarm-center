@@ -10,6 +10,7 @@ import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmStatisticsMapper;
 import com.zte.msg.alarmcenter.service.AlarmStatisticsService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import com.zte.msg.alarmcenter.utils.ExcelPortUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,9 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
      */
     @Override
     public Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, PageReqDTO pageReqDTO) {
+        if (alarmReason.contains(Constants.PERCENT_SIGN)) {
+            alarmReason = "尼玛死了";
+        }
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return alarmStatisticsMapper.totalAlarmData(pageReqDTO.of(), systemId, siteId, alarmReason, startTime, endTime);
     }

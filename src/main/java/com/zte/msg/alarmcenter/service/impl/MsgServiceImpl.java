@@ -9,6 +9,7 @@ import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.MsgMapper;
 import com.zte.msg.alarmcenter.service.MsgService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,9 @@ public class MsgServiceImpl implements MsgService {
     @Override
     public Page<MsgConfig> pageMsgConfig(String name, Integer type, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        if (name.contains(Constants.PERCENT_SIGN)) {
+            name = "尼玛死了";
+        }
         return msgMapper.pageMsgConfig(pageReqDTO.of(), name, type);
     }
 
@@ -73,6 +77,10 @@ public class MsgServiceImpl implements MsgService {
     public void editMsgConfig(MsgConfig msgConfig) {
         if (Objects.isNull(msgConfig)) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
+        }
+        Long id = msgMapper.selectMsgConfigIsExist(msgConfig);
+        if (!Objects.isNull(id)) {
+            throw new CommonException(ErrorCode.MSG_CONFIG_EXIST);
         }
         int result = msgMapper.editMsgConfig(msgConfig);
         if (result < 0) {

@@ -7,6 +7,7 @@ import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO;
 import com.zte.msg.alarmcenter.dto.req.SnmpAlarmDTO;
+import com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.dto.res.RedisUpdateFrequencyResDTO;
 import com.zte.msg.alarmcenter.entity.*;
@@ -26,8 +27,12 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author frp
@@ -53,6 +58,9 @@ public class AsyncReceiver {
 
     @Autowired
     private AlarmRuleMapper alarmRuleMapper;
+
+    @Autowired
+    private HomeMapper homeMapper;
 
     @Autowired
     private RedissonClient redissonClient;
@@ -103,7 +111,7 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void alarmProcess(String json) {
+    public void alarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTO = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTO || alarmReqDTO.isEmpty()) {
@@ -119,14 +127,13 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void syncAlarmProcess(String json) {
+    public void syncAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTOList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTOList || alarmReqDTOList.isEmpty()) {
             log.warn("消息队列中信息为空");
             return;
         }
-        //TODO 确认是否更新当前系统所有当前告警，删除不在列表中的报警
         log.info("------ 开始同步告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
@@ -141,7 +148,7 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.SNMP_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void snmpAlarmProcess(String json) {
+    public void snmpAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
         if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
@@ -163,7 +170,7 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.SNMP_SYNC_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void snmpSyncAlarmProcess(String json) {
+    public void snmpSyncAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
         if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
@@ -173,8 +180,7 @@ public class AsyncReceiver {
         log.info("------ 开始接收告警记录 ------");
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-        //TODO 确认是否更新所有当前告警，删除不在列表中的报警
-        editData(alarmHistories);
+        syncData(alarmHistories);
         log.info("------ 接收告警记录结束 ------");
     }
 
@@ -243,11 +249,13 @@ public class AsyncReceiver {
         int result = alarmManageMapper.editAlarmHistory(alarmHistories);
         if (result >= 0) {
             for (AlarmHistory alarmHistory : alarmHistories) {
-                Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
-                result = alarmManageMapper.editAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
-                if (result < 0) {
-                    log.error("ID为{}的告警记录添加附加信息失败", alarmId);
+                if (null != alarmHistory.getAlarmMessageList() && !alarmHistory.getAlarmMessageList().isEmpty()) {
+                    Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
+                    result = alarmManageMapper.editAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
+                    if (result < 0) {
+                        log.error("ID为{}的告警记录添加附加信息失败", alarmId);
 
+                    }
                 }
             }
         }
@@ -258,8 +266,19 @@ public class AsyncReceiver {
             log.error("告警记录接收为空");
             return;
         }
-        //todo
-
+        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory();
+        for (AlarmHistory alarmHistory : alarmHistories) {
+            alarmHistoryResDTOList.removeIf(alarmHistoryResDTO -> alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                    alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
+                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()) &&
+                    alarmHistory.getAlarmState().equals(alarmHistoryResDTO.getAlarmState()));
+        }
+        if (alarmHistoryResDTOList.size() > 0) {
+            alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
+        }
         int result = alarmManageMapper.syncAlarmHistory(alarmHistories);
         if (result >= 0) {
             for (AlarmHistory alarmHistory : alarmHistories) {
@@ -273,9 +292,16 @@ public class AsyncReceiver {
         }
     }
 
-    private List<AlarmHistory> conversionAndFilter(List<AlarmHistoryReqDTO> alarmReqDTOList) {
+    private List<AlarmHistory> conversionAndFilter(List<AlarmHistoryReqDTO> alarmReqDTOList) throws ParseException {
         List<AlarmHistory> alarmHistories = new ArrayList<>();
         for (AlarmHistoryReqDTO alarmReqDTO : alarmReqDTOList) {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Pattern a = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+            if (!a.matcher(alarmReqDTO.getAlarmTime()).matches()) {
+                alarmReqDTO.setAlarmTime(null);
+                alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "时间格式错误，请检查时间格式| Data: " + JSON.toJSONString(alarmReqDTO));
+                continue;
+            }
             AlarmHistory alarmHistory = new AlarmHistory();
             if (null != DataCacheTask.subsystemData.get(alarmReqDTO.getSystem())) {
                 alarmHistory.setSubsystemId(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getId());
@@ -359,57 +385,83 @@ public class AsyncReceiver {
                 continue;
             }
             alarmHistory.setAlarmState(0);
+            ConcurrentHashMap<Long, AlarmRuleDataResDTO> ruleData = new ConcurrentHashMap<>();
             for (Map.Entry<Long, AlarmRuleDataResDTO> m : DataCacheTask.alarmRuleData.entrySet()) {
-                if (m.getValue().getSystemIds().contains(alarmHistory.getSubsystemId())
+                if (m.getValue().getIsEnable() == 0
+                        && m.getValue().getSystemIds().contains(alarmHistory.getSubsystemId())
                         && m.getValue().getDeviceIds().contains(alarmHistory.getDeviceId())
                         && m.getValue().getPositionIds().contains(alarmHistory.getSiteId())
                         && m.getValue().getAlarmIds().contains(alarmHistory.getAlarmCode())) {
-                    // 根据告警规则获取告警状态
-                    if (m.getValue().getType() == 2) {
-                        alarmHistory = null;
-                        break;
-                    } else if (m.getValue().getType() == 3) {
-                        alarmHistory.setAlarmState(5);
-                        break;
-                    } else if (m.getValue().getType() == 5) {
-                        alarmHistory.setAlarmState(7);
-                        break;
-                    } else if (m.getValue().getType() == 1) {
-                        alarmHistory.setAlarmState(1);
-                        alarmHistory.setDelayTime(new Timestamp(alarmReqDTO.getAlarmTime().getTime() + m.getValue().getDelayTime()));
-                        break;
-                    } else if (m.getValue().getType() == 4) {
-                        alarmHistory.setAlarmState(3);
-                        break;
-                    } else if (m.getValue().getType() == 7) {
-                        if (m.getValue().getMsgConfigId() == null) {
+                    ruleData.put(m.getValue().getType(), m.getValue());
+                }
+            }
+            // 根据告警规则获取告警状态
+            // 1-告警延迟规则;2-告警入库过滤规则;3-告警过滤规则;4-告警确认规则;5-告警清除规则;6-告警升级规则;7-告警前转规则
+            if (ruleData.get(2L) != null) {
+                alarmHistory = null;
+            } else if (ruleData.get(3L) != null) {
+                alarmHistory.setIsRing(0);
+                alarmHistory.setAlarmState(5);
+                String flag = "sysId:" + alarmHistory.getSubsystemId() +
+                        "-lineId:" + alarmHistory.getLineId() +
+                        "-siteId:" + alarmHistory.getSiteId() +
+                        "-deviceId:" + alarmHistory.getDeviceId() +
+                        "-slotId:" + alarmHistory.getSlotId() +
+                        "-codeId:" + alarmHistory.getAlarmCode();
+                String updateKey = "update_frequency:" + flag;
+                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, System.currentTimeMillis());
+            } else if (ruleData.get(5L) != null) {
+                alarmHistory.setIsRing(0);
+                alarmHistory.setAlarmState(7);
+                String flag = "sysId:" + alarmHistory.getSubsystemId() +
+                        "-lineId:" + alarmHistory.getLineId() +
+                        "-siteId:" + alarmHistory.getSiteId() +
+                        "-deviceId:" + alarmHistory.getDeviceId() +
+                        "-slotId:" + alarmHistory.getSlotId() +
+                        "-codeId:" + alarmHistory.getAlarmCode();
+                String updateKey = "update_frequency:" + flag;
+                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, System.currentTimeMillis());
+            } else if (ruleData.get(4L) != null) {
+                alarmHistory.setIsRing(0);
+                alarmHistory.setAlarmState(3);
+            } else {
+                if (ruleData.get(6L) != null) {
+                    alarmHistory.setAlarmFrequency(ruleData.get(6L).getFrequency());
+                    alarmHistory.setFrequencyTime(ruleData.get(6L).getFrequencyTime());
+                    alarmHistory.setExperienceTime(ruleData.get(6L).getExperienceTime());
+                    if (alarmHistory.getAlarmLevel() > 1) {
+                        frequencyAlarmHistory(alarmHistory);
+                    }
+                }
+                if (ruleData.get(7L) != null) {
+                    String content = alarmHistory.getLineName() + "线路-" + alarmHistory.getSiteName() + "站点-" + alarmHistory.getSubsystemName() + "系统 产生";
+                    Integer result = alarmManageMapper.getUpdateLevel(alarmHistory);
+                    if (result != null) {
+                        alarmHistory.setAlarmLevel(result);
+                    }
+                    if (1 == alarmHistory.getAlarmLevel()) {
+                        content = content + "紧急告警";
+                    } else if (2 == alarmHistory.getAlarmLevel()) {
+                        content = content + "重要告警";
+                    } else if (3 == alarmHistory.getAlarmLevel()) {
+                        content = content + "一般告警";
+                    }
+                    content = content + " | Data: " + JSON.toJSONString(alarmReqDTO);
+                    if (ruleData.get(7L).getMsgConfigId() == null) {
+                        alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
+                    } else {
+                        MsgConfig msgConfig = alarmRuleMapper.selectMsgConfigById(ruleData.get(7L).getMsgConfigId());
+                        if (Objects.isNull(msgConfig)) {
                             alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
                         } else {
-                            String content = alarmHistory.getLineName() + "线路-" + alarmHistory.getSiteName() + "站点-" + alarmHistory.getSubsystemName() + "系统 产生";
-                            if (1 == alarmHistory.getAlarmLevel()) {
-                                content = content + "紧急告警";
-                            } else if (2 == alarmHistory.getAlarmLevel()) {
-                                content = content + "重要告警";
-                            } else if (3 == alarmHistory.getAlarmLevel()) {
-                                content = content + "一般告警";
-                            }
-                            content = content + " | Data: " + JSON.toJSONString(alarmReqDTO);
-                            MsgConfig msgConfig = alarmRuleMapper.selectMsgConfigById(m.getValue().getMsgConfigId());
-                            if (Objects.isNull(msgConfig)) {
-                                alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警规则前转信息数据异常，未找到告警规则前转信息 | Data: " + JSON.toJSONString(alarmReqDTO));
-                            }
                             alarmRuleMapper.insertMsgPush(msgConfig, content);
                         }
-                        break;
-                    } else if (m.getValue().getType() == 6) {
-                        alarmHistory.setAlarmFrequency(m.getValue().getFrequency());
-                        alarmHistory.setFrequencyTime(m.getValue().getFrequencyTime());
-                        alarmHistory.setExperienceTime(m.getValue().getExperienceTime());
-                        if (alarmHistory.getAlarmLevel() > 1) {
-                            frequencyAlarmHistory(alarmHistory);
-                        }
-                        break;
                     }
+                }
+                if (ruleData.get(1L) != null) {
+                    alarmHistory.setIsRing(0);
+                    alarmHistory.setAlarmState(1);
+                    alarmHistory.setDelayTime(new Timestamp(simpleDateFormat.parse(alarmReqDTO.getAlarmTime()).getTime() + ruleData.get(1L).getDelayTime() * 1000));
                 }
             }
             if (!Objects.isNull(alarmHistory)) {
@@ -421,8 +473,8 @@ public class AsyncReceiver {
                     alarmHistory.setRecoveryTime(new Timestamp(System.currentTimeMillis()));
                     alarmHistory.setAlarmState(7);
                 }
-                alarmHistory.setFirstTime(alarmReqDTO.getAlarmTime());
-                alarmHistory.setFinalTime(alarmReqDTO.getAlarmTime());
+                alarmHistory.setFirstTime(new Timestamp(simpleDateFormat.parse(alarmReqDTO.getAlarmTime()).getTime()));
+                alarmHistory.setFinalTime(new Timestamp(simpleDateFormat.parse(alarmReqDTO.getAlarmTime()).getTime()));
                 alarmHistories.add(alarmHistory);
                 if (!Objects.isNull(alarmReqDTO.getAlarmMessageList())) {
                     alarmHistory.setAlarmMessageList(alarmReqDTO.getAlarmMessageList());
@@ -449,11 +501,12 @@ public class AsyncReceiver {
             locker.lock();
             long now = System.currentTimeMillis();
             if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(updateKey))) {
+                stringRedisTemplate.opsForZSet().add(updateKey, String.valueOf(now), now);
                 return;
             }
-            if (Objects.requireNonNull(stringRedisTemplate.opsForZSet().count(updateKey, now - alarmHistory.getFrequencyTime(), now)) + 1 < alarmHistory.getAlarmFrequency()) {
-                stringRedisTemplate.opsForZSet().add(updateKey, String.valueOf(alarmHistory.getAlarmFrequency()), now);
-                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, now);
+            if (Objects.requireNonNull(stringRedisTemplate.opsForZSet().count(updateKey, now - alarmHistory.getFrequencyTime() * 1000, now)) < alarmHistory.getAlarmFrequency()) {
+                stringRedisTemplate.opsForZSet().add(updateKey, String.valueOf(now), now);
+                stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, now - alarmHistory.getFrequencyTime() * 1000);
             } else {
                 stringRedisTemplate.opsForZSet().removeRangeByScore(updateKey, 0, now);
                 alarmManageMapper.updateFrequencyAlarmHistory(alarmHistory);

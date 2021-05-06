@@ -3,6 +3,7 @@ package com.zte.msg.alarmcenter.service.impl;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.req.AlarmLevelReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmLevelResDTO;
+import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmLevelMapper;
 import com.zte.msg.alarmcenter.service.AlarmLevelService;
@@ -37,7 +38,7 @@ public class AlarmLevelServiceImpl implements AlarmLevelService {
     public void modifyAlarmLevel(Long id, AlarmLevelReqDTO alarmLevelReqDTO, String userId) {
         int integer = alarmLevelMapper.modifyAlarmLevel(id,alarmLevelReqDTO,userId);
         if (integer == 0) {
-            throw new CommonException(4000, "编辑失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 }

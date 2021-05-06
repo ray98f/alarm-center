@@ -120,6 +120,9 @@ public class AlarmHistory extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "告警备注")
     private String alarmRemark;
 
+    @ApiModelProperty(value = "是否响铃")
+    private Integer isRing;
+
     @ApiModelProperty(value = "告警附加信息")
     private List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList;
 

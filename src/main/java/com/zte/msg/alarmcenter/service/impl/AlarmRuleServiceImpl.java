@@ -9,6 +9,7 @@ import com.zte.msg.alarmcenter.enums.ErrorCode;
 import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.AlarmRuleMapper;
 import com.zte.msg.alarmcenter.service.AlarmRuleService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,10 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO, String userId) {
-
+        int result = alarmRuleMapper.selectRuleExist(alarmRuleReqDTO,null);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.RULE_EXIST);
+        }
         int systemIdSize = alarmRuleReqDTO.getSystemIds().size();
         int positionIdSize = alarmRuleReqDTO.getPositionIds().size();
         int deviceIdSize = alarmRuleReqDTO.getDeviceIds().size();
@@ -39,7 +43,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         alarmRuleReqDTO.setUserId(userId);
         int integer = alarmRuleMapper.addAlarmRule(alarmRuleReqDTO);
         if (integer == 0) {
-            throw new CommonException(4000, "告警码规则新增失败");
+            throw new CommonException(ErrorCode.INSERT_ERROR);
         }
         int[] ints = {systemIdSize, positionIdSize, deviceIdSize, alarmIdSize};
         Arrays.sort(ints);
@@ -64,25 +68,25 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
             if (systemId > 0) {
                 int sysCount = alarmRuleMapper.addAlarmRuleOnSystem(alarmRuleReqDTO.getId(), alarmRuleReqDTO.getSystemIds().get(i));
                 if (sysCount == 0) {
-                    throw new CommonException(4000, "系统过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (positionId > 0) {
                 int positionCount = alarmRuleMapper.addAlarmRuleOnPosition(alarmRuleReqDTO.getId(), alarmRuleReqDTO.getPositionIds().get(i));
                 if (positionCount == 0) {
-                    throw new CommonException(4000, "位置过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (deviceId > 0) {
                 int deviceCount = alarmRuleMapper.addAlarmRuleOnDevice(alarmRuleReqDTO.getId(), alarmRuleReqDTO.getDeviceIds().get(i));
                 if (deviceCount == 0) {
-                    throw new CommonException(4000, "设备过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (alarmId > 0) {
                 int alarmCount = alarmRuleMapper.addAlarmRuleOnAlarm(alarmRuleReqDTO.getId(), alarmRuleReqDTO.getAlarmIds().get(i));
                 if (alarmCount == 0) {
-                    throw new CommonException(4000, "告警过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
         }
@@ -91,6 +95,9 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     @Override
     public Page<AlarmRuleResDTO> getAlarmRule(String name, Integer isEnable, Integer type, Long page, Long size) {
         List<AlarmRuleResDTO> childSystemList = null;
+        if (name.contains(Constants.PERCENT_SIGN)) {
+            name = "尼玛死了";
+        }
         int count = alarmRuleMapper.getAlarmRuleCount(name, isEnable, type);
         Page<AlarmRuleResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
@@ -105,13 +112,17 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyAlarmRule(AlarmRuleReqDTO alarmRuleReqDTO, Long id, String userId) {
+        int result = alarmRuleMapper.selectRuleExist(alarmRuleReqDTO,id);
+        if (result > 0) {
+            throw new CommonException(ErrorCode.RULE_EXIST);
+        }
         alarmRuleReqDTO.setSystemId(alarmRuleReqDTO.getSystemIds().size() == 0 ? 0 : 1);
         alarmRuleReqDTO.setPositionId(alarmRuleReqDTO.getPositionIds().size() == 0 ? 0 : 1);
         alarmRuleReqDTO.setDeviceId(alarmRuleReqDTO.getDeviceIds().size() == 0 ? 0 : 1);
         alarmRuleReqDTO.setAlarmId(alarmRuleReqDTO.getAlarmIds().size() == 0 ? 0 : 1);
         int modifyCount = alarmRuleMapper.modifyAlarmRule(alarmRuleReqDTO, id, userId);
         if (modifyCount == 0) {
-            throw new CommonException(4000, "编辑失败！");
+            throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
         //todo 根据id多表删除 根据id多表新增
         int delFilterCount = alarmRuleMapper.deleteFilter(id);
@@ -142,25 +153,25 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
             if (systemId > 0) {
                 int sysCount = alarmRuleMapper.addAlarmRuleOnSystem(id, alarmRuleReqDTO.getSystemIds().get(i));
                 if (sysCount == 0) {
-                    throw new CommonException(4000, "系统过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (positionId > 0) {
                 int positionCount = alarmRuleMapper.addAlarmRuleOnPosition(id, alarmRuleReqDTO.getPositionIds().get(i));
                 if (positionCount == 0) {
-                    throw new CommonException(4000, "位置过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (deviceId > 0) {
                 int deviceCount = alarmRuleMapper.addAlarmRuleOnDevice(id, alarmRuleReqDTO.getDeviceIds().get(i));
                 if (deviceCount == 0) {
-                    throw new CommonException(4000, "设备过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
             if (alarmId > 0) {
                 int alarmCount = alarmRuleMapper.addAlarmRuleOnAlarm(id, alarmRuleReqDTO.getAlarmIds().get(i));
                 if (alarmCount == 0) {
-                    throw new CommonException(4000, "告警过滤新增失败");
+                    throw new CommonException(ErrorCode.INSERT_ERROR);
                 }
             }
         }
@@ -181,7 +192,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public void deleteAlarmRule(Long id) {
         int alarmDelCount = alarmRuleMapper.deleteAlarmRule(id);
         if (alarmDelCount == 0) {
-            throw new CommonException(4000, "删除失败");
+            throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
 

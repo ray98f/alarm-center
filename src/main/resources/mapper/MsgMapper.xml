@@ -12,7 +12,20 @@
     </select>
 
     <select id="selectMsgConfigIsExist" parameterType="com.zte.msg.alarmcenter.entity.MsgConfig" resultType="java.lang.Long">
-        select id from msg_config where name=#{name} and type=#{type} and phone=#{phone} and email=#{email} and box=#{box} and is_deleted=0
+        select id from msg_config where name=#{name} and type=#{type} and
+        <if test="phone!=null and phone!=''">
+            phone=#{phone} and
+        </if>
+        <if test="email!=null and email!=''">
+            email=#{email} and
+        </if>
+        <if test="box!=null and box!=''">
+            box=#{box} and
+        </if>
+        <if test="id!=null">
+            id!=#{id} and
+        </if>
+        is_deleted=0
     </select>
 
     <insert id="insertMsgConfig" parameterType="com.zte.msg.alarmcenter.entity.MsgConfig">

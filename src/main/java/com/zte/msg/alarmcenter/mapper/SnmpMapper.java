@@ -21,7 +21,7 @@ public interface SnmpMapper {
     List<SnmpSlotResDTO> exportDevice(@Param("snmpSlotName") String snmpSlotName, @Param("systemId") Long systemId,
                                       @Param("siteId") Long siteId, @Param("pageReq") PageReqDTO pageReq);
 
-    Long selectSnmpSlotIsExist(SnmpSlotModifyReqDTO slotModifyReqDTO);
+    Long selectSnmpSlotIsExist(SnmpSlotModifyReqDTO slotModifyReqDTO, Long id);
 
     Integer addSnmpSlot(@Param("slotModifyReqDTO") SnmpSlotModifyReqDTO slotModifyReqDTO, @Param("userId") String userId);
 
@@ -37,7 +37,7 @@ public interface SnmpMapper {
 
     List<SnmpAlarmCodeResDTO> exportSnmpAlarmCode(@Param("alarmCode") String alarmCode, @Param("systemId") Long systemId);
 
-    Long selectSnmpAlarmCodeIsExist(SnmpAlarmCodeReqDTO snmpAlarmCode);
+    Long selectSnmpAlarmCodeIsExist(SnmpAlarmCodeReqDTO snmpAlarmCode, Long id);
 
     Integer addSSnmpAlarmCode(@Param("snmpAlarmCode") SnmpAlarmCodeReqDTO snmpAlarmCode, @Param("userId") String userId);
 

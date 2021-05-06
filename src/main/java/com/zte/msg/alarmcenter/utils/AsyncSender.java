@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +59,8 @@ public class AsyncSender {
         alarmHistoryReqDTO.setSlot(2);
         alarmHistoryReqDTO.setAlarmCode(2);
         alarmHistoryReqDTO.setRecovery(true);
-        alarmHistoryReqDTO.setAlarmTime(new Timestamp(System.currentTimeMillis()));
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        alarmHistoryReqDTO.setAlarmTime(simpleDateFormat.format(System.currentTimeMillis()));
         List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList = new ArrayList<>();
         AlarmHistoryReqDTO.AlarmMessage alarmMessage1 = new AlarmHistoryReqDTO.AlarmMessage();
         AlarmHistoryReqDTO.AlarmMessage alarmMessage2 = new AlarmHistoryReqDTO.AlarmMessage();

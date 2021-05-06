@@ -50,6 +50,9 @@
         </if>
         where id = #{id}
     </update>
+    <select id="selectIsChildSystemUse" resultType="java.lang.Integer">
+        select count(*) from filter_system as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.system_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
+    </select>
     <!--删除子系统-->
     <update id="removeChildSystem">
         UPDATE subsystem

@@ -9,6 +9,7 @@ import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.OperationLogMapper;
 import com.zte.msg.alarmcenter.mapper.RoleMapper;
 import com.zte.msg.alarmcenter.service.OperationLogService;
+import com.zte.msg.alarmcenter.utils.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,9 @@ public class OperationLogServiceImpl implements OperationLogService {
                                                Timestamp endTime,
                                                PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
+        if (userName.contains(Constants.PERCENT_SIGN)) {
+            userName = "尼玛死了";
+        }
         return operationLogMapper.listOperationLog(pageReqDTO.of(), userName, operationType, startTime, endTime);
     }
 

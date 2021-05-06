@@ -23,7 +23,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param userName
      * @return
      */
-    UserReqDTO selectUserInfo(String userName);
+    UserReqDTO selectUserInfo(Long id, String userName);
 
     /**
      * 获取用户权限id
