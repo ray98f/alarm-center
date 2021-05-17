@@ -44,8 +44,11 @@
         </if>
         where id = #{id}
     </update>
-    <select id="selectIsDeviceUse" resultType="java.lang.Integer">
+    <select id="selectIsDeviceUse1" resultType="java.lang.Integer">
         select count(*) from filter_device as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.device_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
+    </select>
+    <select id="selectIsDeviceUse2" resultType="java.lang.Integer">
+        select count(*) from device_slot where device_id=#{id} and is_deleted=0
     </select>
     <update id="deleteDevice">
         update device

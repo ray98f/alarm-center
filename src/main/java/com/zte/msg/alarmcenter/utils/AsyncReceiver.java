@@ -22,10 +22,13 @@ import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +43,9 @@ import java.util.regex.Pattern;
 @Slf4j
 @Component
 public class AsyncReceiver {
+
+    @Value("${spring.redis.key-prefix}")
+    private String keyPrefix;
 
     @Autowired
     private SynchronizeMapper synchronizeMapper;
@@ -85,7 +91,7 @@ public class AsyncReceiver {
     @RabbitHandler
     @Async
     public void process(AsyncVO asyncVO) {
-        log.info("------ 开始接收同步对象 ------");
+//        log.info("------ 开始接收同步对象 ------");
         if (null != asyncVO.getAlarmCodeSyncReqDTOList()) {
             int result = synchronizeMapper.alarmCodesSync(asyncVO.getAlarmCodeSyncReqDTOList());
             log.info(JSONUtils.beanToJsonString(asyncVO.getAlarmCodeSyncReqDTOList()) + " : result = {}", result);
@@ -105,7 +111,7 @@ public class AsyncReceiver {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         }
-        log.info("------ 接收同步对象结束 ------");
+//        log.info("------ 接收同步对象结束 ------");
     }
 
     @RabbitListener(queues = RabbitMqConfig.ALARM_QUEUE)
@@ -118,10 +124,10 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始接收告警记录 ------");
+//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTO);
         editData(alarmHistories);
-        log.info("------ 接收告警记录结束 ------");
+//        log.info("------ 接收告警记录结束 ------");
     }
 
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
@@ -134,10 +140,10 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始同步告警记录 ------");
+//        log.info("------ 开始同步告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
-        log.info("------ 同步告警记录结束 ------");
+//        log.info("------ 同步告警记录结束 ------");
     }
 
     /**
@@ -155,11 +161,11 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始接收告警记录 ------");
+//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         editData(alarmHistories);
-        log.info("------ 接收告警记录结束 ------");
+//        log.info("------ 接收告警记录结束 ------");
     }
 
     /**
@@ -177,11 +183,11 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始接收告警记录 ------");
+//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
-        log.info("------ 接收告警记录结束 ------");
+//        log.info("------ 接收告警记录结束 ------");
     }
 
     /**
@@ -236,9 +242,9 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-        log.info("------ 开始接收系统心跳 ------");
+//        log.info("------ 开始接收系统心跳 ------");
         childSystemMapper.isOnline(heartbeatQueueReqDTOList);
-        log.info("------ 接收系统心跳结束 ------");
+//        log.info("------ 接收系统心跳结束 ------");
     }
 
     private void editData(List<AlarmHistory> alarmHistories) {
@@ -429,7 +435,7 @@ public class AsyncReceiver {
                     alarmHistory.setAlarmFrequency(ruleData.get(6L).getFrequency());
                     alarmHistory.setFrequencyTime(ruleData.get(6L).getFrequencyTime());
                     alarmHistory.setExperienceTime(ruleData.get(6L).getExperienceTime());
-                    if (alarmHistory.getAlarmLevel() > 1) {
+                    if (alarmHistory.getAlarmLevel() > 1 && alarmHistory.getExperienceTime() == null) {
                         frequencyAlarmHistory(alarmHistory);
                     }
                 }
@@ -494,8 +500,8 @@ public class AsyncReceiver {
                 "-deviceId:" + alarmHistory.getDeviceId() +
                 "-slotId:" + alarmHistory.getSlotId() +
                 "-codeId:" + alarmHistory.getAlarmCode();
-        String updateKey = "update_frequency:" + flag;
-        String lockKey = "update_frequency_lock:" + flag;
+        String updateKey = keyPrefix + "update-frequency:" + flag;
+        String lockKey = keyPrefix + "update-frequency-lock:" + flag;
         RLock locker = redissonClient.getLock(lockKey);
         try {
             locker.lock();
@@ -512,7 +518,9 @@ public class AsyncReceiver {
                 alarmManageMapper.updateFrequencyAlarmHistory(alarmHistory);
             }
         } catch (Exception e) {
-            log.error("告警升级失败: {}", e.getMessage());
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(out));
+            log.error("告警升级失败: {}", out.toString());
         } finally {
             locker.unlock();
         }

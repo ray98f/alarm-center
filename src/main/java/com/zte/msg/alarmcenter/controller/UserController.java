@@ -143,10 +143,4 @@ public class UserController {
                                        @Valid PageReqDTO pageReqDTO){
         return PageResponse.of(userService.listUser(status, userRealName, pageReqDTO));
     }
-
-    @GetMapping("/test")
-    public <T> DataResponse<T> test() throws Exception {
-        asyncSender.test();
-        return DataResponse.success();
-    }
 }

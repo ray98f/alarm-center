@@ -35,7 +35,7 @@ public class DeviceServiceImpl implements DeviceService {
     public void exportDevice(String name, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
         List<String> listName = Arrays.asList("设备名称", "所属系统编号", "设备位置编号", "设备编号", "品牌型号", "设备串号", "设备描述");
-        List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null,null);
+        List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null, null);
         // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
         if (null != deviceResList) {
@@ -129,8 +129,8 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addDevice(DeviceReqDTO deviceReqDTO, String userId) {
-        Long id = myDeviceMapper.selectDeviceIsExist(deviceReqDTO.getName(), deviceReqDTO.getSystemId(),deviceReqDTO.getPositionId(),deviceReqDTO.getDeviceCode(),null);
-        if (!Objects.isNull(id)){
+        Long id = myDeviceMapper.selectDeviceIsExist(deviceReqDTO.getName(), deviceReqDTO.getSystemId(), deviceReqDTO.getPositionId(), deviceReqDTO.getDeviceCode(), null);
+        if (!Objects.isNull(id)) {
             throw new CommonException(ErrorCode.DEVICE_EXIST);
         }
         List<DeviceReqDTO> temp = new ArrayList<>();
@@ -144,18 +144,18 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void modifyDevice(DeviceReqModifyDTO reqModifyDTO, Long id, String userId) {
-        Long result = myDeviceMapper.selectDeviceIsExist(reqModifyDTO.getName(), reqModifyDTO.getSystemId(),reqModifyDTO.getPositionId(),reqModifyDTO.getDeviceCode(),id);
-        if (!Objects.isNull(result)){
+        Long result = myDeviceMapper.selectDeviceIsExist(reqModifyDTO.getName(), reqModifyDTO.getSystemId(), reqModifyDTO.getPositionId(), reqModifyDTO.getDeviceCode(), id);
+        if (!Objects.isNull(result)) {
             throw new CommonException(ErrorCode.DEVICE_EXIST);
         }
-        int integer = myDeviceMapper.modifyDevice(reqModifyDTO,id, userId);
+        int integer = myDeviceMapper.modifyDevice(reqModifyDTO, id, userId);
         if (integer == 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
     }
 
     @Override
-    public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page,Long size) {
+    public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         if (name.contains(Constants.PERCENT_SIGN)) {
             name = "尼玛死了";
         }
@@ -165,8 +165,8 @@ public class DeviceServiceImpl implements DeviceService {
         Page<DeviceResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-            page = (page-1)*size;
-            deviceReqDTOList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, page,size);
+            page = (page - 1) * size;
+            deviceReqDTOList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, page, size);
             pageBean.setRecords(deviceReqDTOList);
         }
         return pageBean;
@@ -175,8 +175,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteDevice(Long id) {
-        Integer result = myDeviceMapper.selectIsDeviceUse(id);
-        if (result != 0) {
+        Integer result1 = myDeviceMapper.selectIsDeviceUse1(id);
+        Integer result2 = myDeviceMapper.selectIsDeviceUse2(id);
+        if (result1 != 0 || result2 != 0) {
             throw new CommonException(ErrorCode.RESOURCE_USE);
         }
         int integer = myDeviceMapper.deleteDevice(id);

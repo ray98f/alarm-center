@@ -183,10 +183,10 @@
             WHERE not exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
             and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
             and alarm_code=#{alarmHistory.alarmCode}
-            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0">
                 and alarm_state=#{alarmHistory.alarmState}
             </if>
-            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0">
                 and alarm_state in (0,1,2,3)
             </if>
             and is_deleted=0);
@@ -219,7 +219,7 @@
             <if test="alarmHistory.isRing==null">
                 is_ring=1,
             </if>
-            <if test="alarmHistory.alarmState!=null">
+            <if test="alarmHistory.alarmState!=null and alarmHistory.alarmState!=0">
                 alarm_state=#{alarmHistory.alarmState},
             </if>
             <if test="alarmHistory.delayTime!=null">
@@ -237,10 +237,10 @@
             recovery_time=#{alarmHistory.recoveryTime}
             WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
             and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode}
-            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0">
                 and alarm_state=#{alarmHistory.alarmState}
             </if>
-            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0">
                 and alarm_state in (0,1,2,3)
             </if>
             and is_deleted=0
@@ -321,10 +321,10 @@
             WHERE NOT exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
             and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
             and alarm_code=#{alarmHistory.alarmCode}
-            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3">
+            <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0">
                 and alarm_state=#{alarmHistory.alarmState}
             </if>
-            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3">
+            <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0">
                 and alarm_state in (0,1,2,3)
             </if>
             and is_deleted=0)

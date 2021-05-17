@@ -64,7 +64,8 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where p.is_deleted=0 and p.type=3 and ah.alarm_state in (4,5,6,7)
+        and ah.alarm_state in (4,5,6,7)
+        where p.is_deleted=0 and p.type=3
         <if test="siteIds!=null and siteIds.size()>0">
             and p.id in(
             <foreach collection="siteIds" index="index" item="siteId" separator=",">
@@ -93,7 +94,8 @@
         <if test="endTime!=null">
             and #{endTime}>=ah.final_time
         </if>
-        where cs.is_deleted=0 and ah.alarm_state in (4,5,6,7) and cs.pid not in (0)
+        and ah.alarm_state in (4,5,6,7)
+        where cs.is_deleted=0 and cs.pid not in (0)
         <if test="systemIds!=null and systemIds.size()>0">
             and cs.id in(
             <foreach collection="systemIds" index="index" item="systemId" separator=",">

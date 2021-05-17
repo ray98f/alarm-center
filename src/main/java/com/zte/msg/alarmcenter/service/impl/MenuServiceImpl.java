@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * description:
@@ -53,7 +54,8 @@ public class MenuServiceImpl implements MenuService {
         Long id = userMapper.selectUserId(TokenUtil.getCurrentUserName());
         List<Long> userRoles = userMapper.selectUserRoles(id);
         if (null == userRoles || userRoles.isEmpty()) {
-            throw new CommonException(ErrorCode.USER_NO_ROLE);
+            List<Long> menuIds = menuMapper.selectNormalMenuIds();
+            return menuMapper.listCatalog(null, menuIds);
         }
         return new ArrayList<>(menuService.listMenu(userRoles));
     }
@@ -63,6 +65,9 @@ public class MenuServiceImpl implements MenuService {
         List<MenuResDTO> list;
         List<MenuResDTO.MenuInfo> menuInfoList;
         List<Long> menuIds = roleMapper.selectMenuIds(roleIds);
+        List<Long> normalMenuIds = menuMapper.selectNormalMenuIds();
+        menuIds.addAll(normalMenuIds);
+        menuIds = menuIds.stream().distinct().collect(Collectors.toList());
         list = menuMapper.listCatalog(null, menuIds);
         if (list.isEmpty()) {
             log.warn("根目录无下级");

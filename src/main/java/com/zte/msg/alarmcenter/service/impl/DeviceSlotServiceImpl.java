@@ -139,10 +139,10 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     @Override
     public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         List<DeviceSlotResDTO> deviceReqDTOList = null;
-        if (slotName.contains(Constants.PERCENT_SIGN)) {
+        if (slotName != null && slotName.contains(Constants.PERCENT_SIGN)) {
             slotName = "尼玛死了";
         }
-        if (deviceName.contains(Constants.PERCENT_SIGN)) {
+        if (deviceName != null && deviceName.contains(Constants.PERCENT_SIGN)) {
             deviceName = "尼玛死了";
         }
         int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceName, deviceCode, systemId, positionId);

@@ -1,6 +1,10 @@
 -- Host: frp    Database: alarm_center
 -- ------------------------------------------------------
 -- Server version	8.0.22
+DROP DATABASE IF EXISTS `alarm_center`;
+CREATE DATABASE `alarm_center` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+
+use alarm_center;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -980,7 +984,7 @@ CREATE TABLE `user_role` (
 
 LOCK TABLES `user_role` WRITE;
 /*!40000 ALTER TABLE `user_role` DISABLE KEYS */;
-INSERT INTO `user_role` VALUES (1,1,1,'2021-02-18 08:47:50','2021-04-07 02:02:01','admin','admin',1);
+INSERT INTO `user_role` VALUES (1,1,1,'2021-02-18 08:47:50','2021-04-07 02:02:01','admin','admin',0);
 /*!40000 ALTER TABLE `user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

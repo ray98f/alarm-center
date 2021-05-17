@@ -25,7 +25,9 @@ public interface DeviceMapper {
 
     Integer getDevicesCount(@Param("name") String name, @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId, @Param("positionId") Long positionId);
 
-    Integer selectIsDeviceUse(@Param("id") Long id);
+    Integer selectIsDeviceUse1(@Param("id") Long id);
+
+    Integer selectIsDeviceUse2(@Param("id") Long id);
 
     Integer deleteDevice(@Param("id") Long id);
 }

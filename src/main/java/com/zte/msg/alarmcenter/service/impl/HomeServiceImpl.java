@@ -124,6 +124,8 @@ public class HomeServiceImpl implements HomeService {
                 }
                 if (alarmHistoryResDTO.getAlarmState() == 0) {
                     alarmStateName = "待处理";
+                } else if (alarmHistoryResDTO.getAlarmState() == 1) {
+                    alarmStateName = "延迟告警";
                 } else if (alarmHistoryResDTO.getAlarmState() == 2) {
                     alarmStateName = "手动确认";
                 } else if (alarmHistoryResDTO.getAlarmState() == 3) {

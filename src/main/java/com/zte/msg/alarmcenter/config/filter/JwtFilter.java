@@ -42,6 +42,12 @@ public class JwtFilter implements Filter {
             "/api/v1/alarm/history/export",
             "/api/v1/device/export",
             "/api/v1/map",
+            "/api/v1/alarmCodesSync",
+            "/api/v1/alarmCodeSync",
+            "/api/v1/devicesSync",
+            "/api/v1/deviceSync",
+            "/api/v1/slotsSync",
+            "/api/v1/slotSync",
     };
 
     @Override

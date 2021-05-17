@@ -134,7 +134,7 @@ public class DataCacheTask {
                 frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
             }
         }
-        log.info("------------ 缓存结束 ------------");
+//        log.info("------------ 缓存结束 ------------");
     }
 
     /**

@@ -5,7 +5,7 @@
         <foreach collection="list" item="alarmCodeSyncReqDTO" index="index">
             INSERT INTO alarm_code
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="alarmCodeSyncReqDTO.id!=null">
+                <if test="alarmCodeSyncReqDTO.id!=null and alarmCodeSyncReqDTO.id!=''">
                     exe_id,
                 </if>
                 system_id,
@@ -29,7 +29,7 @@
             </trim>
             SELECT
             <trim suffixOverrides=",">
-                <if test="alarmCodeSyncReqDTO.id!=null">
+                <if test="alarmCodeSyncReqDTO.id!=null and alarmCodeSyncReqDTO.id!=''">
                     #{alarmCodeSyncReqDTO.id},
                 </if>
                 #{alarmCodeSyncReqDTO.systemId},
@@ -56,7 +56,7 @@
             and position_id=#{alarmCodeSyncReqDTO.lineId} and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0);
             UPDATE alarm_code SET
             <trim suffixOverrides=",">
-                <if test="alarmCodeSyncReqDTO.id!=null">
+                <if test="alarmCodeSyncReqDTO.id!=null and alarmCodeSyncReqDTO.id!=''">
                     exe_id=#{alarmCodeSyncReqDTO.id},
                 </if>
                 system_id=#{alarmCodeSyncReqDTO.systemId},
@@ -86,7 +86,7 @@
     <insert id="alarmCodeSync" parameterType="com.zte.msg.alarmcenter.dto.req.AlarmCodeSyncReqDTO">
         INSERT INTO alarm_code
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id,
             </if>
             system_id,
@@ -110,7 +110,7 @@
         </trim>
         SELECT
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 #{id},
             </if>
             #{systemId},
@@ -137,7 +137,7 @@
         and code=#{alarmCode} and is_locked=0);
         UPDATE alarm_code SET
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
             system_id=#{systemId},
@@ -166,12 +166,11 @@
         <foreach collection="list" index="index" item="deviceSyncReqDTO">
             INSERT INTO device
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="deviceSyncReqDTO.id!=null">
+                <if test="deviceSyncReqDTO.id!=null and deviceSyncReqDTO.id!=''">
                     exe_id,
                 </if>
                 system_id,
                 position_id,
-                station_id,
                 device_code,
                 <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
                     name,
@@ -188,11 +187,10 @@
             </trim>
             SELECT
             <trim suffixOverrides=",">
-                <if test="deviceSyncReqDTO.id!=null">
+                <if test="deviceSyncReqDTO.id!=null and deviceSyncReqDTO.id!=''">
                     #{deviceSyncReqDTO.id},
                 </if>
                 #{deviceSyncReqDTO.systemId},
-                #{deviceSyncReqDTO.lineId},
                 #{deviceSyncReqDTO.stationId},
                 #{deviceSyncReqDTO.deviceId},
                 <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
@@ -209,16 +207,15 @@
                 </if>
             </trim>
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM device WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.lineId}
-            and station_id=#{deviceSyncReqDTO.stationId} and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0);
+            WHERE NOT exists (SELECT id FROM device WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.stationId}
+            and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0);
             UPDATE device SET
             <trim suffixOverrides=",">
-                <if test="deviceSyncReqDTO.id!=null">
+                <if test="deviceSyncReqDTO.id!=null and deviceSyncReqDTO.id!=''">
                     exe_id=#{deviceSyncReqDTO.id},
                 </if>
                 system_id=#{deviceSyncReqDTO.systemId},
-                position_id=#{deviceSyncReqDTO.lineId},
-                station_id=#{deviceSyncReqDTO.stationId},
+                position_id=#{deviceSyncReqDTO.stationId},
                 device_code=#{deviceSyncReqDTO.deviceId},
                 <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
                     name=#{deviceSyncReqDTO.deviceName},
@@ -233,20 +230,19 @@
                     is_deleted=#{deviceSyncReqDTO.isDeleted},
                 </if>
             </trim>
-            WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.lineId}
-            and station_id=#{deviceSyncReqDTO.stationId} and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0;
+            WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.stationId}
+            and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0;
         </foreach>
     </insert>
 
     <insert id="deviceSync" parameterType="com.zte.msg.alarmcenter.dto.req.DeviceSyncReqDTO">
         INSERT INTO device
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id,
             </if>
             system_id,
             position_id,
-            station_id,
             device_code,
             <if test="deviceName!=null and deviceName!=''">
                 name,
@@ -263,11 +259,10 @@
         </trim>
         SELECT
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 #{id},
             </if>
             #{systemId},
-            #{lineId},
             #{stationId},
             #{deviceId},
             <if test="deviceName!=null and deviceName!=''">
@@ -284,15 +279,15 @@
             </if>
         </trim>
         FROM DUAL
-        WHERE NOT exists (SELECT id FROM device WHERE system_id=#{systemId} and position_id=#{lineId}
-        and station_id=#{stationId} and device_code=#{deviceId} and is_locked=0);
+        WHERE NOT exists (SELECT id FROM device WHERE system_id=#{systemId} and position_id=#{stationId}
+        and device_code=#{deviceId} and is_locked=0);
         UPDATE device SET
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
             system_id=#{systemId},
-            position_id=#{lineId},
+            position_id=#{stationId},
             station_id=#{stationId},
             device_code=#{deviceId},
             <if test="deviceName!=null and deviceName!=''">
@@ -308,20 +303,18 @@
                 is_deleted=#{isDeleted},
             </if>
         </trim>
-        WHERE system_id=#{systemId} and position_id=#{lineId} and station_id=#{stationId}
-        and device_code=#{deviceId} and is_locked=0;
+        WHERE system_id=#{systemId} and position_id=#{stationId} and device_code=#{deviceId} and is_locked=0;
     </insert>
 
     <insert id="slotsSync">
         <foreach collection="list" index="index" item="slotSyncReqDTO">
             INSERT INTO device_slot
             <trim prefix="(" suffix=")" suffixOverrides=",">
-                <if test="slotSyncReqDTO.id!=null">
+                <if test="slotSyncReqDTO.id!=null and slotSyncReqDTO.id!=''">
                     exe_id,
                 </if>
                 system_id,
                 position_id,
-                station_id,
                 device_id,
                 slot_code,
                 <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
@@ -333,11 +326,10 @@
             </trim>
             SELECT
             <trim suffixOverrides=",">
-                <if test="slotSyncReqDTO.id!=null">
+                <if test="slotSyncReqDTO.id!=null and slotSyncReqDTO.id!=''">
                     #{slotSyncReqDTO.id},
                 </if>
                 #{slotSyncReqDTO.systemId},
-                #{slotSyncReqDTO.lineId},
                 #{slotSyncReqDTO.stationId},
                 #{slotSyncReqDTO.deviceId},
                 #{slotSyncReqDTO.slotId},
@@ -349,16 +341,15 @@
                 </if>
             </trim>
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.lineId}
-            and station_id=#{slotSyncReqDTO.stationId} and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0);
+            WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.stationId}
+            and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0);
             UPDATE device_slot SET
             <trim suffixOverrides=",">
-                <if test="slotSyncReqDTO.id!=null">
+                <if test="slotSyncReqDTO.id!=null and slotSyncReqDTO.id!=''">
                     exe_id=#{slotSyncReqDTO.id},
                 </if>
                 system_id=#{slotSyncReqDTO.systemId},
-                position_id=#{slotSyncReqDTO.lineId},
-                station_id=#{slotSyncReqDTO.stationId},
+                position_id=#{slotSyncReqDTO.stationId},
                 device_id=#{slotSyncReqDTO.deviceId},
                 slot_code=#{slotSyncReqDTO.slotId},
                 <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
@@ -368,7 +359,7 @@
                     is_deleted=#{slotSyncReqDTO.isDeleted},
                 </if>
             </trim>
-            WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.lineId} and station_id=#{slotSyncReqDTO.stationId}
+            WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.stationId}
             and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0;
         </foreach>
     </insert>
@@ -376,12 +367,11 @@
     <insert id="slotSync" parameterType="com.zte.msg.alarmcenter.dto.req.SlotSyncReqDTO">
         INSERT INTO device_slot
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id,
             </if>
             system_id,
             position_id,
-            station_id,
             device_id,
             slot_code,
             <if test="slotName!=null and slotName!=''">
@@ -393,11 +383,10 @@
         </trim>
         SELECT
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 #{id},
             </if>
             #{systemId},
-            #{lineId},
             #{stationId},
             #{deviceId},
             #{slotId},
@@ -409,16 +398,15 @@
             </if>
         </trim>
         FROM DUAL
-        WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{systemId} and position_id=#{lineId}
-        and station_id=#{stationId} and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0);
+        WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{systemId} and position_id=#{stationId}
+        and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0);
         UPDATE device_slot SET
         <trim suffixOverrides=",">
-            <if test="id!=null">
+            <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
             system_id=#{systemId},
-            position_id=#{lineId},
-            station_id=#{stationId},
+            position_id=#{stationId},
             device_id=#{deviceId},
             slot_code=#{slotId},
             <if test="slotName!=null and slotName!=''">
@@ -428,7 +416,7 @@
                 is_deleted=#{isDeleted},
             </if>
         </trim>
-        WHERE system_id=#{systemId} and position_id=#{lineId} and station_id=#{stationId}
+        WHERE system_id=#{systemId} and position_id=#{stationId}
         and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0;
     </insert>
 </mapper>

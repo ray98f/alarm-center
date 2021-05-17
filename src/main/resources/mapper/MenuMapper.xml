@@ -62,4 +62,8 @@
         </if>
         ) AS a
     </select>
+
+    <select id="selectNormalMenuIds" resultType="java.lang.Long">
+        SELECT id FROM alarm_center.menu where is_deleted=0 and is_catalog=0 and is_menu=1 and menu_type=1;
+    </select>
 </mapper>
