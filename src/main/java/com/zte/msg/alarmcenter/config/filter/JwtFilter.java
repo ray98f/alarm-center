@@ -48,6 +48,7 @@ public class JwtFilter implements Filter {
             "/api/v1/deviceSync",
             "/api/v1/slotsSync",
             "/api/v1/slotSync",
+            "/api/v1/system/dto",
     };
 
     @Override

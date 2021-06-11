@@ -101,7 +101,7 @@ public class SnmpServiceImpl implements SnmpService {
     @Override
     public void exportDevice(String snmpSlotName, Long systemId, Long siteId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("SNMP槽位", "系统编号", "线路编号", "站点编号", "设备编号", "槽位编号", "槽位名称");
+        List<String> listName = Arrays.asList("SNMP槽位", "系统编号", "线路编号", "站点编号", "设备编号", "槽位编号", "槽位名称", "系统名称", "线路名称", "站点名称");
         List<SnmpSlotResDTO> snmpSlotResList = mySlotMapper.exportDevice(snmpSlotName, systemId, siteId, null);
         // 列名 数据
         ArrayList<Map<String, String>> list = new ArrayList<>();
@@ -115,6 +115,9 @@ public class SnmpServiceImpl implements SnmpService {
                 map.put("设备编号", snmpSlotResDTO.getDeviceCode());
                 map.put("槽位编号", snmpSlotResDTO.getSlotCode());
                 map.put("槽位名称", snmpSlotResDTO.getSlotName());
+                map.put("系统名称", snmpSlotResDTO.getSystemName());
+                map.put("线路名称", snmpSlotResDTO.getPositionName());
+                map.put("站点名称", snmpSlotResDTO.getSiteName());
                 list.add(map);
             }
         }
@@ -219,7 +222,7 @@ public class SnmpServiceImpl implements SnmpService {
     @Override
     public void exportSnmpAlarmCode(String alarmCode, Long systemId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("系统编号", "线路编号", "告警码", "网元类型", "SNMP码", "SNMP告警码原因");
+        List<String> listName = Arrays.asList("系统编号", "线路编号", "告警码", "网元类型", "SNMP码", "SNMP告警码原因", "系统名称", "线路名称");
         List<SnmpAlarmCodeResDTO> snmpAlarmCodeList = mySlotMapper.exportSnmpAlarmCode(alarmCode, systemId);
         List<Map<String, String>> list = new ArrayList<>();
         if (null != snmpAlarmCodeList) {
@@ -231,6 +234,8 @@ public class SnmpServiceImpl implements SnmpService {
                 map.put("网元类型", snmpAlarmCodeResDTO.getElementType());
                 map.put("SNMP码", snmpAlarmCodeResDTO.getSnmpCode());
                 map.put("SNMP告警码原因", snmpAlarmCodeResDTO.getReason());
+                map.put("系统名称", snmpAlarmCodeResDTO.getSystemName());
+                map.put("线路名称", snmpAlarmCodeResDTO.getPositionName());
                 list.add(map);
             }
         }

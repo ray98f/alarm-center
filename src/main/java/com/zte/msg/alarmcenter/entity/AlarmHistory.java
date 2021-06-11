@@ -18,6 +18,8 @@ import java.util.List;
 @ApiModel
 public class AlarmHistory extends BaseEntity implements Serializable {
 
+    private Long id;
+
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
 
@@ -125,5 +127,8 @@ public class AlarmHistory extends BaseEntity implements Serializable {
 
     @ApiModelProperty(value = "告警附加信息")
     private List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList;
+
+    @ApiModelProperty("是否为告警恢复")
+    private Boolean isRecovery = false;
 
 }

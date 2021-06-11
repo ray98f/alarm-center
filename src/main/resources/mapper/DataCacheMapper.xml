@@ -95,6 +95,24 @@
         (#{endTime}>=updated_at and updated_at>=#{startTime})
     </select>
 
+    <select id="selectLinePosition" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select * from position where is_deleted=0 and type=2
+    </select>
+
+    <select id="selectLinePositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select * from position where is_deleted=0 and type=2 and (#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})
+    </select>
+
+    <select id="selectSitePosition" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select p1.*,p2.position_code as line_code from position as p1 left join position as p2 on p1.p_id=p2.id and p2.is_deleted=0 and p2.type=2 where p1.is_deleted=0 and p1.type=3
+    </select>
+
+    <select id="selectSitePositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
+        select p1.*,p2.position_code as line_code from position as p1 left join position as p2 on p1.p_id=p2.id and p2.is_deleted=0 and p2.type=2 where p1.is_deleted=0 and p1.type=3
+        and (#{endTime}>=p1.created_at and p1.created_at>=#{startTime}) or (#{endTime}>=p1.updated_at and p1.updated_at>=#{startTime})
+    </select>
+
     <select id="selectFrequencyAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
         select * from alarm_history where is_deleted=0 and alarm_state in (0,2,3) and alarm_frequency is not null
         and frequency_time is not null and experience_time is null and alarm_level!=1

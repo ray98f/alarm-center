@@ -45,10 +45,10 @@ public interface HomeMapper {
 
     /**
      * 首页告警消息
-     *
+     * @param size
      * @return
      */
-    List<AlarmHistoryResDTO> selectAlarmHistory();
+    List<AlarmHistoryResDTO> selectAlarmHistory(Long size);
 
     /**
      * 静音

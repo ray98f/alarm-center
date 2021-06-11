@@ -100,7 +100,7 @@ public interface DataCacheMapper {
      *
      * @return
      */
-    List<Position> selectPosition();
+    List<Position> selectLinePosition();
 
     /**
      * 增量获取线路与站点
@@ -109,7 +109,23 @@ public interface DataCacheMapper {
      * @param endTime
      * @return
      */
-    List<Position> selectPositionByTime(Timestamp startTime, Timestamp endTime);
+    List<Position> selectLinePositionByTime(Timestamp startTime, Timestamp endTime);
+
+    /**
+     * 全量获取线路与站点
+     *
+     * @return
+     */
+    List<Position> selectSitePosition();
+
+    /**
+     * 增量获取线路与站点
+     *
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    List<Position> selectSitePositionByTime(Timestamp startTime, Timestamp endTime);
 
     /**
      * 全量获取升级告警记录

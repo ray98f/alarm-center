@@ -23,12 +23,11 @@
             #{userId}
             FROM DUAL
             WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=(select id from subsystem where sid = #{item.systemId} and is_deleted=0)
-            and position_id=(select id from `position` where position_code = #{item.positionId} and type=2 and is_deleted=0)
-            and code=#{item.alarmCode} and level_id=#{item.alarmLevelId} and is_deleted=0)
+            and code=#{item.alarmCode} and is_deleted=0)
         </foreach>
     </insert>
     <select id="selectAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.AlarmCodeReqDTO">
-        select id from alarm_code where system_id=#{alarmCodeReqDTO.systemId} AND position_id=#{alarmCodeReqDTO.positionId} AND code=#{alarmCodeReqDTO.alarmCode} AND is_deleted=0
+        select id from alarm_code where system_id=#{alarmCodeReqDTO.systemId} AND code=#{alarmCodeReqDTO.alarmCode} AND is_deleted=0
         <if test="id!=null">
             and id!=#{id}
         </if>

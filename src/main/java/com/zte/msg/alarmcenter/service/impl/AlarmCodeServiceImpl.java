@@ -75,7 +75,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     @Override
     public void exportDevice(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, HttpServletResponse response) {
 // 列名
-        List<String> listName = Arrays.asList("线路编号", "线路名称", "系统编号", "系统名称", "告警码", "告警级别", "告警名称", "告警原因", "处理意见");
+        List<String> listName = Arrays.asList("线路编号", "系统编号", "告警码", "告警级别", "告警名称", "告警原因", "处理意见", "线路名称", "系统名称");
         List<AlarmCodeResDTO> alarmCodeResList = alarmCodeMapper.exportAlarmCode(alarmCode, alarmName, systemId, alarmLevelId, null, null);
         // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
@@ -83,14 +83,14 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
             for (AlarmCodeResDTO alarmCodeRes : alarmCodeResList) {
                 Map<String, String> map = new HashMap<>();
                 map.put("线路编号", alarmCodeRes.getPositionCode().toString());
-                map.put("线路名称", alarmCodeRes.getPositionName());
                 map.put("系统编号", alarmCodeRes.getSystemCode().toString());
-                map.put("系统名称", alarmCodeRes.getSystemName());
                 map.put("告警码", alarmCodeRes.getAlarmCode());
                 map.put("告警级别", alarmCodeRes.getAlarmLevelName());
                 map.put("告警名称", alarmCodeRes.getAlarmName());
                 map.put("告警原因", alarmCodeRes.getReason());
                 map.put("处理意见", alarmCodeRes.getHandlingOpinions());
+                map.put("线路名称", alarmCodeRes.getPositionName());
+                map.put("系统名称", alarmCodeRes.getSystemName());
                 list.add(map);
             }
         }

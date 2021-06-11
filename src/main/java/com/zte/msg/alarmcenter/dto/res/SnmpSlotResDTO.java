@@ -26,6 +26,9 @@ public class SnmpSlotResDTO {
     @ApiModelProperty(value = "线路编号")
     private String positionId;
 
+    @ApiModelProperty(value = "线路名称")
+    private String positionName;
+
     @ApiModelProperty(value = "站点编号")
     private String siteCode;
 

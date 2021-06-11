@@ -14,7 +14,11 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Position extends BaseEntity {
 
+    private Long id;
+
     private Long pid;
+
+    private Integer lineCode;
 
     private Integer positionCode;
 

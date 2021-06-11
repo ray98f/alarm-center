@@ -79,8 +79,9 @@ public class HomeController {
      */
     @GetMapping("/alarm")
     @ApiOperation(value = "首页告警消息")
-    public DataResponse<List<AlarmHistoryResDTO>> selectAlarmHistory() {
-        return DataResponse.of(homeService.selectAlarmHistory());
+    public DataResponse<List<AlarmHistoryResDTO>> selectAlarmHistory(@RequestParam(required = false)
+                                                                         @ApiParam("返回数据数量") Long size) {
+        return DataResponse.of(homeService.selectAlarmHistory(size));
     }
 
     /**

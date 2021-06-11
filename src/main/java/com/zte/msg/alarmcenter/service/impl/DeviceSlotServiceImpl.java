@@ -74,19 +74,23 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     @Override
     public void exportDevice(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("设备名称", "所属系统", "设备位置", "设备编号", "槽位编号", "槽位名称");
+        List<String> listName = Arrays.asList("线路编号", "车站编号", "系统编号", "设备编号", "槽位编号", "槽位名称", "所属系统", "线路名称", "车站名称", "设备名称");
         List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null, null);
         // 列名 数据
         ArrayList<Map<String, String>> list = new ArrayList<>();
         if (null != deviceSlotResList) {
             for (DeviceSlotResDTO deviceSlotResDTO : deviceSlotResList) {
                 Map<String, String> map = new HashMap<>();
-                map.put("设备名称", deviceSlotResDTO.getDeviceName());
-                map.put("所属系统", deviceSlotResDTO.getSystemName());
-                map.put("设备位置", deviceSlotResDTO.getPositionName());
+                map.put("线路编号", deviceSlotResDTO.getLineCode().toString());
+                map.put("车站编号", deviceSlotResDTO.getPositionCode().toString());
+                map.put("系统编号", deviceSlotResDTO.getSystemCode().toString());
                 map.put("设备编号", deviceSlotResDTO.getDeviceCode());
                 map.put("槽位编号", deviceSlotResDTO.getSlotCode());
                 map.put("槽位名称", deviceSlotResDTO.getSlotName());
+                map.put("所属系统", deviceSlotResDTO.getSystemName());
+                map.put("线路名称", deviceSlotResDTO.getLineName());
+                map.put("车站名称", deviceSlotResDTO.getPositionName());
+                map.put("设备名称", deviceSlotResDTO.getDeviceName());
                 list.add(map);
             }
         }

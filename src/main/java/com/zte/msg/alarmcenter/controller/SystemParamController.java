@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * description:
@@ -91,6 +93,17 @@ public class SystemParamController {
     public <T> DataResponse<T> insertSystemParam(@Valid @RequestBody SystemParameter systemParameter) {
         systemParamService.insertSystemParam(systemParameter);
         return DataResponse.success();
+    }
+
+    @GetMapping("/dto")
+    @ApiOperation(value = "系统参数对象返回")
+    public DataResponse<Map<String, Object>> listSystemParamDTO() {
+        List<SystemParameter> systemParameters = systemParamService.listAllSystemParam();
+        Map<String, Object> data = new HashMap<>(16);
+        for (SystemParameter systemParameter : systemParameters) {
+            data.put(systemParameter.getParameter(), systemParameter.getParameterValue());
+        }
+        return DataResponse.of(data);
     }
 
 }

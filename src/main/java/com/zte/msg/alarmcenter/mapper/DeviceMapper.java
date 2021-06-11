@@ -21,6 +21,8 @@ public interface DeviceMapper {
 
     Integer importDevice(@Param("list") List<DeviceReqDTO> list, @Param("userId") String userId);
 
+    Integer insertDevice(DeviceReqDTO item, @Param("userId") String userId);
+
     Integer modifyDevice(@Param("reqModifyDTO") DeviceReqModifyDTO reqModifyDTO, @Param("id") Long id, @Param("userId") String userId);
 
     Integer getDevicesCount(@Param("name") String name, @Param("deviceCode") String deviceCode, @Param("systemId") Long systemId, @Param("positionId") Long positionId);

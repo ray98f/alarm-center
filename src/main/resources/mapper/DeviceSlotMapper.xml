@@ -25,7 +25,7 @@
         (select id from device where system_id=(select id from subsystem where sid = #{item.systemCode} and is_deleted=0)
         and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
         where t1.is_deleted=0 and t1.position_code=#{item.stationCode} and t2.position_code=#{item.LineCode})
-        and device_code=#{item.deviceCode}),
+        and device_code=#{item.deviceCode} and is_deleted=0),
         NOW(),
         #{userId}
         FROM DUAL
@@ -169,7 +169,11 @@
             t.`name` as slotName,
             t.device_id,
             t2.id as position_id,
+            t2.position_code as position_code,
+            t4.position_code as line_code,
+            t4.name as line_name,
             t3.id as system_id,
+            t3.sid as system_code,
             t1.device_code,
             t1.`name` as deviceName,
             t2.`name` as positionName,
@@ -177,6 +181,7 @@
         from device_slot t
         left join device t1 on t.device_id = t1.id and t1.is_deleted=0
         left join `position` t2 on t1.position_id = t2.id and t2.is_deleted=0
+        left join `position` t4 on t4.id=t2.p_id and t4.is_deleted=0
         left join subsystem t3 on t1.system_id = t3.id and t3.is_deleted=0
         where t.is_deleted = 0
         <if test="slotName!=null and slotName!=''">

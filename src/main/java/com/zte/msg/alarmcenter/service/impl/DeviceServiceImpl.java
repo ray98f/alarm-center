@@ -34,20 +34,20 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public void exportDevice(String name, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
         // 列名
-        List<String> listName = Arrays.asList("设备名称", "所属系统编号", "设备位置编号", "设备编号", "品牌型号", "设备串号", "设备描述");
+        List<String> listName = Arrays.asList("线路编号", "车站编号", "系统编号", "设备编号", "设备名称", "规格型号", "设备厂商");
         List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null, null);
         // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
         if (null != deviceResList) {
             for (DeviceResDTO deviceResDTO : deviceResList) {
                 Map<String, String> map = new HashMap<>();
-                map.put("设备名称", deviceResDTO.getName());
-                map.put("所属系统编号", deviceResDTO.getSystemCode().toString());
-                map.put("设备位置编号", deviceResDTO.getPositionCode().toString());
+                map.put("线路编号", deviceResDTO.getLineCode().toString());
+                map.put("车站编号", deviceResDTO.getPositionCode().toString());
+                map.put("系统编号", deviceResDTO.getSystemCode().toString());
                 map.put("设备编号", deviceResDTO.getDeviceCode());
-                map.put("品牌型号", deviceResDTO.getBrand());
-                map.put("设备串号", deviceResDTO.getSerialNum());
-                map.put("设备描述", deviceResDTO.getDescription());
+                map.put("设备名称", deviceResDTO.getName());
+                map.put("规格型号", deviceResDTO.getBrand());
+                map.put("设备厂商", deviceResDTO.getManufacturer());
                 list.add(map);
             }
         }
@@ -71,20 +71,20 @@ public class DeviceServiceImpl implements DeviceService {
                 }
                 DeviceReqDTO reqDTO = new DeviceReqDTO();
                 cells.getCell(0).setCellType(CellType.STRING);
-                reqDTO.setName(cells.getCell(0).getStringCellValue());
+                reqDTO.setLineCode(Integer.valueOf(cells.getCell(0).getStringCellValue()));
                 // 将列设置为字符串类型
                 cells.getCell(1).setCellType(CellType.STRING);
-                reqDTO.setSystemId(Long.valueOf(cells.getCell(1).getStringCellValue()));
+                reqDTO.setPositionId(Long.valueOf(cells.getCell(1).getStringCellValue()));
                 cells.getCell(2).setCellType(CellType.STRING);
-                reqDTO.setPositionId(Long.valueOf(cells.getCell(2).getStringCellValue()));
+                reqDTO.setSystemId(Long.valueOf(cells.getCell(2).getStringCellValue()));
                 cells.getCell(3).setCellType(CellType.STRING);
                 reqDTO.setDeviceCode(cells.getCell(3).getStringCellValue());
                 cells.getCell(4).setCellType(CellType.STRING);
-                reqDTO.setBrand(cells.getCell(4).getStringCellValue());
+                reqDTO.setName(cells.getCell(4).getStringCellValue());
                 cells.getCell(5).setCellType(CellType.STRING);
-                reqDTO.setSerialNum(cells.getCell(5).getStringCellValue());
+                reqDTO.setBrand(cells.getCell(5).getStringCellValue());
                 cells.getCell(6).setCellType(CellType.STRING);
-                reqDTO.setDescription(cells.getCell(6).getStringCellValue());
+                reqDTO.setManufacturer(cells.getCell(6).getStringCellValue());
                 temp.add(reqDTO);
             }
             fileInputStream.close();
@@ -133,9 +133,7 @@ public class DeviceServiceImpl implements DeviceService {
         if (!Objects.isNull(id)) {
             throw new CommonException(ErrorCode.DEVICE_EXIST);
         }
-        List<DeviceReqDTO> temp = new ArrayList<>();
-        temp.add(deviceReqDTO);
-        int integer = myDeviceMapper.importDevice(temp, userId);
+        int integer = myDeviceMapper.insertDevice(deviceReqDTO, userId);
         if (integer == 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }

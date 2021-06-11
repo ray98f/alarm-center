@@ -15,6 +15,8 @@ import java.sql.Timestamp;
 @ApiModel
 public class AlarmCode extends BaseEntity {
 
+    private Long id;
+
     @ApiModelProperty(value = "第三方内告警码id")
     private Long exeId;
 

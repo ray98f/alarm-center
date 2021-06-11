@@ -77,7 +77,7 @@ public interface AlarmManageMapper {
      * @param alarmMessages
      * @return
      */
-    int editAlarmMessage(Long alarmId, List<AlarmHistoryReqDTO.AlarmMessage> alarmMessages);
+    int editAlarmMessage(AlarmHistory alarmHistory);
 
     /**
      * 同步告警记录附加信息

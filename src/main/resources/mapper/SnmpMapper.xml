@@ -80,9 +80,7 @@
                 #{item.reason},
                 #{userId}
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM snmp_alarm_code WHERE system_id=(select id from subsystem where sid = #{item.systemId})
-            and positionId=(select id from position where type = 2 and position_code = #{item.positionId})
-            and element_type=#{item.elementType} and snmp_code=#{item.snmpCode} and code=#{item.code} and is_deleted=0)
+            WHERE NOT exists (SELECT id FROM snmp_alarm_code WHERE element_type=#{item.elementType} and snmp_code=#{item.snmpCode} and reason=#{item.reason} and is_deleted=0)
         </foreach>
     </insert>
     <select id="selectSnmpAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.SnmpAlarmCodeReqDTO">
@@ -158,8 +156,11 @@
         t.id,
         t.`name` as snmpSlotName,
         t1.sid as systemId,
+        t1.name as systemName,
         t5.position_code as positionId,
+        t5.name as positionName,
         t2.position_code as siteCode,
+        t2.name as siteName,
         t4.device_code as deviceCode,
         t3.slot_code as slotCode,
         t3.`name` as slotName
@@ -236,7 +237,9 @@
     <select id="exportSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
         select
             t1.sid as system_code,
+            t1.name as system_name,
             t2.position_code as position_code,
+            t2.name as position_name,
             t.element_type,
             t.snmp_code,
             t.code,

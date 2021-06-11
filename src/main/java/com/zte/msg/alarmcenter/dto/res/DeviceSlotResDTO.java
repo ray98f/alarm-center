@@ -48,4 +48,16 @@ public class DeviceSlotResDTO {
     @ApiModelProperty(value = "站点id")
     private Long positionId;
 
+    @ApiModelProperty(value = "系统编号")
+    private Integer systemCode;
+
+    @ApiModelProperty(value = "站点编号")
+    private Integer positionCode;
+
+    @ApiModelProperty(value = "线路编号")
+    private Integer lineCode;
+
+    @ApiModelProperty(value = "线路名称")
+    private String lineName;
+
 }

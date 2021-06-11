@@ -15,6 +15,8 @@ import lombok.EqualsAndHashCode;
 @Data
 public class Device extends BaseEntity {
 
+    private Long id;
+
     private String name;
 
     private Long exeId;

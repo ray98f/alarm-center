@@ -9,11 +9,11 @@
     </select>
 
     <select id="subsystemSituation" resultType="com.zte.msg.alarmcenter.dto.res.HomeSubsystemSituationResDTO">
-        select a.subsystem_name,a.is_online,
+        select a.subsystem_code,a.subsystem_name,a.is_online,
         ifnull(sum(case when ah.alarm_level=1 and alarm_state in(0,1,2,3) then 1 end),0) as emergency_alarm_num,
         ifnull(sum(case when ah.alarm_level=2 and alarm_state in(0,1,2,3) then 1 end),0) as serious_alarm_num,
         ifnull(sum(case when ah.alarm_level=3 and alarm_state in(0,1,2,3) then 1 end),0) as general_alarm_num
-        from (SELECT p.id as pid,s.id as sid,p.sort as p_sort,s.sort as s_sort,s.name as subsystem_name,s.is_online
+        from (SELECT p.id as pid,s.id as sid,s.sid as subsystem_code,p.sort as p_sort,s.sort as s_sort,s.name as subsystem_name,s.is_online
         FROM position as p join subsystem as s where p.type=2 and p.is_deleted=0 and s.is_deleted=0 and s.pid not in (0)) as a
         left join alarm_history as ah on a.sid=ah.subsystem_id and a.pid=ah.line_id and ah.is_deleted=0 group by a.subsystem_name
         order by emergency_alarm_num desc,serious_alarm_num desc,general_alarm_num desc,a.p_sort asc,a.s_sort asc
@@ -73,6 +73,9 @@
         where ah.is_deleted=0
         and alarm_state in (0,1,2,3)
         ORDER BY ah.alarm_level ASC,ah.final_time DESC,ah.id ASC
+        <if test="size!=null">
+            limit #{size}
+        </if>
     </select>
 
     <update id="mute">

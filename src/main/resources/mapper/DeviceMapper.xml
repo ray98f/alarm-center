@@ -11,22 +11,40 @@
     <insert id="importDevice" parameterType="java.util.List">
         <foreach collection ="list" item="item" index= "index" separator =";">
             insert into device
-            (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
+            (id,`name`,system_id,position_id,device_code,brand,manufacturer,created_at,created_by)
             select
-             null,
+            null,
             #{item.name},
-            #{item.systemId},
-            #{item.positionId},
+            (select id from subsystem where sid=#{item.systemId} and is_deleted=0),
+            (select id from position where p_id=(SELECT id FROM position where position_code=#{item.lineCode} and is_deleted=0 and type=2) and is_deleted=0 and position_code=#{item.positionId} and type=3),
             #{item.deviceCode},
             #{item.brand},
-            #{item.serialNum},
-            #{item.description},
+            #{item.manufacturer},
             NOW(),
             #{userId}
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM device WHERE system_id= #{item.systemId} and position_id=#{item.positionId}
+            WHERE NOT exists (SELECT id FROM device WHERE system_id=(select id from subsystem where sid=#{item.systemId} and is_deleted=0)
+            and position_id=(select id from position where p_id=(SELECT id FROM position where position_code=#{item.lineCode} and is_deleted=0 and type=2) and is_deleted=0 and position_code=#{item.positionId} and type=3)
             and device_code=#{item.deviceCode} and name=#{item.name} and is_deleted=0)
         </foreach>
+    </insert>
+    <insert id="insertDevice" parameterType="java.util.List">
+        insert into device
+        (id,`name`,system_id,position_id,device_code,brand,serial_num,description,created_at,created_by)
+        select
+         null,
+        #{item.name},
+        #{item.systemId},
+        #{item.positionId},
+        #{item.deviceCode},
+        #{item.brand},
+        #{item.serialNum},
+        #{item.description},
+        NOW(),
+        #{userId}
+        FROM DUAL
+        WHERE NOT exists (SELECT id FROM device WHERE system_id= #{item.systemId} and position_id=#{item.positionId}
+        and device_code=#{item.deviceCode} and name=#{item.name} and is_deleted=0)
     </insert>
     <update id="modifyDevice">
         update device
@@ -42,7 +60,16 @@
         <if test="userId!=null and userId!=''">
             ,updated_by = #{userId}
         </if>
-        where id = #{id}
+        where id = #{id};
+        update device_slot
+        set
+        system_id = #{reqModifyDTO.systemId},
+        position_id = #{reqModifyDTO.positionId},
+        updated_at = NOW()
+        <if test="userId!=null and userId!=''">
+            ,updated_by = #{userId}
+        </if>
+        where device_id = #{id};
     </update>
     <select id="selectIsDeviceUse1" resultType="java.lang.Integer">
         select count(*) from filter_device as fa left join alarm_rule as ar on ar.id=fa.rule_id and ar.is_deleted=0 where fa.device_id=#{id} and ar.is_deleted=0 and fa.is_deleted=0
@@ -64,16 +91,17 @@
         t.system_id,
         t1.sid as system_code,
         t1.name as systemName,
+        t3.position_code as line_code,
         t.position_id,
         t2.position_code as position_code,
         t2.name as positionName,
         t.device_code,
         t.brand,
-        t.serial_num,
-        t.description
+        t.manufacturer
         from device t
         join subsystem t1 on t1.id = t.system_id
         join position t2 on t2.id = t.position_id
+        join position t3 on t2.p_id = t3.id
         where t.is_deleted = 0
         <if test="name!=null and name!=''">
             and t.`name` like concat('%',#{name},'%')

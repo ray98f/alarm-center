@@ -37,10 +37,10 @@ public interface HomeService {
 
     /**
      * 首页告警消息
-     *
+     * @param size
      * @return
      */
-    List<AlarmHistoryResDTO> selectAlarmHistory();
+    List<AlarmHistoryResDTO> selectAlarmHistory(Long size);
 
     /**
      * 首页告警消息导出
