@@ -118,16 +118,17 @@ public class AsyncReceiver {
     @RabbitHandler
     @Async
     public void alarmProcess(String json) throws ParseException {
+//        System.out.println(System.currentTimeMillis());
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTO = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTO || alarmReqDTO.isEmpty()) {
             log.warn("消息队列中信息为空");
             return;
         }
-//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTO);
+//        System.out.println(System.currentTimeMillis());
         editData(alarmHistories);
-//        log.info("------ 接收告警记录结束 ------");
+//        System.out.println(System.currentTimeMillis());
     }
 
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
@@ -140,10 +141,8 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-//        log.info("------ 开始同步告警记录 ------");
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
-//        log.info("------ 同步告警记录结束 ------");
     }
 
     /**
@@ -253,18 +252,17 @@ public class AsyncReceiver {
             return;
         }
         int result = alarmManageMapper.editAlarmHistory(alarmHistories);
-        if (result >= 0) {
-            for (AlarmHistory alarmHistory : alarmHistories) {
-                if (null != alarmHistory.getAlarmMessageList() && !alarmHistory.getAlarmMessageList().isEmpty()) {
-                    Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
-                    result = alarmManageMapper.editAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
-                    if (result < 0) {
-                        log.error("ID为{}的告警记录添加附加信息失败", alarmId);
-
-                    }
-                }
-            }
-        }
+//        if (result >= 0) {
+//            for (AlarmHistory alarmHistory : alarmHistories) {
+//                if (null != alarmHistory.getAlarmMessageList() && !alarmHistory.getAlarmMessageList().isEmpty()) {
+//                    result = alarmManageMapper.editAlarmMessage(alarmHistory);
+//                    if (result < 0) {
+//                        log.error("告警记录添加附加信息失败");
+//
+//                    }
+//                }
+//            }
+//        }
     }
 
     private void syncData(List<AlarmHistory> alarmHistories) {
@@ -272,38 +270,37 @@ public class AsyncReceiver {
             log.error("告警记录接收为空");
             return;
         }
-        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory();
+        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null);
         for (AlarmHistory alarmHistory : alarmHistories) {
             alarmHistoryResDTOList.removeIf(alarmHistoryResDTO -> alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
                     alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
                     alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
                     alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
                     alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
-                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()) &&
-                    alarmHistory.getAlarmState().equals(alarmHistoryResDTO.getAlarmState()));
+                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
         }
         if (alarmHistoryResDTOList.size() > 0) {
             alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
         }
         int result = alarmManageMapper.syncAlarmHistory(alarmHistories);
-        if (result >= 0) {
-            for (AlarmHistory alarmHistory : alarmHistories) {
-                Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
-                result = alarmManageMapper.syncAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
-                if (result < 0) {
-                    log.error("ID为{}的告警记录同步附加信息失败", alarmId);
-
-                }
-            }
-        }
+//        if (result >= 0) {
+//            for (AlarmHistory alarmHistory : alarmHistories) {
+//                Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
+//                result = alarmManageMapper.syncAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
+//                if (result < 0) {
+//                    log.error("ID为{}的告警记录同步附加信息失败", alarmId);
+//
+//                }
+//            }
+//        }
     }
 
     private List<AlarmHistory> conversionAndFilter(List<AlarmHistoryReqDTO> alarmReqDTOList) throws ParseException {
         List<AlarmHistory> alarmHistories = new ArrayList<>();
         for (AlarmHistoryReqDTO alarmReqDTO : alarmReqDTOList) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            Pattern a = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
-            if (!a.matcher(alarmReqDTO.getAlarmTime()).matches()) {
+            Pattern time = Pattern.compile("^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s((([0-1][0-9])|(2?[0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$");
+            if (!time.matcher(alarmReqDTO.getAlarmTime()).matches()) {
                 alarmReqDTO.setAlarmTime(null);
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "时间格式错误，请检查时间格式| Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
@@ -313,80 +310,52 @@ public class AsyncReceiver {
                 alarmHistory.setSubsystemId(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getId());
                 alarmHistory.setSubsystemCode(alarmReqDTO.getSystem());
                 alarmHistory.setSubsystemName(DataCacheTask.subsystemData.get(alarmReqDTO.getSystem()).getName());
-            }
-            if (alarmHistory.getSubsystemId() == null) {
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "系统数据异常，未找到系统 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            for (Map.Entry<Long, Position> m : DataCacheTask.positionData.entrySet()) {
-                if (m.getValue().getType().equals(2) && alarmReqDTO.getLine().equals(m.getValue().getPositionCode())) {
-                    alarmHistory.setLineId(m.getValue().getId());
-                    alarmHistory.setLineCode(alarmReqDTO.getLine());
-                    alarmHistory.setLineName(m.getValue().getName());
-                    break;
-                }
-            }
-            if (alarmHistory.getLineId() == null) {
+            if (null != DataCacheTask.lineData.get(alarmReqDTO.getLine())) {
+                alarmHistory.setLineId(DataCacheTask.lineData.get(alarmReqDTO.getLine()).getId());
+                alarmHistory.setLineCode(alarmReqDTO.getLine());
+                alarmHistory.setLineName(DataCacheTask.lineData.get(alarmReqDTO.getLine()).getName());
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "线路数据异常，未找到线路 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            for (Map.Entry<Long, Position> m : DataCacheTask.positionData.entrySet()) {
-                if (m.getValue().getType().equals(3) && alarmHistory.getLineId().equals(m.getValue().getPid())
-                        && alarmReqDTO.getStation().equals(m.getValue().getPositionCode())) {
-                    alarmHistory.setSiteId(m.getValue().getId());
-                    alarmHistory.setSiteCode(alarmReqDTO.getStation());
-                    alarmHistory.setSiteName(m.getValue().getName());
-                    break;
-                }
-            }
-            if (alarmHistory.getSiteId() == null) {
+            if (null != DataCacheTask.siteData.get("line:" + alarmReqDTO.getLine() + "-site:" + alarmReqDTO.getStation())) {
+                alarmHistory.setSiteId(DataCacheTask.siteData.get("line:" + alarmReqDTO.getLine() + "-site:" + alarmReqDTO.getStation()).getId());
+                alarmHistory.setSiteCode(alarmReqDTO.getStation());
+                alarmHistory.setSiteName(DataCacheTask.siteData.get("line:" + alarmReqDTO.getLine() + "-site:" + alarmReqDTO.getStation()).getName());
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "站点数据异常，未找到站点 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            for (Map.Entry<Long, Device> m : DataCacheTask.deviceData.entrySet()) {
-                if (alarmReqDTO.getDevice().equals(m.getValue().getDeviceCode())
-                        && alarmHistory.getLineId().equals(m.getValue().getPositionId())
-                        && alarmHistory.getSiteId().equals(m.getValue().getStationId())
-                        && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())) {
-                    alarmHistory.setDeviceId(m.getValue().getId());
-                    alarmHistory.setDeviceCode(alarmReqDTO.getDevice());
-                    alarmHistory.setDeviceName(m.getValue().getName());
-                    break;
-                }
-            }
-            if (alarmHistory.getDeviceId() == null) {
+            if (null != DataCacheTask.deviceData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() + "-device:" + alarmReqDTO.getDevice())) {
+                alarmHistory.setDeviceId(DataCacheTask.deviceData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() + "-device:" + alarmReqDTO.getDevice()).getId());
+                alarmHistory.setDeviceCode(alarmReqDTO.getDevice());
+                alarmHistory.setDeviceName(DataCacheTask.deviceData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() + "-device:" + alarmReqDTO.getDevice()).getName());
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "设备数据异常，未找到设备 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            for (Map.Entry<Long, DeviceSlot> m : DataCacheTask.deviceSlotData.entrySet()) {
-                if (alarmReqDTO.getSlot().equals(m.getValue().getSlotCode())
-                        && alarmHistory.getLineId().equals(m.getValue().getPositionId())
-                        && alarmHistory.getSiteId().equals(m.getValue().getStationId())
-                        && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())
-                        && alarmHistory.getDeviceId().equals(m.getValue().getDeviceId())) {
-                    alarmHistory.setSlotId(m.getValue().getId());
-                    alarmHistory.setSlotCode(alarmReqDTO.getSlot());
-                    alarmHistory.setSlotName(m.getValue().getName());
-                    break;
-                }
-            }
-            if (alarmHistory.getSlotId() == null) {
+            if (null != DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
+                    "-device:" + alarmHistory.getDeviceId() + "-slot:" + alarmReqDTO.getSlot())) {
+                alarmHistory.setSlotId(DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
+                        "-device:" + alarmHistory.getDeviceId() + "-slot:" + alarmReqDTO.getSlot()).getId());
+                alarmHistory.setSlotCode(alarmReqDTO.getSlot());
+                alarmHistory.setSlotName(DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
+                        "-device:" + alarmHistory.getDeviceId() + "-slot:" + alarmReqDTO.getSlot()).getName());
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "槽位数据异常，未找到槽位 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            for (Map.Entry<Long, AlarmCode> m : DataCacheTask.alarmCodeData.entrySet()) {
-                if (alarmReqDTO.getAlarmCode().equals(m.getValue().getCode())
-                        && alarmHistory.getSubsystemId().equals(m.getValue().getSystemId())
-                        && alarmHistory.getLineId().equals(m.getValue().getPositionId())) {
-                    alarmHistory.setAlarmCode(m.getValue().getId());
-                    alarmHistory.setAlarmCodeId(alarmReqDTO.getAlarmCode());
-                    alarmHistory.setAlarmName(m.getValue().getName());
-                    alarmHistory.setAlarmReason(m.getValue().getReason());
-                    alarmHistory.setAlarmLevel(m.getValue().getLevelId());
-                    break;
-                }
-            }
-            if (alarmHistory.getAlarmCode() == null) {
+            if (null != DataCacheTask.alarmCodeData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getLineId() + "-rule:" + alarmReqDTO.getAlarmCode())) {
+                alarmHistory.setAlarmCode(DataCacheTask.alarmCodeData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getLineId() + "-rule:" + alarmReqDTO.getAlarmCode()).getId());
+                alarmHistory.setAlarmCodeId(alarmReqDTO.getAlarmCode());
+                alarmHistory.setAlarmName(DataCacheTask.alarmCodeData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getLineId() + "-rule:" + alarmReqDTO.getAlarmCode()).getName());
+                alarmHistory.setAlarmReason(DataCacheTask.alarmCodeData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getLineId() + "-rule:" + alarmReqDTO.getAlarmCode()).getReason());
+                alarmHistory.setAlarmLevel(DataCacheTask.alarmCodeData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getLineId() + "-rule:" + alarmReqDTO.getAlarmCode()).getLevelId());
+            } else {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "告警码数据异常，未找到告警码 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
@@ -419,6 +388,7 @@ public class AsyncReceiver {
             } else if (ruleData.get(5L) != null) {
                 alarmHistory.setIsRing(0);
                 alarmHistory.setAlarmState(7);
+                alarmHistory.setRecoveryTime(new Timestamp(System.currentTimeMillis()));
                 String flag = "sysId:" + alarmHistory.getSubsystemId() +
                         "-lineId:" + alarmHistory.getLineId() +
                         "-siteId:" + alarmHistory.getSiteId() +
@@ -431,7 +401,7 @@ public class AsyncReceiver {
                 alarmHistory.setIsRing(0);
                 alarmHistory.setAlarmState(3);
             } else {
-                if (ruleData.get(6L) != null) {
+                if (ruleData.get(6L) != null && !alarmReqDTO.getRecovery()) {
                     alarmHistory.setAlarmFrequency(ruleData.get(6L).getFrequency());
                     alarmHistory.setFrequencyTime(ruleData.get(6L).getFrequencyTime());
                     alarmHistory.setExperienceTime(ruleData.get(6L).getExperienceTime());
@@ -439,7 +409,7 @@ public class AsyncReceiver {
                         frequencyAlarmHistory(alarmHistory);
                     }
                 }
-                if (ruleData.get(7L) != null) {
+                if (ruleData.get(7L) != null && !alarmReqDTO.getRecovery()) {
                     String content = alarmHistory.getLineName() + "线路-" + alarmHistory.getSiteName() + "站点-" + alarmHistory.getSubsystemName() + "系统 产生";
                     Integer result = alarmManageMapper.getUpdateLevel(alarmHistory);
                     if (result != null) {
@@ -476,7 +446,8 @@ public class AsyncReceiver {
                     continue;
                 }
                 if (alarmReqDTO.getRecovery()) {
-                    alarmHistory.setRecoveryTime(new Timestamp(System.currentTimeMillis()));
+                    alarmHistory.setRecoveryTime(new Timestamp(simpleDateFormat.parse(alarmReqDTO.getAlarmTime()).getTime()));
+                    alarmHistory.setIsRecovery(true);
                     alarmHistory.setAlarmState(7);
                 }
                 alarmHistory.setFirstTime(new Timestamp(simpleDateFormat.parse(alarmReqDTO.getAlarmTime()).getTime()));

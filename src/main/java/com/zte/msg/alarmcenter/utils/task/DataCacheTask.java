@@ -94,46 +94,78 @@ public class DataCacheTask {
                          List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmHistories) {
         if (subsystems != null && subsystems.size() > 0) {
             for (Subsystem subsystem : subsystems) {
-                subsystemData.put(subsystem.getSid(), subsystem);
+                if (subsystem.getIsDeleted() == 1) {
+                    subsystemData.remove(subsystem.getSid());
+                } else {
+                    subsystemData.put(subsystem.getSid(), subsystem);
+                }
             }
         }
         if (linePositions != null && linePositions.size() > 0) {
             for (Position position : linePositions) {
-                lineData.put(position.getPositionCode(), position);
+                if (position.getIsDeleted() == 1) {
+                    lineData.remove(position.getPositionCode());
+                } else {
+                    lineData.put(position.getPositionCode(), position);
+                }
             }
         }
         if (sitePositions != null && sitePositions.size() > 0) {
             for (Position position : sitePositions) {
                 String key = "line:" + position.getLineCode() + "-site:" + position.getPositionCode();
-                siteData.put(key, position);
+                if (position.getIsDeleted() == 1) {
+                    siteData.remove(key);
+                } else {
+                    siteData.put(key, position);
+                }
             }
         }
         if (devices != null && devices.size() > 0) {
             for (Device device : devices) {
                 String key = "system:" + device.getSystemId() + "-site:" + device.getStationId() + "-device:" + device.getDeviceCode();
-                deviceData.put(key, device);
+                if (device.getIsDeleted() == 1) {
+                    deviceData.remove(key);
+                } else {
+                    deviceData.put(key, device);
+                }
             }
         }
         if (deviceSlots != null && deviceSlots.size() > 0) {
             for (DeviceSlot deviceSlot : deviceSlots) {
                 String key = "system:" + deviceSlot.getSystemId() + "-site:" + deviceSlot.getStationId() + "-device:" + deviceSlot.getDeviceId() + "-slot:" + deviceSlot.getSlotCode();
-                deviceSlotData.put(key, deviceSlot);
+                if (deviceSlot.getIsDeleted() == 1) {
+                    deviceSlotData.remove(key);
+                } else {
+                    deviceSlotData.put(key, deviceSlot);
+                }
             }
         }
         if (alarmCodes != null && alarmCodes.size() > 0) {
             for (AlarmCode alarmCode : alarmCodes) {
                 String key = "system:" + alarmCode.getSystemId() + "-site:" + alarmCode.getPositionId() + "-rule:" + alarmCode.getCode();
-                alarmCodeData.put(key, alarmCode);
+                if (alarmCode.getIsDeleted() == 1) {
+                    alarmCodeData.remove(key);
+                } else {
+                    alarmCodeData.put(key, alarmCode);
+                }
             }
         }
         if (alarmRules != null && alarmRules.size() > 0) {
             for (AlarmRuleDataResDTO alarmCode : alarmRules) {
-                alarmRuleData.put(alarmCode.getId(), alarmCode);
+                if (alarmCode.getIsDeleted() == 1) {
+                    alarmRuleData.remove(alarmCode.getId());
+                } else {
+                    alarmRuleData.put(alarmCode.getId(), alarmCode);
+                }
             }
         }
         if (alarmHistories != null && alarmHistories.size() > 0) {
             for (AlarmHistory alarmHistory : alarmHistories) {
-                frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
+                if (alarmHistory.getIsDeleted() == 1) {
+                    frequencyAlarmHistoryData.remove(alarmHistory.getId());
+                } else {
+                    frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
+                }
             }
         }
     }

@@ -73,8 +73,7 @@ public interface AlarmManageMapper {
     /**
      * 编辑告警记录附加信息
      *
-     * @param alarmId
-     * @param alarmMessages
+     * @param alarmHistory
      * @return
      */
     int editAlarmMessage(AlarmHistory alarmHistory);
