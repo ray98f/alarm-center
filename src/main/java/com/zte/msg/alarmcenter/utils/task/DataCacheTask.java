@@ -4,6 +4,7 @@ import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.mapper.DataCacheMapper;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -36,6 +37,7 @@ public class DataCacheTask {
      */
     @Scheduled(cron = "*/2 * * * * ? ")
     @Async
+    @SchedulerLock(name = "cacheOne", lockAtMostFor = "PT10S", lockAtLeastFor = "PT2S")
     public void cacheOne() {
         Timestamp startTime = new Timestamp(System.currentTimeMillis() - 10000);
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
@@ -175,6 +177,7 @@ public class DataCacheTask {
      */
     @Scheduled(cron = "0 0 6 * * ?")
     @Async
+    @SchedulerLock(name = "cacheAll", lockAtMostFor = "PT23H", lockAtLeastFor = "PT12H")
     public void cacheAll() {
         log.info("---------- 全量缓存开始 ----------");
         List<Subsystem> subsystemList = dataCacheMapper.selectSubsystem();

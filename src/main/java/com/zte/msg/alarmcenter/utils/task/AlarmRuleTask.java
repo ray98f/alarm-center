@@ -8,6 +8,7 @@ import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
 import com.zte.msg.alarmcenter.mapper.ChildSystemMapper;
 import com.zte.msg.alarmcenter.utils.SerializeUtils;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.formula.functions.T;
 import org.redisson.api.RBucket;
@@ -42,6 +43,7 @@ public class AlarmRuleTask {
      */
     @Scheduled(cron = "*/1 * * * * ?")
     @Async
+    @SchedulerLock(name = "delayRuleTask", lockAtMostFor = "PT10S", lockAtLeastFor = "PT1S")
     public void alarmDelayRuleTask() {
 //        log.info("-----------  告警延迟规则修改开始  -----------");
         alarmManageMapper.updateDelayAlarmHistory();
@@ -53,6 +55,7 @@ public class AlarmRuleTask {
      */
     @Scheduled(cron = "*/1 * * * * ?")
     @Async
+    @SchedulerLock(name = "experienceRuleTask", lockAtMostFor = "PT10S", lockAtLeastFor = "PT1S")
     public void alarmUpdateExperienceRuleTask() {
 //        log.info("-----------  告警经历时间升级规则  -----------");
         alarmManageMapper.updateExperienceAlarmHistory();
@@ -64,6 +67,7 @@ public class AlarmRuleTask {
      */
     @Scheduled(cron = "*/1 * * * * ?")
     @Async
+    @SchedulerLock(name = "heartbeatTask", lockAtMostFor = "PT10S", lockAtLeastFor = "PT1S")
     public void heartbeatTask() {
         childSystemMapper.offline();
     }

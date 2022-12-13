@@ -276,8 +276,19 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-
-
+        <!-- 分布式定时任务锁 -->
+        <!-- https://mvnrepository.com/artifact/net.javacrumbs.shedlock/shedlock-spring -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>4.0.4</version>
+        </dependency>
+        <!-- 使用redis做分布式任务 -->
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-redis-spring</artifactId>
+            <version>2.5.0</version>
+        </dependency>
 
     </dependencies>
 

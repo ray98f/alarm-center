@@ -52,11 +52,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
                 reqDTO.setPositionId(Long.valueOf(cells.getCell(0).getStringCellValue()));
                 reqDTO.setSystemId(Long.valueOf(cells.getCell(1).getStringCellValue()));
                 reqDTO.setAlarmCode(Long.valueOf(cells.getCell(2).getStringCellValue()));
-                Long levelId = alarmCodeMapper.selectAlarmLevelId(cells.getCell(3).getStringCellValue());
-                if (Objects.isNull(levelId)) {
-                    throw new CommonException(ErrorCode.ALARM_LEVEL_NOT_EXIST);
-                }
-                reqDTO.setAlarmLevelId(levelId);
+                reqDTO.setAlarmLevelId(Long.valueOf(cells.getCell(3).getStringCellValue()));
                 reqDTO.setAlarmName(cells.getCell(4).getStringCellValue());
                 reqDTO.setReason(cells.getCell(5).getStringCellValue());
                 reqDTO.setHandlingOpinions(cells.getCell(6).getStringCellValue());

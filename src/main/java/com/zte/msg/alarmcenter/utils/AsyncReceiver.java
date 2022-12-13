@@ -272,12 +272,22 @@ public class AsyncReceiver {
         }
         List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null);
         for (AlarmHistory alarmHistory : alarmHistories) {
-            alarmHistoryResDTOList.removeIf(alarmHistoryResDTO -> alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
-                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
-                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
-                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                    alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
-                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+            if (alarmHistory.getSlotCode() == null) {
+                alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                        alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+            } else {
+                alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                        alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
+                                alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+            }
         }
         if (alarmHistoryResDTOList.size() > 0) {
             alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
@@ -338,7 +348,11 @@ public class AsyncReceiver {
                 alarmAbnormalMapper.insertAlarmError(alarmReqDTO, null, "设备数据异常，未找到设备 | Data: " + JSON.toJSONString(alarmReqDTO));
                 continue;
             }
-            if (null != DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
+            if (alarmReqDTO.getSlot() == 0) {
+                alarmHistory.setSlotId(null);
+                alarmHistory.setSlotCode(null);
+                alarmHistory.setSlotName(null);
+            } else if (null != DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
                     "-device:" + alarmHistory.getDeviceId() + "-slot:" + alarmReqDTO.getSlot())) {
                 alarmHistory.setSlotId(DataCacheTask.deviceSlotData.get("system:" + alarmHistory.getSubsystemId() + "-site:" + alarmHistory.getSiteId() +
                         "-device:" + alarmHistory.getDeviceId() + "-slot:" + alarmReqDTO.getSlot()).getId());

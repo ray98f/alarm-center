@@ -1,12 +1,12 @@
 server:
-  port: 9000
+  port: 9527
   tomcat:
     uri-encoding: UTF-8
   servlet:
     context-path: /api/v1
 spring:
   profiles:
-    active: dev
+    active: wzmtr
   messages:
     basename: i18n/messages
   application:

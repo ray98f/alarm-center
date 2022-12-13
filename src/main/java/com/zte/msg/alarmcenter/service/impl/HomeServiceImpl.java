@@ -96,7 +96,6 @@ public class HomeServiceImpl implements HomeService {
     public List<AlarmHistoryResDTO> selectAlarmHistory(Long size) {
         List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(size);
         if (null == alarmHistoryResDTOList || alarmHistoryResDTOList.isEmpty()) {
-            log.warn("当前无告警");
             return null;
         }
         return alarmHistoryResDTOList;
