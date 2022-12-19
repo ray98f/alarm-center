@@ -242,6 +242,7 @@ public class AsyncReceiver {
             return;
         }
 //        log.info("------ 开始接收系统心跳 ------");
+        System.out.println(JSONArray.toJSONString(heartbeatQueueReqDTOList));
         childSystemMapper.isOnline(heartbeatQueueReqDTOList);
 //        log.info("------ 接收系统心跳结束 ------");
     }
