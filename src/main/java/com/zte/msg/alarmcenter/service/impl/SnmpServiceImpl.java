@@ -172,7 +172,6 @@ public class SnmpServiceImpl implements SnmpService {
         Page<SnmpSlotResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
             page = (page - 1) * size;
             snmpSlotResDTOList = mySlotMapper.getSnmpSlot(snmpSlotName, systemId, siteId, page, size);
             pageBean.setRecords(snmpSlotResDTOList);
