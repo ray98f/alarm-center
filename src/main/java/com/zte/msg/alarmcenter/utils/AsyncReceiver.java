@@ -91,7 +91,6 @@ public class AsyncReceiver {
     @RabbitHandler
     @Async
     public void process(AsyncVO asyncVO) {
-//        log.info("------ 开始接收同步对象 ------");
         if (null != asyncVO.getAlarmCodeSyncReqDTOList()) {
             int result = synchronizeMapper.alarmCodesSync(asyncVO.getAlarmCodeSyncReqDTOList());
             log.info(JSONUtils.beanToJsonString(asyncVO.getAlarmCodeSyncReqDTOList()) + " : result = {}", result);
@@ -111,14 +110,12 @@ public class AsyncReceiver {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         }
-//        log.info("------ 接收同步对象结束 ------");
     }
 
     @RabbitListener(queues = RabbitMqConfig.ALARM_QUEUE)
     @RabbitHandler
     @Async
     public void alarmProcess(String json) throws ParseException {
-//        System.out.println(System.currentTimeMillis());
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTO = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTO || alarmReqDTO.isEmpty()) {
@@ -126,9 +123,7 @@ public class AsyncReceiver {
             return;
         }
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTO);
-//        System.out.println(System.currentTimeMillis());
         editData(alarmHistories);
-//        System.out.println(System.currentTimeMillis());
     }
 
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
@@ -182,11 +177,9 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
-//        log.info("------ 接收告警记录结束 ------");
     }
 
     /**
@@ -198,13 +191,11 @@ public class AsyncReceiver {
     private List<AlarmHistoryReqDTO> transferSnmpToAlarmHistory(List<SnmpAlarmDTO> snmpAlarmDTOS) {
         List<AlarmHistoryReqDTO> alarmHistoryReqDTOS = new ArrayList<>();
         for (SnmpAlarmDTO snmpAlarmDTO : snmpAlarmDTOS) {
-
             Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarmDTO.getSystemCode(), snmpAlarmDTO.getLineCode());
             if (systemId == null || systemId <= 0) {
                 alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarmDTO));
                 continue;
             }
-
             AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarmDTO.getAlarmManagedObjectInstanceName());
             if (alarmHistoryReqDTO == null) {
                 alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarmDTO));
@@ -216,7 +207,6 @@ public class AsyncReceiver {
                 alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarmDTO));
                 continue;
             }
-
             alarmHistoryReqDTO.setAlarmCode(alarmCode);
             alarmHistoryReqDTO.setRecovery(snmpAlarmDTO.isCleared());
             alarmHistoryReqDTO.setAlarmTime(snmpAlarmDTO.getAlarmTime());
@@ -241,10 +231,7 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-//        log.info("------ 开始接收系统心跳 ------");
-//        System.out.println(JSONArray.toJSONString(heartbeatQueueReqDTOList));
         childSystemMapper.isOnline(heartbeatQueueReqDTOList);
-//        log.info("------ 接收系统心跳结束 ------");
     }
 
     private void editData(List<AlarmHistory> alarmHistories) {
@@ -252,18 +239,7 @@ public class AsyncReceiver {
             log.error("告警记录接收为空");
             return;
         }
-        int result = alarmManageMapper.editAlarmHistory(alarmHistories);
-//        if (result >= 0) {
-//            for (AlarmHistory alarmHistory : alarmHistories) {
-//                if (null != alarmHistory.getAlarmMessageList() && !alarmHistory.getAlarmMessageList().isEmpty()) {
-//                    result = alarmManageMapper.editAlarmMessage(alarmHistory);
-//                    if (result < 0) {
-//                        log.error("告警记录添加附加信息失败");
-//
-//                    }
-//                }
-//            }
-//        }
+        alarmManageMapper.editAlarmHistory(alarmHistories);
     }
 
     private void syncData(List<AlarmHistory> alarmHistories) {
@@ -293,17 +269,7 @@ public class AsyncReceiver {
         if (alarmHistoryResDTOList.size() > 0) {
             alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
         }
-        int result = alarmManageMapper.syncAlarmHistory(alarmHistories);
-//        if (result >= 0) {
-//            for (AlarmHistory alarmHistory : alarmHistories) {
-//                Long alarmId = alarmManageMapper.getAlarmHistoryId(alarmHistory);
-//                result = alarmManageMapper.syncAlarmMessage(alarmId, alarmHistory.getAlarmMessageList());
-//                if (result < 0) {
-//                    log.error("ID为{}的告警记录同步附加信息失败", alarmId);
-//
-//                }
-//            }
-//        }
+        alarmManageMapper.syncAlarmHistory(alarmHistories);
     }
 
     private List<AlarmHistory> conversionAndFilter(List<AlarmHistoryReqDTO> alarmReqDTOList) throws ParseException {
