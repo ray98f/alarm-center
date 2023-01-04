@@ -71,7 +71,10 @@
         left join device_slot as ds on ds.id=ah.slot_id and ds.is_deleted=0
         left join alarm_code as ac on ac.id=ah.alarm_code and ac.is_deleted=0
         where ah.is_deleted=0
-        and alarm_state in (0,1,2,3)
+        <if test="isHome==1">
+            and ah.is_recovery=0
+        </if>
+        and ah.alarm_state in (0,1,2,3)
         ORDER BY ah.alarm_level ASC,ah.final_time DESC,ah.id ASC
         <if test="size!=null">
             limit #{size}

@@ -94,7 +94,7 @@ public class HomeServiceImpl implements HomeService {
      */
     @Override
     public List<AlarmHistoryResDTO> selectAlarmHistory(Long size) {
-        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(size);
+        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(size, 1);
         if (null == alarmHistoryResDTOList || alarmHistoryResDTOList.isEmpty()) {
             return null;
         }
@@ -107,7 +107,7 @@ public class HomeServiceImpl implements HomeService {
     @Override
     public void exportAlarmHistory() {
         List<String> listName = Arrays.asList("子系统", "告警等级", "站点", "设备", "槽位", "告警码", "告警名称", "告警原因", "第一次告警时间", "最后告警时间", "告警次数", "告警音量", "是否静音", "告警状态", "告警升级", "告警备注");
-        List<AlarmHistoryResDTO> alarmHistory = homeMapper.selectAlarmHistory(null);
+        List<AlarmHistoryResDTO> alarmHistory = homeMapper.selectAlarmHistory(null, 1);
         List<Map<String, String>> list = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
         if (null != alarmHistory) {

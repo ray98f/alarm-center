@@ -155,11 +155,9 @@ public class AsyncReceiver {
             log.warn("消息队列中信息为空");
             return;
         }
-//        log.info("------ 开始接收告警记录 ------");
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         editData(alarmHistories);
-//        log.info("------ 接收告警记录结束 ------");
     }
 
     /**
@@ -247,7 +245,7 @@ public class AsyncReceiver {
             log.error("告警记录接收为空");
             return;
         }
-        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null);
+        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0);
         for (AlarmHistory alarmHistory : alarmHistories) {
             if (alarmHistory.getSlotCode() == null) {
                 alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->

@@ -48,7 +48,7 @@ public interface HomeMapper {
      * @param size
      * @return
      */
-    List<AlarmHistoryResDTO> selectAlarmHistory(Long size);
+    List<AlarmHistoryResDTO> selectAlarmHistory(Long size, Integer isHome);
 
     /**
      * 静音

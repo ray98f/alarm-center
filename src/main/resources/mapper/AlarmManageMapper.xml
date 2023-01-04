@@ -113,7 +113,8 @@
         <foreach collection="list" item="alarmHistory" index="index" separator=";">
             <trim suffixOverrides=";">
                 INSERT INTO alarm_history (subsystem_id, subsystem_code, alarm_level,
-                line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id,
+                line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code,
+                alarm_code, alarm_code_id, frequency,
                 <if test="alarmHistory.alarmName!=null">
                     alarm_name,
                 </if>
@@ -151,7 +152,7 @@
                 SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
                 #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
                 #{alarmHistory.deviceId}, #{alarmHistory.deviceCode}, #{alarmHistory.slotId}, #{alarmHistory.slotCode},
-                #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId},
+                #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId}, 1,
                 <if test="alarmHistory.alarmName!=null">
                     #{alarmHistory.alarmName},
                 </if>
@@ -223,7 +224,9 @@
                     <if test="alarmHistory.finalTime!=null">
                         final_time=#{alarmHistory.finalTime},
                     </if>
-                    frequency=if(is_recovery=0,frequency+1,frequency),
+                    <if test="!alarmHistory.isRecovery">
+                        frequency=frequency+1,
+                    </if>
                     <if test="alarmHistory.isRing!=null">
                         is_ring=if(alarm_state in (0,1), #{alarmHistory.isRing}, 0),
                     </if>
@@ -281,7 +284,8 @@
         <foreach collection="list" item="alarmHistory" index="index" separator=";">
             <trim suffixOverrides=";">
                 INSERT INTO alarm_history (subsystem_id, subsystem_code, alarm_level,
-                line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code, alarm_code, alarm_code_id, frequency,
+                line_id, line_code, site_id, site_code, device_id, device_code, slot_id, slot_code,
+                alarm_code, alarm_code_id, frequency,
                 <if test="alarmHistory.alarmName!=null">
                     alarm_name,
                 </if>
