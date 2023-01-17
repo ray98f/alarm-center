@@ -121,6 +121,5 @@
             and #{endTime} >= t.alarm_time
         </if>
         order by t.created_at desc,t.id desc
-        limit #{page},#{size}
     </select>
 </mapper>

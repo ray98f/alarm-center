@@ -237,6 +237,9 @@ public class AsyncReceiver {
             log.error("告警记录接收为空");
             return;
         }
+        System.out.println("----------------- start -----------------");
+        System.out.println(JSONArray.toJSONString(alarmHistories));
+        System.out.println("------------------ end ------------------");
         alarmManageMapper.editAlarmHistory(alarmHistories);
     }
 

@@ -26,12 +26,11 @@ public class AlarmAbnormalController {
 
     @GetMapping("/list")
     @ApiOperation(value = "告警异常分页查询")
-    public PageResponse<AlarmAbnormalResDTO> getAlarmAbnormal(@RequestParam("page") Long page, @RequestParam("size") Long size,
+    public PageResponse<AlarmAbnormalResDTO> getAlarmAbnormal(@RequestParam("page") Integer page, @RequestParam("size") Integer size,
                                                               @RequestParam(required = false) @ApiParam(value = "起始时间") String startTime,
                                                               @RequestParam(required = false) @ApiParam(value = "结束时间") String endTime,
                                                               @RequestParam(required = false) @ApiParam(value = "系统编号") Long systemCode) {
-        Page<AlarmAbnormalResDTO> dtoPage = alarmAbnormalService.getAlarmAbnormal(startTime, endTime, systemCode, page,size);
-        return PageResponse.of(dtoPage, page, size);
+        return PageResponse.of(alarmAbnormalService.getAlarmAbnormal(startTime, endTime, systemCode, page, size));
     }
 
 }

@@ -32,8 +32,8 @@
                 <if test="alarmCodeSyncReqDTO.id!=null and alarmCodeSyncReqDTO.id!=''">
                     #{alarmCodeSyncReqDTO.id},
                 </if>
-                #{alarmCodeSyncReqDTO.systemId},
-                #{alarmCodeSyncReqDTO.lineId},
+                (select id from subsystem where sid=#{alarmCodeSyncReqDTO.systemId} and is_deleted=0),
+                (select id from `position` where position_code = #{alarmCodeSyncReqDTO.lineId} and type=2 and is_deleted=0),
                 #{alarmCodeSyncReqDTO.alarmCode},
                 <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
                     #{alarmCodeSyncReqDTO.alarmName},
@@ -52,15 +52,16 @@
                 </if>
             </trim>
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=#{alarmCodeSyncReqDTO.systemId}
-            and position_id=#{alarmCodeSyncReqDTO.lineId} and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0);
+            WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=(select id from subsystem where sid=#{alarmCodeSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select id from `position` where position_code = #{alarmCodeSyncReqDTO.lineId} and type=2 and is_deleted=0)
+            and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0);
             UPDATE alarm_code SET
             <trim suffixOverrides=",">
                 <if test="alarmCodeSyncReqDTO.id!=null and alarmCodeSyncReqDTO.id!=''">
                     exe_id=#{alarmCodeSyncReqDTO.id},
                 </if>
-                system_id=#{alarmCodeSyncReqDTO.systemId},
-                position_id=#{alarmCodeSyncReqDTO.lineId},
+                system_id=(select id from subsystem where sid=#{alarmCodeSyncReqDTO.systemId} and is_deleted=0),
+                position_id=(select id from `position` where position_code = #{alarmCodeSyncReqDTO.lineId} and type=2 and is_deleted=0),
                 code=#{alarmCodeSyncReqDTO.alarmCode},
                 <if test="alarmCodeSyncReqDTO.alarmName!=null and alarmCodeSyncReqDTO.alarmName!=''">
                     name=#{alarmCodeSyncReqDTO.alarmName},
@@ -78,7 +79,8 @@
                     is_deleted=#{alarmCodeSyncReqDTO.isDeleted},
                 </if>
             </trim>
-            WHERE system_id=#{alarmCodeSyncReqDTO.systemId} and position_id=#{alarmCodeSyncReqDTO.lineId}
+            WHERE system_id=(select id from subsystem where sid=#{alarmCodeSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select id from `position` where position_code = #{alarmCodeSyncReqDTO.lineId} and type=2 and is_deleted=0)
             and code=#{alarmCodeSyncReqDTO.alarmCode} and is_locked=0;
         </foreach>
     </insert>
@@ -113,8 +115,8 @@
             <if test="id!=null and id!=''">
                 #{id},
             </if>
-            #{systemId},
-            #{lineId},
+            (select id from subsystem where sid=#{systemId} and is_deleted=0),
+            (select id from `position` where position_code = #{lineId} and type=2 and is_deleted=0),
             #{alarmCode},
             <if test="alarmName!=null and alarmName!=''">
                 #{alarmName},
@@ -133,15 +135,16 @@
             </if>
         </trim>
         FROM DUAL
-        WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=#{systemId} and position_id=#{lineId}
+        WHERE NOT exists (SELECT id FROM alarm_code WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select id from `position` where position_code = #{lineId} and type=2 and is_deleted=0)
         and code=#{alarmCode} and is_locked=0);
         UPDATE alarm_code SET
         <trim suffixOverrides=",">
             <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
-            system_id=#{systemId},
-            position_id=#{lineId},
+            system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0),
+            position_id=(select id from `position` where position_code = #{lineId} and type=2 and is_deleted=0),
             code=#{alarmCode},
             <if test="alarmName!=null and alarmName!=''">
                 name=#{alarmName},
@@ -159,7 +162,9 @@
                 is_deleted=#{isDeleted},
             </if>
         </trim>
-        WHERE system_id=#{systemId} and position_id=#{lineId} and code=#{alarmCode} and is_locked=0;
+        WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select id from `position` where position_code = #{lineId} and type=2 and is_deleted=0)
+        and code=#{alarmCode} and is_locked=0;
     </insert>
 
     <insert id="devicesSync">
@@ -190,8 +195,10 @@
                 <if test="deviceSyncReqDTO.id!=null and deviceSyncReqDTO.id!=''">
                     #{deviceSyncReqDTO.id},
                 </if>
-                #{deviceSyncReqDTO.systemId},
-                #{deviceSyncReqDTO.stationId},
+                (select id from subsystem where sid=#{deviceSyncReqDTO.systemId} and is_deleted=0),
+                (select t1.id from position t1 left join position t2
+                on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+                and t1.position_code=#{deviceSyncReqDTO.stationId} and t2.position_code=#{deviceSyncReqDTO.lineId}),
                 #{deviceSyncReqDTO.deviceId},
                 <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
                     #{deviceSyncReqDTO.deviceName},
@@ -207,15 +214,20 @@
                 </if>
             </trim>
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM device WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.stationId}
+            WHERE NOT exists (SELECT id FROM device WHERE system_id=(select id from subsystem where sid=#{deviceSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{deviceSyncReqDTO.stationId} and t2.position_code=#{deviceSyncReqDTO.lineId})
             and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0);
             UPDATE device SET
             <trim suffixOverrides=",">
                 <if test="deviceSyncReqDTO.id!=null and deviceSyncReqDTO.id!=''">
                     exe_id=#{deviceSyncReqDTO.id},
                 </if>
-                system_id=#{deviceSyncReqDTO.systemId},
-                position_id=#{deviceSyncReqDTO.stationId},
+                system_id=(select id from subsystem where sid=#{deviceSyncReqDTO.systemId} and is_deleted=0),
+                position_id=(select t1.id from position t1 left join position t2
+                on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+                and t1.position_code=#{deviceSyncReqDTO.stationId} and t2.position_code=#{deviceSyncReqDTO.lineId}),
                 device_code=#{deviceSyncReqDTO.deviceId},
                 <if test="deviceSyncReqDTO.deviceName!=null and deviceSyncReqDTO.deviceName!=''">
                     name=#{deviceSyncReqDTO.deviceName},
@@ -230,7 +242,10 @@
                     is_deleted=#{deviceSyncReqDTO.isDeleted},
                 </if>
             </trim>
-            WHERE system_id=#{deviceSyncReqDTO.systemId} and position_id=#{deviceSyncReqDTO.stationId}
+            WHERE system_id=(select id from subsystem where sid=#{deviceSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{deviceSyncReqDTO.stationId} and t2.position_code=#{deviceSyncReqDTO.lineId})
             and device_code=#{deviceSyncReqDTO.deviceId} and is_locked=0;
         </foreach>
     </insert>
@@ -262,8 +277,10 @@
             <if test="id!=null and id!=''">
                 #{id},
             </if>
-            #{systemId},
-            #{stationId},
+            (select id from subsystem where sid=#{systemId} and is_deleted=0),
+            (select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{stationId} and t2.position_code=#{lineId}),
             #{deviceId},
             <if test="deviceName!=null and deviceName!=''">
                 #{deviceName},
@@ -279,16 +296,20 @@
             </if>
         </trim>
         FROM DUAL
-        WHERE NOT exists (SELECT id FROM device WHERE system_id=#{systemId} and position_id=#{stationId}
+        WHERE NOT exists (SELECT id FROM device WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{stationId} and t2.position_code=#{lineId})
         and device_code=#{deviceId} and is_locked=0);
         UPDATE device SET
         <trim suffixOverrides=",">
             <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
-            system_id=#{systemId},
-            position_id=#{stationId},
-            station_id=#{stationId},
+            system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0),
+            position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{stationId} and t2.position_code=#{lineId}),
             device_code=#{deviceId},
             <if test="deviceName!=null and deviceName!=''">
                 name=#{deviceName},
@@ -303,7 +324,11 @@
                 is_deleted=#{isDeleted},
             </if>
         </trim>
-        WHERE system_id=#{systemId} and position_id=#{stationId} and device_code=#{deviceId} and is_locked=0;
+        WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+        and device_code=#{deviceId} and is_locked=0;
     </insert>
 
     <insert id="slotsSync">
@@ -329,9 +354,14 @@
                 <if test="slotSyncReqDTO.id!=null and slotSyncReqDTO.id!=''">
                     #{slotSyncReqDTO.id},
                 </if>
-                #{slotSyncReqDTO.systemId},
-                #{slotSyncReqDTO.stationId},
-                #{slotSyncReqDTO.deviceId},
+                (select id from subsystem where sid=#{slotSyncReqDTO.systemId} and is_deleted=0),
+                (select t1.id from position t1 left join position t2
+                on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+                and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId}),
+                (select id from device where system_id=(select id from subsystem where sid = #{slotSyncReqDTO.systemId} and is_deleted=0)
+                and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+                where t1.is_deleted=0 and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+                and device_code=#{slotSyncReqDTO.deviceId} and is_deleted=0),
                 #{slotSyncReqDTO.slotId},
                 <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
                     #{slotSyncReqDTO.slotName},
@@ -341,16 +371,27 @@
                 </if>
             </trim>
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.stationId}
-            and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0);
+            WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=(select id from subsystem where sid=#{slotSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+            and device_id=(select id from device where system_id=(select id from subsystem where sid = #{slotSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+            where t1.is_deleted=0 and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+            and device_code=#{slotSyncReqDTO.deviceId} and is_deleted=0) and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0);
             UPDATE device_slot SET
             <trim suffixOverrides=",">
                 <if test="slotSyncReqDTO.id!=null and slotSyncReqDTO.id!=''">
                     exe_id=#{slotSyncReqDTO.id},
                 </if>
-                system_id=#{slotSyncReqDTO.systemId},
-                position_id=#{slotSyncReqDTO.stationId},
-                device_id=#{slotSyncReqDTO.deviceId},
+                system_id=(select id from subsystem where sid=#{slotSyncReqDTO.systemId} and is_deleted=0),
+                position_id=(select t1.id from position t1 left join position t2
+                on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+                and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId}),
+                device_id=(select id from device where system_id=(select id from subsystem where sid = #{slotSyncReqDTO.systemId} and is_deleted=0)
+                and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+                where t1.is_deleted=0 and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+                and device_code=#{slotSyncReqDTO.deviceId} and is_deleted=0),
                 slot_code=#{slotSyncReqDTO.slotId},
                 <if test="slotSyncReqDTO.slotName!=null and slotSyncReqDTO.slotName!=''">
                     name=#{slotSyncReqDTO.slotName},
@@ -359,8 +400,14 @@
                     is_deleted=#{slotSyncReqDTO.isDeleted},
                 </if>
             </trim>
-            WHERE system_id=#{slotSyncReqDTO.systemId} and position_id=#{slotSyncReqDTO.stationId}
-            and device_id=#{slotSyncReqDTO.deviceId} and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0;
+            WHERE system_id=(select id from subsystem where sid=#{slotSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+            and device_id=(select id from device where system_id=(select id from subsystem where sid = #{slotSyncReqDTO.systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+            where t1.is_deleted=0 and t1.position_code=#{slotSyncReqDTO.stationId} and t2.position_code=#{slotSyncReqDTO.lineId})
+            and device_code=#{slotSyncReqDTO.deviceId} and is_deleted=0) and slot_code=#{slotSyncReqDTO.slotId} and is_locked=0;
         </foreach>
     </insert>
 
@@ -386,9 +433,14 @@
             <if test="id!=null and id!=''">
                 #{id},
             </if>
-            #{systemId},
-            #{stationId},
-            #{deviceId},
+            (select id from subsystem where sid=#{systemId} and is_deleted=0),
+            (select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{stationId} and t2.position_code=#{lineId}),
+            (select id from device where system_id=(select id from subsystem where sid = #{systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+            where t1.is_deleted=0 and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+            and device_code=#{deviceId} and is_deleted=0),
             #{slotId},
             <if test="slotName!=null and slotName!=''">
                 #{slotName},
@@ -398,16 +450,27 @@
             </if>
         </trim>
         FROM DUAL
-        WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=#{systemId} and position_id=#{stationId}
-        and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0);
+        WHERE NOT exists (SELECT id FROM device_slot WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+        and device_id=(select id from device where system_id=(select id from subsystem where sid = #{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+        where t1.is_deleted=0 and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+        and device_code=#{deviceId} and is_deleted=0) and slot_code=#{slotId} and is_locked=0);
         UPDATE device_slot SET
         <trim suffixOverrides=",">
             <if test="id!=null and id!=''">
                 exe_id=#{id},
             </if>
-            system_id=#{systemId},
-            position_id=#{stationId},
-            device_id=#{deviceId},
+            system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0),
+            position_id=(select t1.id from position t1 left join position t2
+            on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+            and t1.position_code=#{stationId} and t2.position_code=#{lineId}),
+            device_id=(select id from device where system_id=(select id from subsystem where sid = #{systemId} and is_deleted=0)
+            and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+            where t1.is_deleted=0 and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+            and device_code=#{deviceId} and is_deleted=0),
             slot_code=#{slotId},
             <if test="slotName!=null and slotName!=''">
                 name=#{slotName},
@@ -416,7 +479,13 @@
                 is_deleted=#{isDeleted},
             </if>
         </trim>
-        WHERE system_id=#{systemId} and position_id=#{stationId}
-        and device_id=#{deviceId} and slot_code=#{slotId} and is_locked=0;
+        WHERE system_id=(select id from subsystem where sid=#{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2
+        on t2.id=t1.p_id and t2.is_deleted=0 where t1.is_deleted=0
+        and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+        and device_id=(select id from device where system_id=(select id from subsystem where sid = #{systemId} and is_deleted=0)
+        and position_id=(select t1.id from position t1 left join position t2 on t2.id=t1.p_id and t2.is_deleted=0
+        where t1.is_deleted=0 and t1.position_code=#{stationId} and t2.position_code=#{lineId})
+        and device_code=#{deviceId} and is_deleted=0) and slot_code=#{slotId} and is_locked=0;
     </insert>
 </mapper>
