@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.res.AlarmAbnormalResDTO;
@@ -35,6 +36,12 @@ public class AlarmAbnormalController {
                                                               @RequestParam(required = false) @ApiParam(value = "系统编号") Long systemCode,
                                                               @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(alarmAbnormalService.getAlarmAbnormal(startTime, endTime, systemCode, pageReqDTO));
+    }
+
+    @GetMapping("/detail")
+    @ApiOperation(value = "告警异常详情")
+    public DataResponse<AlarmAbnormalResDTO> getAlarmAbnormalDetail(@RequestParam String id) {
+        return DataResponse.of(alarmAbnormalService.getAlarmAbnormalDetail(id));
     }
 
 }

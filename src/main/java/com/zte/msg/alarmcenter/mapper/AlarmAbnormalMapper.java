@@ -19,4 +19,6 @@ public interface AlarmAbnormalMapper {
     Integer getAlarmAbnormalCount(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("systemCode") Long systemCode);
 
     Page<AlarmAbnormalResDTO> getAlarmAbnormal(Page<AlarmAbnormalResDTO> page, Timestamp startTime, Timestamp endTime, Long systemCode);
+
+    AlarmAbnormalResDTO getAlarmAbnormalDetail(String id);
 }

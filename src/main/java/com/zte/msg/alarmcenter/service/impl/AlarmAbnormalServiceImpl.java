@@ -22,4 +22,9 @@ public class AlarmAbnormalServiceImpl implements AlarmAbnormalService {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return alarmAbnormalMapper.getAlarmAbnormal(pageReqDTO.of(), startTime, endTime, systemCode);
     }
+
+    @Override
+    public AlarmAbnormalResDTO getAlarmAbnormalDetail(String id) {
+        return alarmAbnormalMapper.getAlarmAbnormalDetail(id);
+    }
 }

@@ -8,4 +8,6 @@ import java.sql.Timestamp;
 
 public interface AlarmAbnormalService {
     Page<AlarmAbnormalResDTO> getAlarmAbnormal(Timestamp startTime, Timestamp endTime, Long systemCode, PageReqDTO pageReqDTO);
+
+    AlarmAbnormalResDTO getAlarmAbnormalDetail(String id);
 }
