@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Mapper
@@ -17,5 +18,5 @@ public interface AlarmAbnormalMapper {
 
     Integer getAlarmAbnormalCount(@Param("startTime") String startTime, @Param("endTime") String endTime, @Param("systemCode") Long systemCode);
 
-    Page<AlarmAbnormalResDTO> getAlarmAbnormal(Page<AlarmAbnormalResDTO> page, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("systemCode") Long systemCode);
+    Page<AlarmAbnormalResDTO> getAlarmAbnormal(Page<AlarmAbnormalResDTO> page, Timestamp startTime, Timestamp endTime, Long systemCode);
 }

@@ -87,37 +87,24 @@
         t.system_code,
         (select name from subsystem where sid=t.system_code and is_deleted=0) as system_name,
         t.line_code,
-        (select name from position where position_code=t.line_code and type=2 and is_deleted=0) as line_name,
         t.position_code,
         (select name from position where position_code=t.position_code and is_deleted=0 and type=3 and
         p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) as position_name,
         t.device_code,
-        (select name from device where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
-        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
-        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and device_code=t.device_code and is_deleted=0) as device_name,
         t.slot_code,
-        (select name from device_slot where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
-        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
-        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and slot_code=t.slot_code
-        and device_id=(select id from device where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
-        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
-        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and device_code=t.device_code and is_deleted=0) and is_deleted=0) as slot_name,
         t.alarm_code,
-        (select name from alarm_code where system_id=(select id from subsystem where sid=t.system_code and is_deleted=0) and
-        position_id=(select id from position where position_code=t.position_code and is_deleted=0 and type=3 and
-        p_id=(select id from position where position_code=t.line_code and type=2 and is_deleted=0)) and is_deleted=0 and code=t.alarm_code) as alarm_name,
         t.ip,
         t.created_at,
         t.error_content
         from alarm_error t
-        where 1 = 1
+        where t.is_deleted=0
         <if test="systemCode!=null">
             and t.system_code = #{systemCode}
         </if>
-        <if test="startTime!=null and startTime!=''">
+        <if test="startTime!=null">
             and t.alarm_time >= #{startTime}
         </if>
-        <if test="endTime!=null and endTime!=''">
+        <if test="endTime!=null">
             and #{endTime} >= t.alarm_time
         </if>
         order by t.created_at desc,t.id desc

@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.zte.msg.alarmcenter.dto.res.*;
 import com.zte.msg.alarmcenter.entity.AlarmHistory;
 import com.zte.msg.alarmcenter.enums.ErrorCode;
@@ -76,13 +77,20 @@ public class HomeServiceImpl implements HomeService {
             log.warn("无路线信息");
             return null;
         }
-        for (HomeStationSituationResDTO homeStationSituationResDTO : list) {
-            List<HomeStationSituationResDTO.Station> stationList = homeMapper.stationSituation(homeStationSituationResDTO.getLineId());
+        for (HomeStationSituationResDTO res : list) {
+            List<HomeStationSituationResDTO.Station> stationList = homeMapper.stationSituation(res.getLineId());
             if (null == stationList || stationList.isEmpty()) {
-                log.warn("{}路线下无站点信息", homeStationSituationResDTO.getLineId());
+                log.warn("{}路线下无站点信息", res.getLineId());
                 continue;
             }
-            homeStationSituationResDTO.setStationList(stationList);
+            res.setStationList(stationList);
+        }
+        if (list.size() == 1) {
+            HomeStationSituationResDTO s1 = new HomeStationSituationResDTO();
+            s1.setLineId(1L);
+            s1.setLineName("S1");
+            s1.setStationList(new ArrayList<>());
+            list.add(0, s1);
         }
         return list;
     }
