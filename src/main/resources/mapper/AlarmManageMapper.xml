@@ -189,7 +189,10 @@
                 #{alarmHistory.recoveryTime}
                 FROM DUAL
                 WHERE not exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
-                and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
+                and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId}
+                <if test="alarmHistory.slotId!=null">
+                    and slot_id=#{alarmHistory.slotId}
+                </if>
                 and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
                     and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
@@ -211,8 +214,12 @@
                     site_code=#{alarmHistory.siteCode},
                     device_id=#{alarmHistory.deviceId},
                     device_code=#{alarmHistory.deviceCode},
-                    slot_id=#{alarmHistory.slotId},
-                    slot_code=#{alarmHistory.slotCode},
+                    <if test="alarmHistory.slotId!=null">
+                        slot_id=#{alarmHistory.slotId},
+                    </if>
+                    <if test="alarmHistory.slotCode!=null">
+                        slot_code=#{alarmHistory.slotCode},
+                    </if>
                     alarm_code=#{alarmHistory.alarmCode},
                     alarm_code_id=#{alarmHistory.alarmCodeId},
                     <if test="alarmHistory.alarmName!=null">
@@ -254,7 +261,11 @@
                 </if>
                 recovery_time=#{alarmHistory.recoveryTime}
                 WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
-                and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode}
+                and device_id=#{alarmHistory.deviceId}
+                <if test="alarmHistory.slotId!=null">
+                    and slot_id=#{alarmHistory.slotId}
+                </if>
+                and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
                     and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
                 </if>
@@ -265,13 +276,21 @@
                 <if test="!alarmHistory.isRecovery">
                     delete from alarm_message
                     WHERE alarm_id=(select max(id) as id from alarm_history where subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
-                    and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0) and is_deleted=0;
+                    and device_id=#{alarmHistory.deviceId}
+                    <if test="alarmHistory.slotId!=null">
+                        and slot_id=#{alarmHistory.slotId}
+                    </if>
+                    and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0) and is_deleted=0;
                     <if test="alarmHistory.alarmMessageList!=null and alarmHistory.alarmMessageList.size()>0">
                         INSERT INTO alarm_message (alarm_id, title, content)
                         values
                         <foreach collection="alarmHistory.alarmMessageList" index="index" item="alarmMessage" separator=",">
                             ((select max(id) as id from alarm_history where subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
-                            and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0),
+                            and device_id=#{alarmHistory.deviceId}
+                            <if test="alarmHistory.slotId!=null">
+                                and slot_id=#{alarmHistory.slotId}
+                            </if>
+                            and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0),
                             #{alarmMessage.title}, #{alarmMessage.content})
                         </foreach>
                     </if>
@@ -360,7 +379,10 @@
                 #{alarmHistory.recoveryTime}
                 FROM DUAL
                 WHERE NOT exists (SELECT id FROM alarm_history WHERE subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId}
-                and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId}
+                and site_id=#{alarmHistory.siteId} and device_id=#{alarmHistory.deviceId}
+                <if test="alarmHistory.slotId!=null">
+                    and slot_id=#{alarmHistory.slotId}
+                </if>
                 and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
                     and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
@@ -371,13 +393,21 @@
                 and is_deleted=0);
                 delete from alarm_message
                 WHERE alarm_id=(select max(id) as id from alarm_history where subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
-                and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0) and is_deleted=0;
+                and device_id=#{alarmHistory.deviceId}
+                <if test="alarmHistory.slotId!=null">
+                    and slot_id=#{alarmHistory.slotId}
+                </if>
+                and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0) and is_deleted=0;
                 <if test="alarmHistory.alarmMessageList!=null and alarmHistory.alarmMessageList.size()>0">
                     INSERT INTO alarm_message (alarm_id, title, content)
                     values
                     <foreach collection="alarmHistory.alarmMessageList" index="index" item="alarmMessage" separator=",">
                         ((select max(id) as id from alarm_history where subsystem_id=#{alarmHistory.subsystemId} and line_id=#{alarmHistory.lineId} and site_id=#{alarmHistory.siteId}
-                        and device_id=#{alarmHistory.deviceId} and slot_id=#{alarmHistory.slotId} and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0),
+                        and device_id=#{alarmHistory.deviceId}
+                        <if test="alarmHistory.slotId!=null">
+                            and slot_id=#{alarmHistory.slotId}
+                        </if>
+                        and alarm_code=#{alarmHistory.alarmCode} and alarm_state=#{alarmHistory.alarmState} and is_deleted=0),
                         #{alarmMessage.title}, #{alarmMessage.content})
                     </foreach>
                 </if>
@@ -388,12 +418,20 @@
     <insert id="editAlarmMessage">
         delete from alarm_message
         WHERE alarm_id=(select max(id) as id from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
-        and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0) and is_deleted=0;
+        and device_id=#{deviceId}
+        <if test="slotId!=null">
+            and slot_id=#{slotId}
+        </if>
+        and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0) and is_deleted=0;
         INSERT INTO alarm_message (alarm_id, title, content)
         values
         <foreach collection="alarmMessageList" index="index" item="alarmMessage" separator=",">
             ((select max(id) as id from alarm_history where subsystem_id=#{subsystemId} and line_id=#{lineId} and site_id=#{siteId}
-            and device_id=#{deviceId} and slot_id=#{slotId} and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0),
+            and device_id=#{deviceId}
+            <if test="slotId!=null">
+                and slot_id=#{slotId}
+            </if>
+            and alarm_code=#{alarmCode} and alarm_state=#{alarmState} and is_deleted=0),
             #{alarmMessage.title}, #{alarmMessage.content})
         </foreach>
     </insert>
