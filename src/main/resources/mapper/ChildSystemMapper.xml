@@ -78,7 +78,8 @@
                is_online
         FROM subsystem
         WHERE is_deleted = 0 and pid = 0
-            limit #{current},#{pageSize}
+        order by sort asc
+        limit #{current},#{pageSize}
     </select>
 
 
@@ -94,6 +95,7 @@
             is_online
         from subsystem
         WHERE is_deleted = 0 and pid = #{id}
+        order by sort asc
     </select>
 
     <select id="getIdBySidAndPositionCode" resultType="java.lang.Integer">

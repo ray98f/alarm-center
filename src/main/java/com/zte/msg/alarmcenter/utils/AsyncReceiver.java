@@ -234,21 +234,19 @@ public class AsyncReceiver {
 
     private void editData(List<AlarmHistory> alarmHistories) {
         if (null == alarmHistories || alarmHistories.isEmpty()) {
-            log.error("告警记录接收为空");
+            log.error("告警信息数据异常，请查看异常告警获取详情");
             return;
         }
-        System.out.println("----------------- start -----------------");
-        System.out.println(JSONArray.toJSONString(alarmHistories));
-        System.out.println("------------------ end ------------------");
+        log.info(JSONArray.toJSONString(alarmHistories));
         alarmManageMapper.editAlarmHistory(alarmHistories);
     }
 
     private void syncData(List<AlarmHistory> alarmHistories) {
         if (null == alarmHistories || alarmHistories.isEmpty()) {
-            log.error("告警记录接收为空");
+            log.error("告警信息数据异常，请查看异常告警获取详情");
             return;
         }
-        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0);
+        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
         for (AlarmHistory alarmHistory : alarmHistories) {
             if (alarmHistory.getSlotCode() == null) {
                 alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->

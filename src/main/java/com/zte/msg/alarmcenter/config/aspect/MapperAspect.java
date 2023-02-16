@@ -15,16 +15,12 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class MapperAspect {
-    @AfterReturning("execution(* com.zte.msg.alarmcenter.mapper.AlarmManageMapper.editAlarmHistory(..))")
+    @AfterReturning("execution(* com.zte.msg.alarmcenter.mapper.AlarmLevelMapper.modifyAlarmLevel(..))")
     public void logServiceAccess(JoinPoint joinPoint) {
-        log.info("Completed: " + joinPoint);
+
     }
 
-
-    /**
-     * 监控cn.xbmchina.mybatissqltime.mapper..*Mapper包及其子包的所有public方法
-     */
-    @Pointcut("execution(* com.zte.msg.alarmcenter.mapper.AlarmManageMapper.editAlarmHistory(..))")
+    @Pointcut("execution(* com.zte.msg.alarmcenter.mapper.AlarmLevelMapper.modifyAlarmLevel(..))")
     private void pointCutMethod() {
     }
 
@@ -40,10 +36,8 @@ public class MapperAspect {
         long begin = System.nanoTime();
         Object obj = pjp.proceed();
         long end = System.nanoTime();
-
-        log.info("调用Mapper方法：{}，参数：{}，执行耗时：{}纳秒，耗时：{}毫秒",
-                pjp.getSignature().toString(), Arrays.toString(pjp.getArgs()),
-                (end - begin), (end - begin) / 1000000);
+//        log.info("调用Mapper方法：{}，参数：{}，执行耗时：{}纳秒，耗时：{}毫秒", pjp.getSignature().toString(),
+//                Arrays.toString(pjp.getArgs()), (end - begin), (end - begin) / 1000000);
         return obj;
     }
 }

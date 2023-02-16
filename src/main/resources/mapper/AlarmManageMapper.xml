@@ -195,7 +195,7 @@
                 </if>
                 and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
-                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
+                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel})
                 </if>
                 <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0 or (alarmHistory.alarmState==7 and alarmHistory.isRecovery)">
                     and alarm_state in (0,1,2,3)
@@ -267,7 +267,7 @@
                 </if>
                 and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
-                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
+                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel})
                 </if>
                 <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0 or (alarmHistory.alarmState==7 and alarmHistory.isRecovery)">
                     and alarm_state in (0,1,2,3)
@@ -385,7 +385,7 @@
                 </if>
                 and alarm_code=#{alarmHistory.alarmCode}
                 <if test="alarmHistory.alarmState!=1 and alarmHistory.alarmState!=3 and alarmHistory.alarmState!=2 and alarmHistory.alarmState!=0 and (alarmHistory.alarmState!=7 or !alarmHistory.isRecovery)">
-                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel} and to_days(first_time)=to_days(#{alarmHistory.firstTime})
+                    and alarm_state=#{alarmHistory.alarmState} and alarm_level=#{alarmHistory.alarmLevel})
                 </if>
                 <if test="alarmHistory.alarmState==1 or alarmHistory.alarmState==3 or alarmHistory.alarmState==2 or alarmHistory.alarmState==0 or (alarmHistory.alarmState==7 and alarmHistory.isRecovery)">
                     and alarm_state in (0,1,2,3)

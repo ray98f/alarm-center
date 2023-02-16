@@ -75,6 +75,9 @@
             and ah.is_recovery=0
         </if>
         and ah.alarm_state in (0,1,2,3)
+        <if test="subsystemId!=null">
+            and ah.subsystem_id=#{subsystemId}
+        </if>
         ORDER BY ah.alarm_level ASC,ah.final_time DESC,ah.id ASC
         <if test="size!=null">
             limit #{size}
