@@ -10,7 +10,6 @@ import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,27 +25,24 @@ public class AsyncSender {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    public boolean send(String message) throws Exception {
+    public boolean send(String message) {
         if (StringUtils.isEmpty(message)) {
             return false;
         }
-        rabbitTemplate.convertAndSend(RabbitMqConfig.STRING_QUEUE, message);
-        log.info(String.format("Sender发送字符串消息结果：%s", true));
+        rabbitTemplate.convertAndSend(RabbitMqConfig.TTS, message);
         return true;
     }
 
-    public boolean send(AsyncVO asyncVO) throws Exception {
+    public boolean send(AsyncVO asyncVO) {
         if (Objects.isNull(asyncVO)) {
             return false;
         }
         rabbitTemplate.convertAndSend(RabbitMqConfig.ASYNC_QUEUE, asyncVO);
-        log.info(String.format("Sender发送同步消息消息结果：%s", true));
         return true;
     }
 
-    public void refresh() throws Exception {
+    public void refresh() {
         rabbitTemplate.convertAndSend(RabbitMqConfig.REFRESH_QUEUE);
-        log.info(String.format("Sender发送刷新结果：%s", true));
     }
 
     public boolean test() throws Exception {
@@ -74,7 +70,6 @@ public class AsyncSender {
         alarmHistoryReqDTOList.add(alarmHistoryReqDTO);
         String json = JSON.toJSONString(alarmHistoryReqDTOList);
         rabbitTemplate.convertAndSend(RabbitMqConfig.SYNC_ALARM_QUEUE, json);
-        log.info(String.format("Sender发送告警记录结果：%s", true));
         return true;
     }
 }

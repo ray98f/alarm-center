@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 @Configuration
 public class RabbitMqConfig {
 
+    public static final String TTS = "TTS";
     public static final String ASYNC_QUEUE = "ASYNC_QUEUE";
     public static final String STRING_QUEUE = "STRING_QUEUE";
     public static final String ALARM_QUEUE = "ALARM_QUEUE";
@@ -68,6 +69,11 @@ public class RabbitMqConfig {
     @Bean
     public Queue snmpSyncAlarmQueue() {
         return QueueBuilder.durable(SNMP_SYNC_ALARM_QUEUE).build();
+    }
+
+    @Bean
+    public Queue tts() {
+        return QueueBuilder.durable(TTS).build();
     }
 
 }

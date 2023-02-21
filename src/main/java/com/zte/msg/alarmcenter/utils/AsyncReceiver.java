@@ -74,6 +74,9 @@ public class AsyncReceiver {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    AsyncSender asyncSender;
+
     @RabbitListener(queues = RabbitMqConfig.STRING_QUEUE)
     @RabbitHandler
     @Async
@@ -83,7 +86,6 @@ public class AsyncReceiver {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        log.info("HelloReceiver接收到的字符串消息是 => " + message);
     }
 
 
@@ -119,7 +121,6 @@ public class AsyncReceiver {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTO = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTO || alarmReqDTO.isEmpty()) {
-            log.warn("消息队列中信息为空");
             return;
         }
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTO);
@@ -133,7 +134,6 @@ public class AsyncReceiver {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<AlarmHistoryReqDTO> alarmReqDTOList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
         if (null == alarmReqDTOList || alarmReqDTOList.isEmpty()) {
-            log.warn("消息队列中信息为空");
             return;
         }
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
@@ -152,7 +152,6 @@ public class AsyncReceiver {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
         if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
-            log.warn("消息队列中信息为空");
             return;
         }
         List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
@@ -170,12 +169,11 @@ public class AsyncReceiver {
     @Async
     public void snmpSyncAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
-            log.warn("消息队列中信息为空");
+        List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
+        if (null == snmpAlarms || snmpAlarms.isEmpty()) {
             return;
         }
-        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
+        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         syncData(alarmHistories);
     }
@@ -226,7 +224,6 @@ public class AsyncReceiver {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<HeartbeatQueueReqDTO> heartbeatQueueReqDTOList = jsonArray.toJavaList(HeartbeatQueueReqDTO.class);
         if (null == heartbeatQueueReqDTOList || heartbeatQueueReqDTOList.isEmpty()) {
-            log.warn("消息队列中信息为空");
             return;
         }
         childSystemMapper.isOnline(heartbeatQueueReqDTOList);
@@ -239,6 +236,12 @@ public class AsyncReceiver {
         }
         log.info(JSONArray.toJSONString(alarmHistories));
         alarmManageMapper.editAlarmHistory(alarmHistories);
+        AlarmHistory alarm = alarmHistories.get(0);
+        if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
+            asyncSender.send(alarm.getSubsystemName() + "产生"
+                    + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
+                    + "，告警内容为：" + alarm.getAlarmName());
+        }
     }
 
     private void syncData(List<AlarmHistory> alarmHistories) {

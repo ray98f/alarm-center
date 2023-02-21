@@ -23,7 +23,7 @@ public class AlarmHistory extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "子系统id")
     private Long subsystemId;
 
-    @ApiModelProperty(value = "子系统码")
+    @ApiModelProperty(value = "子系统编码")
     private Integer subsystemCode;
 
     @ApiModelProperty(value = "子系统名称")
@@ -32,10 +32,10 @@ public class AlarmHistory extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "线路id")
     private Long lineId;
 
-    @ApiModelProperty(value = "线路码")
+    @ApiModelProperty(value = "线路编码")
     private Integer lineCode;
 
-    @ApiModelProperty(value = "子系统名称")
+    @ApiModelProperty(value = "线路名称")
     private String lineName;
 
     @ApiModelProperty(value = "站点id")
@@ -44,25 +44,25 @@ public class AlarmHistory extends BaseEntity implements Serializable {
     @ApiModelProperty(value = "站点码")
     private Integer siteCode;
 
-    @ApiModelProperty(value = "子系统名称")
+    @ApiModelProperty(value = "站点名称")
     private String siteName;
 
     @ApiModelProperty(value = "设备id")
     private Long deviceId;
 
-    @ApiModelProperty(value = "设备码")
+    @ApiModelProperty(value = "设备编码")
     private Integer deviceCode;
 
-    @ApiModelProperty(value = "子系统名称")
+    @ApiModelProperty(value = "设备名称")
     private String deviceName;
 
     @ApiModelProperty(value = "槽位id")
     private Long slotId;
 
-    @ApiModelProperty(value = "槽位码")
+    @ApiModelProperty(value = "槽位编码")
     private Integer slotCode;
 
-    @ApiModelProperty(value = "子系统名称")
+    @ApiModelProperty(value = "槽位名称")
     private String slotName;
 
     @ApiModelProperty(value = "告警等级")
