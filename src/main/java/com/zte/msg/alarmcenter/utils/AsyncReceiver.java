@@ -150,11 +150,11 @@ public class AsyncReceiver {
     @Async
     public void snmpAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        List<SnmpAlarmDTO> snmpAlarmDTOS = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (null == snmpAlarmDTOS || snmpAlarmDTOS.isEmpty()) {
+        List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
+        if (null == snmpAlarms || snmpAlarms.isEmpty()) {
             return;
         }
-        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarmDTOS);
+        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
         List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
         editData(alarmHistories);
     }
@@ -234,13 +234,16 @@ public class AsyncReceiver {
             log.error("告警信息数据异常，请查看异常告警获取详情");
             return;
         }
-        log.info(JSONArray.toJSONString(alarmHistories));
-        alarmManageMapper.editAlarmHistory(alarmHistories);
-        AlarmHistory alarm = alarmHistories.get(0);
-        if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
-            asyncSender.send(alarm.getSubsystemName() + "产生"
-                    + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
-                    + "，告警内容为：" + alarm.getAlarmName());
+        try {
+            alarmManageMapper.editAlarmHistory(alarmHistories);
+            AlarmHistory alarm = alarmHistories.get(0);
+            if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
+                asyncSender.send(alarm.getSubsystemName() + "产生"
+                        + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
+                        + "，告警内容为：" + alarm.getAlarmName());
+            }
+        } catch (Exception e) {
+            log.info(JSONArray.toJSONString(alarmHistories));
         }
     }
 
