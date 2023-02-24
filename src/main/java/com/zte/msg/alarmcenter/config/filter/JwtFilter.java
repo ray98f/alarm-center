@@ -89,12 +89,8 @@ public class JwtFilter implements Filter {
     }
 
     @Override
-    public void init(FilterConfig filterConfig) {
-        log.info("jwtFilter init ...");
-    }
+    public void init(FilterConfig filterConfig) {}
 
     @Override
-    public void destroy() {
-        log.info("jwtFilter destroy ...");
-    }
+    public void destroy() {}
 }

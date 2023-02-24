@@ -45,7 +45,6 @@ public class DefaultControllerAdvice {
         Locale locale = LocaleContextHolder.getLocale();
         String message = messageSource.getMessage(e.getMessage(),
                 null, locale);
-        log.error(message);
         if (!Objects.isNull(e.getParams())) {
             message = messageSource.getMessage(ErrorCode.messageOf(e.getCode()),
                     new Object[]{e.getParams()}, locale);
@@ -82,7 +81,6 @@ public class DefaultControllerAdvice {
                     message = messageSource.getMessage(ErrorCode.messageOf(code),
                             new Object[]{field}, locale);
                 }
-                log.error(message);
                 return new BaseResponse().code(code).message(message);
             }
         }

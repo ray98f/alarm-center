@@ -21,7 +21,6 @@ import java.util.*;
  * @version 1.0
  * @date 2020/12/23 15:42
  */
-@SuppressFBWarnings("PREDICTABLE_RANDOM")
 public class TokenUtil {
 
     private static final String SIMPLE_TOKEN_SECRET = "ZTE96952f774ce244fcb42af56062e519b3lFOGZ3YaWuCZS";
@@ -141,7 +140,6 @@ public class TokenUtil {
                     .setSigningKey(generalKey(SIMPLE_TOKEN_SECRET))
                     .parseClaimsJws(token);
         } catch (JwtException ex) {
-            System.err.println("Token parsing failed!");
             return null;
         }
         Claims res = jws.getBody();
@@ -208,17 +206,5 @@ public class TokenUtil {
             result = TokenStatus.INVALID;
         }
         return result;
-    }
-
-    public static void main(String[] args) throws Exception {
-        UserReqDTO user = new UserReqDTO();
-        user.setId(1L);
-        user.setUserName("frp");
-        user.setUserRealName("冯锐鹏");
-        List<Long> roleIds = new ArrayList<>();
-        roleIds.add(1L);
-        roleIds.add(2L);
-        user.setRoleIds(roleIds);
-        System.out.println(createSimpleToken(user, 999999999));
     }
 }

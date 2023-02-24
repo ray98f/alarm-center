@@ -68,12 +68,10 @@ public class LoginController {
     public DataResponse<Map<String, Object>> login(@RequestBody @Valid LoginReqDTO loginReqDTO) throws Exception {
         UserReqDTO userInfo = userService.selectUserInfo(loginReqDTO);
         String token = createSimpleToken(userInfo);
-        log.info("{} Token返回成功", userInfo.getUserName());
         Map<String, Object> data = new HashMap<>(16);
         data.put("token", token);
         data.put("userName", userInfo.getUserName());
         data.put("userRealName", userInfo.getUserRealName());
-        log.info("登陆成功");
         return DataResponse.of(data);
     }
 
@@ -87,8 +85,6 @@ public class LoginController {
     @ApiOperation(value = "管理平台登出")
     @LogMaker(value = "管理平台登出")
     public <T> DataResponse<T> exit() {
-        String userName = TokenUtil.getCurrentUserName();
-        log.info("{} 登出成功", userName);
         return DataResponse.success();
     }
 
@@ -124,11 +120,9 @@ public class LoginController {
         changeShiftsService.addChangeShifts(changeShifts);
         Map<String, Object> data = new HashMap<>(16);
         String token = createSimpleToken(userInfo);
-        log.info("{} Token返回成功", userInfo.getUserName());
         data.put("token", token);
         data.put("userName", userInfo.getUserName());
         data.put("userRealName", userInfo.getUserRealName());
-        log.info("交接班成功");
         return DataResponse.of(data);
     }
 

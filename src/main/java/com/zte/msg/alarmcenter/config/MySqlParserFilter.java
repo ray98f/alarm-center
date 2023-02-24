@@ -80,7 +80,6 @@ public class MySqlParserFilter implements ISqlParserFilter {
                 }
             } catch (JSQLParserException e) {
                 e.printStackTrace();
-                log.error("error when parse sql ! ");
             }
             List<String> joins = new ArrayList<>(tables.size());
             for (String table : tables) {

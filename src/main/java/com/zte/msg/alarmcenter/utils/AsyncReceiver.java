@@ -95,19 +95,19 @@ public class AsyncReceiver {
     public void process(AsyncVO asyncVO) {
         if (null != asyncVO.getAlarmCodeSyncReqDTOList()) {
             int result = synchronizeMapper.alarmCodesSync(asyncVO.getAlarmCodeSyncReqDTOList());
-            log.info(JSONUtils.beanToJsonString(asyncVO.getAlarmCodeSyncReqDTOList()) + " : result = {}", result);
+//            log.info(JSONUtils.beanToJsonString(asyncVO.getAlarmCodeSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         } else if (null != asyncVO.getDeviceSyncReqDTOList()) {
             int result = synchronizeMapper.devicesSync(asyncVO.getDeviceSyncReqDTOList());
-            log.info(JSONUtils.beanToJsonString(asyncVO.getDeviceSyncReqDTOList()) + " : result = {}", result);
+//            log.info(JSONUtils.beanToJsonString(asyncVO.getDeviceSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         } else {
             int result = synchronizeMapper.slotsSync(asyncVO.getSlotSyncReqDTOList());
-            log.info(JSONUtils.beanToJsonString(asyncVO.getSlotSyncReqDTOList()) + " : result = {}", result);
+//            log.info(JSONUtils.beanToJsonString(asyncVO.getSlotSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
