@@ -166,7 +166,7 @@ public class SnmpServiceImpl implements SnmpService {
     public Page<SnmpSlotResDTO> getSnmpSlot(String snmpSlotName, Long systemId, Long siteId, Long page, Long size) {
         List<SnmpSlotResDTO> snmpSlotResDTOList = null;
         if (snmpSlotName != null && snmpSlotName.contains(Constants.PERCENT_SIGN)) {
-            snmpSlotName = "尼玛死了";
+            snmpSlotName = "Prohibit input";
         }
         int count = mySlotMapper.getSnmpSlotCount(snmpSlotName, systemId, siteId);
         Page<SnmpSlotResDTO> pageBean = new Page<>();

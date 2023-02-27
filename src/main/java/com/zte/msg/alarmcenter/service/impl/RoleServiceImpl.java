@@ -46,7 +46,7 @@ public class RoleServiceImpl implements RoleService {
     public Page<Role> listRole(Integer status, String roleName, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         if (roleName != null && roleName.contains(Constants.PERCENT_SIGN)) {
-            roleName = "尼玛死了";
+            roleName = "Prohibit input";
         }
         return roleMapper.listRole(pageReqDTO.of(), status, roleName);
     }

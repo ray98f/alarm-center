@@ -238,7 +238,7 @@ public class AsyncReceiver {
             alarmManageMapper.editAlarmHistory(alarmHistories);
             AlarmHistory alarm = alarmHistories.get(0);
             if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
-                asyncSender.send(alarm.getSubsystemName() + "产生"
+                asyncSender.sendTts(alarm.getSubsystemName() + "产生"
                         + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
                         + "，告警内容为：" + alarm.getAlarmName());
             }

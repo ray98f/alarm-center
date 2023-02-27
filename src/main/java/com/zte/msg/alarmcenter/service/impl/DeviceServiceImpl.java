@@ -155,7 +155,7 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     public Page<DeviceResDTO> getDevices(String name, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         if (name.contains(Constants.PERCENT_SIGN)) {
-            name = "尼玛死了";
+            name = "Prohibit input";
         }
         PageHelper.startPage(page.intValue(), size.intValue());
         List<DeviceResDTO> deviceReqDTOList = null;

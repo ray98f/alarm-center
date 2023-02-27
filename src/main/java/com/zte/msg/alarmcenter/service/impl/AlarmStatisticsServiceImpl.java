@@ -50,7 +50,7 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     @Override
     public Page<TotalAlarmDataResDTO> totalAlarmData(Long systemId, Long siteId, String alarmReason, String startTime, String endTime, PageReqDTO pageReqDTO) {
         if (alarmReason.contains(Constants.PERCENT_SIGN)) {
-            alarmReason = "尼玛死了";
+            alarmReason = "Prohibit input";
         }
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         return alarmStatisticsMapper.totalAlarmData(pageReqDTO.of(), systemId, siteId, alarmReason, startTime, endTime);

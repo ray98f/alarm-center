@@ -144,10 +144,10 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
     public Page<DeviceSlotResDTO> getDevicesSlot(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, Long page, Long size) {
         List<DeviceSlotResDTO> deviceReqDTOList = null;
         if (slotName != null && slotName.contains(Constants.PERCENT_SIGN)) {
-            slotName = "尼玛死了";
+            slotName = "Prohibit input";
         }
         if (deviceName != null && deviceName.contains(Constants.PERCENT_SIGN)) {
-            deviceName = "尼玛死了";
+            deviceName = "Prohibit input";
         }
         int count = myDeviceSlotMapper.getDevicesSlotCount(slotName, deviceName, deviceCode, systemId, positionId);
         Page<DeviceSlotResDTO> pageBean = new Page<>();

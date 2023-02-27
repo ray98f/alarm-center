@@ -25,20 +25,18 @@ public class AsyncSender {
     @Autowired
     private AmqpTemplate rabbitTemplate;
 
-    public boolean send(String message) {
+    public void sendTts(String message) {
         if (StringUtils.isEmpty(message)) {
-            return false;
+            return;
         }
         rabbitTemplate.convertAndSend(RabbitMqConfig.TTS, message);
-        return true;
     }
 
-    public boolean send(AsyncVO asyncVO) {
+    public void send(AsyncVO asyncVO) {
         if (Objects.isNull(asyncVO)) {
-            return false;
+            return;
         }
         rabbitTemplate.convertAndSend(RabbitMqConfig.ASYNC_QUEUE, asyncVO);
-        return true;
     }
 
     public void refresh() {

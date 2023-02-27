@@ -160,7 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public Page<User> listUser(Integer status, String userRealName, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         if (userRealName != null && userRealName.contains(Constants.PERCENT_SIGN)) {
-            userRealName = "尼玛死了";
+            userRealName = "Prohibit input";
         }
         Page<User> userPage = userMapper.listUser(pageReqDTO.of(), status, userRealName);
         userPage.getRecords().sort(Comparator.comparing(User::getUpdatedAt).reversed());

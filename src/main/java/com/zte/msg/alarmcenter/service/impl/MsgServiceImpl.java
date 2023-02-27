@@ -17,13 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * description:
- *
- * @author frp
- * @version 1.0
- * @date 2021/4/7 8:56
- */
 @Service
 @Slf4j
 public class MsgServiceImpl implements MsgService {
@@ -43,7 +36,7 @@ public class MsgServiceImpl implements MsgService {
     public Page<MsgConfig> pageMsgConfig(String name, Integer type, PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         if (name.contains(Constants.PERCENT_SIGN)) {
-            name = "尼玛死了";
+            name = "Prohibit input";
         }
         return msgMapper.pageMsgConfig(pageReqDTO.of(), name, type);
     }

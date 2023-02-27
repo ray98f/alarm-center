@@ -124,7 +124,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
     public Page<AlarmCodeResDTO> getAlarmCode(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, Long page, Long size) {
         List<AlarmCodeResDTO> deviceReqDTOList = null;
         if (alarmName.contains(Constants.PERCENT_SIGN)) {
-            alarmName = "尼玛死了";
+            alarmName = "Prohibit input";
         }
         int count = alarmCodeMapper.getAlarmCodeCount(alarmCode, alarmName, systemId, alarmLevelId);
         Page<AlarmCodeResDTO> pageBean = new Page<>();

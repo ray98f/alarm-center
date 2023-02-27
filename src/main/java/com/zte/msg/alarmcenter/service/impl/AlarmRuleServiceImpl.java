@@ -96,7 +96,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public Page<AlarmRuleResDTO> getAlarmRule(String name, Integer isEnable, Integer type, Long page, Long size) {
         List<AlarmRuleResDTO> childSystemList = null;
         if (name.contains(Constants.PERCENT_SIGN)) {
-            name = "尼玛死了";
+            name = "Prohibit input";
         }
         int count = alarmRuleMapper.getAlarmRuleCount(name, isEnable, type);
         Page<AlarmRuleResDTO> pageBean = new Page<>();

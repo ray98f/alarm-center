@@ -50,7 +50,7 @@ public class OperationLogServiceImpl implements OperationLogService {
                                                PageReqDTO pageReqDTO) {
         PageHelper.startPage(pageReqDTO.getPage().intValue(), pageReqDTO.getSize().intValue());
         if (userName.contains(Constants.PERCENT_SIGN)) {
-            userName = "尼玛死了";
+            userName = "Prohibit input";
         }
         return operationLogMapper.listOperationLog(pageReqDTO.of(), userName, operationType, startTime, endTime);
     }

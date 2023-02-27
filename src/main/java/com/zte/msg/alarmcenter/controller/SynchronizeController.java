@@ -10,6 +10,7 @@ import com.zte.msg.alarmcenter.utils.AsyncSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,17 +22,10 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * description:
- *
- * @author frp
- * @version 1.0
- * @date 2021/2/24 9:01
- */
 @Slf4j
 @RestController
 @RequestMapping
-@Api(tags = "数据同步")
+@Api(tags = "点表数据同步接口")
 @Validated
 public class SynchronizeController {
 
@@ -45,13 +39,11 @@ public class SynchronizeController {
      * 全量告警码同步
      *
      * @param alarmCodeSyncReqDTOList
-     * @param <T>
      * @return
      */
     @PostMapping("/alarmCodesSync")
     @ApiOperation(value = "全量告警码同步")
-    public <T> DataResponse<T> alarmCodesSync(@RequestBody @Valid List<AlarmCodeSyncReqDTO> alarmCodeSyncReqDTOList) throws Exception {
-//        synchronizeService.alarmCodesSync(alarmCodeSyncReqDTOList);
+    public DataResponse<T> alarmCodesSync(@RequestBody @Valid List<AlarmCodeSyncReqDTO> alarmCodeSyncReqDTOList) throws Exception {
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setAlarmCodeSyncReqDTOList(alarmCodeSyncReqDTOList);
         asyncSender.send(asyncVO);
@@ -62,12 +54,11 @@ public class SynchronizeController {
      * 告警码变更
      *
      * @param alarmCodeSyncReqDTO
-     * @param <T>
      * @return
      */
     @PostMapping("/alarmCodeSync")
     @ApiOperation(value = "告警码变更")
-    public <T> DataResponse<T> alarmCodeSync(@RequestBody @Valid AlarmCodeSyncReqDTO alarmCodeSyncReqDTO) {
+    public DataResponse<T> alarmCodeSync(@RequestBody @Valid AlarmCodeSyncReqDTO alarmCodeSyncReqDTO) {
         synchronizeService.alarmCodeSync(alarmCodeSyncReqDTO);
         return DataResponse.success();
     }
@@ -76,13 +67,11 @@ public class SynchronizeController {
      * 全量设备同步
      *
      * @param deviceSyncReqDTOList
-     * @param <T>
      * @return
      */
     @PostMapping("/devicesSync")
     @ApiOperation(value = "全量设备同步")
-    public <T> DataResponse<T> devicesSync(@RequestBody @Valid List<DeviceSyncReqDTO> deviceSyncReqDTOList) throws Exception {
-//        synchronizeService.devicesSync(deviceSyncReqDTOList);
+    public DataResponse<T> devicesSync(@RequestBody @Valid List<DeviceSyncReqDTO> deviceSyncReqDTOList) throws Exception {
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setDeviceSyncReqDTOList(deviceSyncReqDTOList);
         asyncSender.send(asyncVO);
@@ -93,12 +82,11 @@ public class SynchronizeController {
      * 设备变更
      *
      * @param deviceSyncReqDTO
-     * @param <T>
      * @return
      */
     @PostMapping("/deviceSync")
     @ApiOperation(value = "设备变更")
-    public <T> DataResponse<T> deviceSync(@RequestBody @Valid DeviceSyncReqDTO deviceSyncReqDTO) {
+    public DataResponse<T> deviceSync(@RequestBody @Valid DeviceSyncReqDTO deviceSyncReqDTO) {
         synchronizeService.deviceSync(deviceSyncReqDTO);
         return DataResponse.success();
     }
@@ -107,13 +95,11 @@ public class SynchronizeController {
      * 全量设备槽位同步
      *
      * @param slotSyncReqDTOList
-     * @param <T>
      * @return
      */
     @PostMapping("/slotsSync")
     @ApiOperation(value = "全量设备槽位同步")
-    public <T> DataResponse<T> slotsSync(@RequestBody @Valid List<SlotSyncReqDTO> slotSyncReqDTOList) throws Exception {
-//        synchronizeService.slotsSync(slotSyncReqDTOList);
+    public DataResponse<T> slotsSync(@RequestBody @Valid List<SlotSyncReqDTO> slotSyncReqDTOList) throws Exception {
         AsyncVO asyncVO = new AsyncVO();
         asyncVO.setSlotSyncReqDTOList(slotSyncReqDTOList);
         asyncSender.send(asyncVO);
@@ -124,12 +110,11 @@ public class SynchronizeController {
      * 设备槽位变更
      *
      * @param slotSyncReqDTO
-     * @param <T>
      * @return
      */
     @PostMapping("/slotSync")
     @ApiOperation(value = "设备槽位变更")
-    public <T> DataResponse<T> slotSync(@RequestBody @Valid SlotSyncReqDTO slotSyncReqDTO) {
+    public DataResponse<T> slotSync(@RequestBody @Valid SlotSyncReqDTO slotSyncReqDTO) {
         synchronizeService.slotSync(slotSyncReqDTO);
         return DataResponse.success();
     }
