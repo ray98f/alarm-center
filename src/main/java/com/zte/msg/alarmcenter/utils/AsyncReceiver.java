@@ -181,32 +181,32 @@ public class AsyncReceiver {
     /**
      * SNMP告警转换为通用告警数据
      *
-     * @param snmpAlarmDTOS
+     * @param snmpAlarms
      * @return
      */
-    private List<AlarmHistoryReqDTO> transferSnmpToAlarmHistory(List<SnmpAlarmDTO> snmpAlarmDTOS) {
+    private List<AlarmHistoryReqDTO> transferSnmpToAlarmHistory(List<SnmpAlarmDTO> snmpAlarms) {
         List<AlarmHistoryReqDTO> alarmHistoryReqDTOS = new ArrayList<>();
-        for (SnmpAlarmDTO snmpAlarmDTO : snmpAlarmDTOS) {
-            Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarmDTO.getSystemCode(), snmpAlarmDTO.getLineCode());
+        for (SnmpAlarmDTO snmpAlarm : snmpAlarms) {
+            Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarm.getSystemCode(), snmpAlarm.getLineCode());
             if (systemId == null || systemId <= 0) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
-            AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarmDTO.getAlarmManagedObjectInstanceName());
+            AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarm.getAlarmManagedObjectInstanceName());
             if (alarmHistoryReqDTO == null) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
 
-            Integer alarmCode = snmpAlarmMapper.getAlarmCodeBySnmpInfo(systemId, snmpAlarmDTO.getEmsAlarmCode(), snmpAlarmDTO.getAlarmNetype(), snmpAlarmDTO.getAlarmSpecificProblem());
+            Integer alarmCode = snmpAlarmMapper.getAlarmCodeBySnmpInfo(systemId, snmpAlarm.getEmsAlarmCode(), snmpAlarm.getAlarmNetype(), snmpAlarm.getAlarmSpecificProblem());
             if (alarmCode == null) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarmDTO));
+                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
             alarmHistoryReqDTO.setAlarmCode(alarmCode);
-            alarmHistoryReqDTO.setRecovery(snmpAlarmDTO.isCleared());
-            alarmHistoryReqDTO.setAlarmTime(snmpAlarmDTO.getAlarmTime());
-            alarmHistoryReqDTO.setAlarmMessageList(snmpAlarmDTO.getMessages());
+            alarmHistoryReqDTO.setRecovery(snmpAlarm.isCleared());
+            alarmHistoryReqDTO.setAlarmTime(snmpAlarm.getAlarmTime());
+            alarmHistoryReqDTO.setAlarmMessageList(snmpAlarm.getMessages());
             alarmHistoryReqDTOS.add(alarmHistoryReqDTO);
         }
         return alarmHistoryReqDTOS;
