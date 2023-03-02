@@ -116,12 +116,11 @@ public class AsyncReceiver {
     @Async
     public void alarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        List<AlarmHistoryReqDTO> alarmReqDTO = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
-        if (null == alarmReqDTO || alarmReqDTO.isEmpty()) {
-            return;
+        List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
+        if (alarmReqList != null && !alarmReqList.isEmpty()) {
+            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
+            editData(alarmHistories);
         }
-        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTO);
-        editData(alarmHistories);
     }
 
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
@@ -129,12 +128,11 @@ public class AsyncReceiver {
     @Async
     public void syncAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        List<AlarmHistoryReqDTO> alarmReqDTOList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
-        if (null == alarmReqDTOList || alarmReqDTOList.isEmpty()) {
-            return;
+        List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
+        if (alarmReqList != null && !alarmReqList.isEmpty()) {
+            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
+            syncData(alarmHistories);
         }
-        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-        syncData(alarmHistories);
     }
 
     /**
@@ -148,12 +146,11 @@ public class AsyncReceiver {
     public void snmpAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (null == snmpAlarms || snmpAlarms.isEmpty()) {
-            return;
+        if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
+            List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
+            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+            editData(alarmHistories);
         }
-        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
-        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-        editData(alarmHistories);
     }
 
     /**
@@ -167,12 +164,11 @@ public class AsyncReceiver {
     public void snmpSyncAlarmProcess(String json) throws ParseException {
         JSONArray jsonArray = JSONArray.parseArray(json);
         List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (null == snmpAlarms || snmpAlarms.isEmpty()) {
-            return;
+        if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
+            List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
+            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+            syncData(alarmHistories);
         }
-        List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
-        List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-        syncData(alarmHistories);
     }
 
     /**
@@ -219,59 +215,54 @@ public class AsyncReceiver {
     @Async
     public void syncHeartbeatQueue(String json) {
         JSONArray jsonArray = JSONArray.parseArray(json);
-        List<HeartbeatQueueReqDTO> heartbeatQueueReqDTOList = jsonArray.toJavaList(HeartbeatQueueReqDTO.class);
-        if (null == heartbeatQueueReqDTOList || heartbeatQueueReqDTOList.isEmpty()) {
-            return;
+        List<HeartbeatQueueReqDTO> heartbeatQueueReqList = jsonArray.toJavaList(HeartbeatQueueReqDTO.class);
+        if (heartbeatQueueReqList != null && !heartbeatQueueReqList.isEmpty()) {
+            childSystemMapper.isOnline(heartbeatQueueReqList);
         }
-        childSystemMapper.isOnline(heartbeatQueueReqDTOList);
     }
 
     private void editData(List<AlarmHistory> alarmHistories) {
-        if (null == alarmHistories || alarmHistories.isEmpty()) {
-            log.error("告警信息数据异常，请查看异常告警获取详情");
-            return;
-        }
-        try {
-            alarmManageMapper.editAlarmHistory(alarmHistories);
-            AlarmHistory alarm = alarmHistories.get(0);
-            if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
-                asyncSender.sendTts(alarm.getSubsystemName() + "产生"
-                        + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
-                        + "，告警内容为：" + alarm.getAlarmName());
+        if (alarmHistories != null && !alarmHistories.isEmpty()) {
+            try {
+                alarmManageMapper.editAlarmHistory(alarmHistories);
+                AlarmHistory alarm = alarmHistories.get(0);
+                if ((alarm.getIsRing() == null || alarm.getIsRing() != 0) && !alarm.getIsRecovery()) {
+                    asyncSender.sendTts(alarm.getSubsystemName() + "产生"
+                            + (alarm.getAlarmLevel() == 1 ? "紧急告警" : alarm.getAlarmLevel() == 2 ? "重要告警" : "一般告警")
+                            + "，告警内容为：" + alarm.getAlarmName());
+                }
+            } catch (Exception e) {
+                log.info("告警失败：" + JSONArray.toJSONString(alarmHistories));
             }
-        } catch (Exception e) {
-            log.info(JSONArray.toJSONString(alarmHistories));
         }
     }
 
     private void syncData(List<AlarmHistory> alarmHistories) {
-        if (null == alarmHistories || alarmHistories.isEmpty()) {
-            log.error("告警信息数据异常，请查看异常告警获取详情");
-            return;
-        }
-        List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
-        for (AlarmHistory alarmHistory : alarmHistories) {
-            if (alarmHistory.getSlotCode() == null) {
-                alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
-                        alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
-                                alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
-                                alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
-                                alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                                alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
-            } else {
-                alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
-                        alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
-                                alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
-                                alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
-                                alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                                alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
-                                alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+        if (alarmHistories != null && !alarmHistories.isEmpty()) {
+            List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
+            for (AlarmHistory alarmHistory : alarmHistories) {
+                if (alarmHistory.getSlotCode() == null) {
+                    alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                            alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                } else {
+                    alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                            alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                    alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
+                                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                }
             }
+            if (alarmHistoryResDTOList.size() > 0) {
+                alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
+            }
+            alarmManageMapper.syncAlarmHistory(alarmHistories);
         }
-        if (alarmHistoryResDTOList.size() > 0) {
-            alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
-        }
-        alarmManageMapper.syncAlarmHistory(alarmHistories);
     }
 
     private List<AlarmHistory> conversionAndFilter(List<AlarmHistoryReqDTO> alarmReqDTOList) throws ParseException {
