@@ -74,13 +74,11 @@ public class HomeServiceImpl implements HomeService {
     public List<HomeStationSituationResDTO> stationSituation() {
         List<HomeStationSituationResDTO> list = homeMapper.selectAllLine();
         if (null == list || list.isEmpty()) {
-            log.warn("无路线信息");
             return null;
         }
         for (HomeStationSituationResDTO res : list) {
             List<HomeStationSituationResDTO.Station> stationList = homeMapper.stationSituation(res.getLineId());
             if (null == stationList || stationList.isEmpty()) {
-                log.warn("{}路线下无站点信息", res.getLineId());
                 continue;
             }
             res.setStationList(stationList);

@@ -70,13 +70,11 @@ public class MenuServiceImpl implements MenuService {
         menuIds = menuIds.stream().distinct().collect(Collectors.toList());
         list = menuMapper.listCatalog(null, menuIds);
         if (list.isEmpty()) {
-            log.warn("根目录无下级");
             list = null;
         } else {
             for (MenuResDTO menuResDTO : list) {
                 menuInfoList = menuMapper.listMenu(menuResDTO.getId(), null, menuIds);
                 if (menuInfoList.isEmpty()) {
-                    log.warn(menuResDTO.getId() + "目录无下级");
                     menuInfoList = null;
                 } else {
                     for (MenuResDTO.MenuInfo menuInfo : menuInfoList) {
@@ -106,14 +104,10 @@ public class MenuServiceImpl implements MenuService {
         List<MenuResDTO.MenuInfo> menuInfoList;
         List<MenuResDTO.MenuInfo.ButtonInfo> buttonInfoList;
         list = menuMapper.listCatalog(menuReqDTO, null);
-        if (list.isEmpty()) {
-            log.warn("根目录无下级");
-        } else {
+        if (!list.isEmpty()) {
             for (MenuResDTO menuResDTO : list) {
                 menuInfoList = menuMapper.listMenu(menuResDTO.getId(), menuReqDTO, null);
-                if (menuInfoList.isEmpty()) {
-                    log.warn(menuResDTO.getMenuId() + "目录无下级");
-                } else {
+                if (!menuInfoList.isEmpty()) {
                     for (MenuResDTO.MenuInfo menuInfo : menuInfoList) {
                         buttonInfoList = menuMapper.listButton(menuInfo.getId(), menuReqDTO, null);
                         menuInfo.setChildren(buttonInfoList);

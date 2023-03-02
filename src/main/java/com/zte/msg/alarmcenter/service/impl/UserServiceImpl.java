@@ -56,7 +56,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (!loginReqDTO.getPassword().equals(AesUtils.decrypt(userInfo.getPassword()))) {
             throw new CommonException(ErrorCode.LOGIN_PASSWORD_ERROR);
         }
-        log.info("用户搜索成功");
         userInfo.setRoleIds(userMapper.selectUserRoles(userInfo.getId()));
         return userInfo;
     }
@@ -78,7 +77,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (result <= 0) {
                 throw new CommonException(ErrorCode.INSERT_ERROR);
             }
-            log.info("用户新增成功");
         } else {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
@@ -92,9 +90,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         passwordReqDTO.setOldPwd(AesUtils.encrypt(passwordReqDTO.getOldPwd()));
         passwordReqDTO.setNewPwd(AesUtils.encrypt(passwordReqDTO.getNewPwd()));
         int result = userMapper.changePwd(passwordReqDTO, TokenUtil.getCurrentUserName());
-        if (result > 0) {
-            log.info("用户密码修改成功");
-        } else {
+        if (result < 0) {
             throw new CommonException(ErrorCode.USER_PWD_CHANGE_FAIL);
         }
     }
@@ -102,9 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public void resetPwd(Integer id) {
         int result = userMapper.resetPwd(AesUtils.encrypt(DECRYPTED_DATA), TokenUtil.getCurrentUserName(), id);
-        if (result > 0) {
-            log.info("用户密码重置成功");
-        } else {
+        if (result < 0) {
             throw new CommonException(ErrorCode.USER_PWD_CHANGE_FAIL);
         }
     }
@@ -125,7 +119,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if (result <= 0) {
                 throw new CommonException(ErrorCode.UPDATE_ERROR);
             }
-            log.info("修改用户信息成功");
         } else {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
@@ -140,9 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new CommonException(ErrorCode.USER_LOGIN_CANT_DELETE);
         }
         int result = userMapper.deleteUser(ids);
-        if (result > 0) {
-            log.info("用户删除成功");
-        } else {
+        if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }

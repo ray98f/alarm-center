@@ -25,7 +25,6 @@ public class ObjectUtils {
             Method method = o.getClass().getMethod(getter);
             return method.invoke(o);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

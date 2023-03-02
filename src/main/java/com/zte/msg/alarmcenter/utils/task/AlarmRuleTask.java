@@ -45,9 +45,7 @@ public class AlarmRuleTask {
     @Async
     @SchedulerLock(name = "delayRuleTask", lockAtMostFor = "PT10S", lockAtLeastFor = "PT1S")
     public void alarmDelayRuleTask() {
-//        log.info("-----------  告警延迟规则修改开始  -----------");
         alarmManageMapper.updateDelayAlarmHistory();
-//        log.info("-----------  告警延迟规则修改结束  -----------");
     }
 
     /**
@@ -57,9 +55,7 @@ public class AlarmRuleTask {
     @Async
     @SchedulerLock(name = "experienceRuleTask", lockAtMostFor = "PT10S", lockAtLeastFor = "PT1S")
     public void alarmUpdateExperienceRuleTask() {
-//        log.info("-----------  告警经历时间升级规则  -----------");
         alarmManageMapper.updateExperienceAlarmHistory();
-//        log.info("-----------  告警经历时间升级规则  -----------");
     }
 
     /**

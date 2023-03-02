@@ -64,7 +64,6 @@ public class OperationLogServiceImpl implements OperationLogService {
     public List<String> getOperationType() {
         List<String> list = operationLogMapper.getOperationType();
         if (null == list || list.isEmpty()) {
-            log.warn("操作类型为空");
             return null;
         }
         return list;

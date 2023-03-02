@@ -96,7 +96,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<StatisticsByAnyResDTO> statisticsByLine(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
         List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsByLine(statisticsByAnyReqDTO);
         if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
@@ -136,7 +135,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<StatisticsByAnyResDTO> statisticsBySystem(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
         List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsBySystem(statisticsByAnyReqDTO);
         if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
@@ -176,7 +174,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<StatisticsByAnyResDTO> statisticsByAlarmLevel(StatisticsByAnyReqDTO statisticsByAnyReqDTO) {
         List<StatisticsByAnyResDTO> statisticsByAnyResDTOList = alarmStatisticsMapper.statisticsByAlarmLevel(statisticsByAnyReqDTO);
         if (null == statisticsByAnyResDTOList || statisticsByAnyResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<StatisticsByAnyResDTO> list = new ArrayList<>();
@@ -207,7 +204,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<AnyAlarmTrendResDTO> lineAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
         List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.lineAlarmTrend(anyAlarmTrendReqDTO);
         if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<AnyAlarmTrendResDTO> list = new ArrayList<>();
@@ -251,7 +247,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<AnyAlarmTrendResDTO> levelAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
         List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.levelAlarmTrend(anyAlarmTrendReqDTO);
         if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<AnyAlarmTrendResDTO> list = new ArrayList<>();
@@ -288,7 +283,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<AnyAlarmTrendResDTO> systemAlarmTrend(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
         List<AnyAlarmTrendResDTO> anyAlarmTrendResDTOList = alarmStatisticsMapper.systemAlarmTrend(anyAlarmTrendReqDTO);
         if (null == anyAlarmTrendResDTOList || anyAlarmTrendResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<AnyAlarmTrendResDTO> list = new ArrayList<>();
@@ -332,7 +326,6 @@ public class AlarmStatisticsServiceImpl implements AlarmStatisticsService {
     public List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiency(AnyAlarmTrendReqDTO anyAlarmTrendReqDTO) {
         List<AlarmResolutionEfficiencyResDTO> alarmResolutionEfficiencyResDTOList = alarmStatisticsMapper.alarmResolutionEfficiency(anyAlarmTrendReqDTO);
         if (null == alarmResolutionEfficiencyResDTOList || alarmResolutionEfficiencyResDTOList.isEmpty()) {
-            log.warn("告警记录为空");
             return null;
         }
         List<AlarmResolutionEfficiencyResDTO> list = new ArrayList<>();

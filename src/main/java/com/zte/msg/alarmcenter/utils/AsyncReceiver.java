@@ -95,19 +95,16 @@ public class AsyncReceiver {
     public void process(AsyncVO asyncVO) {
         if (null != asyncVO.getAlarmCodeSyncReqDTOList()) {
             int result = synchronizeMapper.alarmCodesSync(asyncVO.getAlarmCodeSyncReqDTOList());
-//            log.info(JSONUtils.beanToJsonString(asyncVO.getAlarmCodeSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         } else if (null != asyncVO.getDeviceSyncReqDTOList()) {
             int result = synchronizeMapper.devicesSync(asyncVO.getDeviceSyncReqDTOList());
-//            log.info(JSONUtils.beanToJsonString(asyncVO.getDeviceSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
         } else {
             int result = synchronizeMapper.slotsSync(asyncVO.getSlotSyncReqDTOList());
-//            log.info(JSONUtils.beanToJsonString(asyncVO.getSlotSyncReqDTOList()) + " : result = {}", result);
             if (result < 0) {
                 throw new CommonException(ErrorCode.SYNC_ERROR);
             }
@@ -185,7 +182,7 @@ public class AsyncReceiver {
      * @return
      */
     private List<AlarmHistoryReqDTO> transferSnmpToAlarmHistory(List<SnmpAlarmDTO> snmpAlarms) {
-        List<AlarmHistoryReqDTO> alarmHistoryReqDTOS = new ArrayList<>();
+        List<AlarmHistoryReqDTO> alarmHistories = new ArrayList<>();
         for (SnmpAlarmDTO snmpAlarm : snmpAlarms) {
             Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarm.getSystemCode(), snmpAlarm.getLineCode());
             if (systemId == null || systemId <= 0) {
@@ -207,9 +204,9 @@ public class AsyncReceiver {
             alarmHistoryReqDTO.setRecovery(snmpAlarm.isCleared());
             alarmHistoryReqDTO.setAlarmTime(snmpAlarm.getAlarmTime());
             alarmHistoryReqDTO.setAlarmMessageList(snmpAlarm.getMessages());
-            alarmHistoryReqDTOS.add(alarmHistoryReqDTO);
+            alarmHistories.add(alarmHistoryReqDTO);
         }
-        return alarmHistoryReqDTOS;
+        return alarmHistories;
     }
 
     /**
@@ -356,8 +353,7 @@ public class AsyncReceiver {
                     ruleData.put(m.getValue().getType(), m.getValue());
                 }
             }
-            // 根据告警规则获取告警状态
-            // 1-告警延迟规则;2-告警入库过滤规则;3-告警过滤规则;4-告警确认规则;5-告警清除规则;6-告警升级规则;7-告警前转规则
+            // 根据告警规则获取告警状态 1-告警延迟规则;2-告警入库过滤规则;3-告警过滤规则;4-告警确认规则;5-告警清除规则;6-告警升级规则;7-告警前转规则
             if (ruleData.get(2L) != null) {
                 alarmHistory = null;
             } else if (ruleData.get(3L) != null) {

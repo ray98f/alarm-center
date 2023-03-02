@@ -206,7 +206,6 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public List<DeviceResDTO> getDevices(AlarmRuleDeviceReqDTO alarmRuleDeviceReqDTO) {
         List<DeviceResDTO> deviceResDTOList = alarmRuleMapper.getDevices(alarmRuleDeviceReqDTO);
         if (null == deviceResDTOList || deviceResDTOList.isEmpty()) {
-            log.warn("设备下拉列表获取为空");
             return null;
         }
         return deviceResDTOList;
@@ -222,7 +221,6 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public List<AlarmCodeResDTO> getAlarmCodes(List<Long> systemIds) {
         List<AlarmCodeResDTO> alarmCodeResDTOList = alarmRuleMapper.getAlarmCodes(systemIds);
         if (null == alarmCodeResDTOList || alarmCodeResDTOList.isEmpty()) {
-            log.warn("告警码下拉列表获取为空");
             return null;
         }
         return alarmCodeResDTOList;
@@ -237,7 +235,6 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public List<MsgConfig> getMsgConfigs() {
         List<MsgConfig> msgConfigs = alarmRuleMapper.getMsgConfigs();
         if (null == msgConfigs || msgConfigs.isEmpty()) {
-            log.warn("消息推送配置列表无数据");
             return null;
         }
         return msgConfigs;

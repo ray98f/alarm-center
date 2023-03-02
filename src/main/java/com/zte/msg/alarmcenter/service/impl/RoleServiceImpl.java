@@ -63,9 +63,7 @@ public class RoleServiceImpl implements RoleService {
             }
         }
         int deleteRole = roleMapper.deleteRole(ids);
-        if (deleteRole >= 0) {
-            log.info("角色删除成功");
-        } else {
+        if (deleteRole < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
@@ -85,14 +83,12 @@ public class RoleServiceImpl implements RoleService {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
         if (null == role.getMenuIds() || role.getMenuIds().isEmpty()) {
-            log.warn("没有需要添加的角色权限信息");
             return;
         }
         int insertRoleMenu = roleMapper.insertRoleMenu(role.getId(), role.getMenuIds(), role.getCreatedBy());
         if (insertRoleMenu <= 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
-        log.info("新增角色成功");
     }
 
     @Override
@@ -111,14 +107,12 @@ public class RoleServiceImpl implements RoleService {
         }
         roleMapper.deleteRoleMenus(role.getId());
         if (null == role.getMenuIds() || role.getMenuIds().isEmpty()) {
-            log.warn("没有需要修改的角色权限信息");
             return;
         }
         int insertRoleMenu = roleMapper.insertRoleMenu(role.getId(), role.getMenuIds(), role.getCreatedBy());
         if (insertRoleMenu <= 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
-        log.info("修改角色成功");
     }
 
     @Override
@@ -126,13 +120,6 @@ public class RoleServiceImpl implements RoleService {
         if (null == roleId || roleId < 0) {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
-        List<Long> list = roleMapper.selectRoleMenuIds(roleId);
-        if (null == list || list.isEmpty()) {
-            log.warn("该角色无菜单信息");
-            return null;
-        } else {
-            log.info("角色菜单权限返回成功");
-            return list;
-        }
+        return roleMapper.selectRoleMenuIds(roleId);
     }
 }

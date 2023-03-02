@@ -53,11 +53,7 @@ public class SystemParamServiceImpl implements SystemParamService {
      */
     @Override
     public List<SystemParameter> listAllSystemParam() {
-        List<SystemParameter> list = systemParamMapper.listAllSystemParam();
-        if (null == list || list.isEmpty()) {
-            log.warn("系统参数列表为空");
-        }
-        return list;
+        return systemParamMapper.listAllSystemParam();
     }
 
     /**
@@ -71,9 +67,7 @@ public class SystemParamServiceImpl implements SystemParamService {
             throw new CommonException(ErrorCode.PARAM_NULL_ERROR);
         }
         int result = systemParamMapper.deleteSystemParam(ids);
-        if (result >= 0) {
-            log.info("系统参数删除成功");
-        } else {
+        if (result < 0) {
             throw new CommonException(ErrorCode.DELETE_ERROR);
         }
     }
@@ -95,10 +89,9 @@ public class SystemParamServiceImpl implements SystemParamService {
         }
         systemParameter.setUpdatedBy(TokenUtil.getCurrentUserName());
         int updateRole = systemParamMapper.updateSystemParam(systemParameter);
-        if (updateRole <= 0) {
+        if (updateRole < 0) {
             throw new CommonException(ErrorCode.UPDATE_ERROR);
         }
-        log.info("修改系统参数成功");
     }
 
     /**
@@ -118,10 +111,9 @@ public class SystemParamServiceImpl implements SystemParamService {
             throw new CommonException(ErrorCode.SYSTEM_PARAM_EXIST);
         }
         int insertRole = systemParamMapper.insertSystemParam(systemParameter);
-        if (insertRole <= 0) {
+        if (insertRole < 0) {
             throw new CommonException(ErrorCode.INSERT_ERROR);
         }
-        log.info("新增系统参数成功");
     }
 
 }
