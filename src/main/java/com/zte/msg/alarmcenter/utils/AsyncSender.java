@@ -42,32 +42,4 @@ public class AsyncSender {
     public void refresh() {
         rabbitTemplate.convertAndSend(RabbitMqConfig.REFRESH_QUEUE);
     }
-
-    public boolean test() throws Exception {
-        List<AlarmHistoryReqDTO> alarmHistoryReqDTOList = new ArrayList<>();
-        AlarmHistoryReqDTO alarmHistoryReqDTO = new AlarmHistoryReqDTO();
-        alarmHistoryReqDTO.setSystem(1);
-        alarmHistoryReqDTO.setLine(2);
-        alarmHistoryReqDTO.setStation(2);
-        alarmHistoryReqDTO.setDevice(2);
-        alarmHistoryReqDTO.setSlot(2);
-        alarmHistoryReqDTO.setAlarmCode(2);
-        alarmHistoryReqDTO.setRecovery(true);
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        alarmHistoryReqDTO.setAlarmTime(simpleDateFormat.format(System.currentTimeMillis()));
-        List<AlarmHistoryReqDTO.AlarmMessage> alarmMessageList = new ArrayList<>();
-        AlarmHistoryReqDTO.AlarmMessage alarmMessage1 = new AlarmHistoryReqDTO.AlarmMessage();
-        AlarmHistoryReqDTO.AlarmMessage alarmMessage2 = new AlarmHistoryReqDTO.AlarmMessage();
-        alarmMessage1.setTitle("1111");
-        alarmMessage1.setContent("ASDASD");
-        alarmMessage2.setTitle("2222");
-        alarmMessage2.setContent("FRPFRP");
-        alarmMessageList.add(alarmMessage1);
-        alarmMessageList.add(alarmMessage2);
-        alarmHistoryReqDTO.setAlarmMessageList(alarmMessageList);
-        alarmHistoryReqDTOList.add(alarmHistoryReqDTO);
-        String json = JSON.toJSONString(alarmHistoryReqDTOList);
-        rabbitTemplate.convertAndSend(RabbitMqConfig.SYNC_ALARM_QUEUE, json);
-        return true;
-    }
 }

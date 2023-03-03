@@ -232,7 +232,8 @@ public class AsyncReceiver {
                             + "，告警内容为：" + alarm.getAlarmName());
                 }
             } catch (Exception e) {
-                log.info("告警失败：" + JSONArray.toJSONString(alarmHistories));
+                log.error("告警失败：" + e.getMessage());
+                log.info(JSONArray.toJSONString(alarmHistories));
             }
         }
     }
