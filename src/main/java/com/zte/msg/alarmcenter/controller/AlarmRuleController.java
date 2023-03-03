@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
@@ -38,6 +39,7 @@ public class AlarmRuleController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增告警规则")
+    @LogMaker(value = "新增告警规则")
     public DataResponse<Void> addAlarmRule(@RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -57,6 +59,7 @@ public class AlarmRuleController {
 
     @PutMapping("/upData/{id}")
     @ApiOperation(value = "修改告警规则")
+    @LogMaker(value = "修改告警规则")
     public DataResponse<Void> modifyAlarmRule(@PathVariable("id") Long id, @RequestBody AlarmRuleReqDTO alarmRuleReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -73,6 +76,7 @@ public class AlarmRuleController {
 
     @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "删除告警规则")
+    @LogMaker(value = "删除告警规则")
     public DataResponse<T> deleteAlarmRule(@PathVariable("id") Long id) {
         alarmRuleService.deleteAlarmRule(id);
         return DataResponse.success();

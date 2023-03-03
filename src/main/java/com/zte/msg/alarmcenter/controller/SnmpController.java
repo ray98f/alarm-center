@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
@@ -42,6 +43,7 @@ public class SnmpController {
 
     @PostMapping("/slot/import")
     @ApiOperation(value = "批量导入SNMP槽位")
+    @LogMaker(value = "批量导入SNMP槽位")
     public DataResponse<T> importSnmpSlot(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -51,6 +53,7 @@ public class SnmpController {
 
     @GetMapping("/slot/export")
     @ApiOperation(value = "批量导出SNMP槽位")
+    @LogMaker(value = "批量导出SNMP槽位")
     public DataResponse<T> exportSnmpSlot(@RequestParam(required = false) @ApiParam(value = "SNMP槽位") String snmpSlotName,
                                           @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
                                           @RequestParam(required = false) @ApiParam(value = "设备编号查询") Long siteId,
@@ -61,6 +64,7 @@ public class SnmpController {
 
     @PostMapping("/slot/add")
     @ApiOperation(value = "新增SNMP槽位")
+    @LogMaker(value = "新增SNMP槽位")
     public DataResponse<Void> addSnmpSlot(@RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -70,6 +74,7 @@ public class SnmpController {
 
     @PutMapping("/slot/upData/{id}")
     @ApiOperation(value = "修改SNMP槽位")
+    @LogMaker(value = "修改SNMP槽位")
     public DataResponse<Void> modifySnmpSlot(@PathVariable("id") Long id, @RequestBody SnmpSlotModifyReqDTO slotModifyReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -89,14 +94,15 @@ public class SnmpController {
 
     @DeleteMapping("/slot/delete/{id}")
     @ApiOperation(value = "删除SNMP槽位")
+    @LogMaker(value = "删除SNMP槽位")
     public DataResponse<T> deleteSnmpSlot(@PathVariable("id") Long id) {
         mySlotService.deleteSnmpSlot(id);
         return DataResponse.success();
     }
 
-
     @PostMapping("/code/import")
     @ApiOperation(value = "批量导入SNMP告警码")
+    @LogMaker(value = "批量导入SNMP告警码")
     public DataResponse<T> importSnmpAlarmCode(@RequestParam MultipartFile file, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -106,6 +112,7 @@ public class SnmpController {
 
     @GetMapping("/code/export")
     @ApiOperation(value = "批量导出SNMP告警码")
+    @LogMaker(value = "批量导出SNMP告警码")
     public DataResponse<T> exportSnmpAlarmCode(@RequestParam(required = false) @ApiParam(value = "SNMP告警码") String alarmCode,
                                                @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
                                                HttpServletResponse response) {
@@ -116,7 +123,8 @@ public class SnmpController {
 
     @PostMapping("/code/add")
     @ApiOperation(value = "新增SNMP告警码")
-    public DataResponse<Void> addSSnmpAlarmCode(@RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
+    @LogMaker(value = "新增SNMP告警码")
+    public DataResponse<Void> addSnmpAlarmCode(@RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
         mySlotService.addSSnmpAlarmCode(snmpAlarmCode, tokenInfo == null ? null : tokenInfo.getUserName());
@@ -125,6 +133,7 @@ public class SnmpController {
 
     @PutMapping("/code/upData/{id}")
     @ApiOperation(value = "修改SNMP告警码")
+    @LogMaker(value = "修改SNMP告警码")
     public DataResponse<Void> modifySnmpAlarmCode(@PathVariable("id") Long id, @RequestBody SnmpAlarmCodeReqDTO snmpAlarmCode, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -143,6 +152,7 @@ public class SnmpController {
 
     @DeleteMapping("/code/delete/{id}")
     @ApiOperation(value = "删除SNMP告警码")
+    @LogMaker(value = "删除SNMP告警码")
     public DataResponse<T> deleteSnmpAlarmCode(@PathVariable("id") Long id) {
         mySlotService.deleteSnmpAlarmCode(id);
         return DataResponse.success();

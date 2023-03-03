@@ -94,7 +94,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     @Override
     public Page<AlarmRuleResDTO> getAlarmRule(String name, Integer isEnable, Integer type, Long page, Long size) {
-        List<AlarmRuleResDTO> childSystemList = null;
+        List<AlarmRuleResDTO> childSystemList;
         if (name.contains(Constants.PERCENT_SIGN)) {
             name = "Prohibit input";
         }

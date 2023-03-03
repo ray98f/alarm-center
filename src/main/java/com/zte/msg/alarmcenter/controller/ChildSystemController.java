@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -37,44 +38,41 @@ public class ChildSystemController {
 
     @GetMapping("/list")
     @ApiOperation(value = "子系统列表")
-    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(@RequestParam("page") Long page,@RequestParam("size") Long size) {
+    public PageResponse<ChildSystemConfigResDTO> getChildSystemConfigs(@RequestParam("page") Long page, @RequestParam("size") Long size) {
         Page<ChildSystemConfigResDTO> childSystemConfigs = myChildSystemService.getChildSystemConfigs(page, size);
         return PageResponse.of(childSystemConfigs, page, size);
     }
 
     @PostMapping("/add")
     @ApiOperation(value = "子系统-新增")
+    @LogMaker(value = "子系统-新增")
     public DataResponse<Void> addChildSystemConfigs(@RequestBody ChildSystemConfigReqDTO childSystemConfigReqDTO,
                                                     ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        childSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
+        childSystemConfigReqDTO.setUserId(tokenInfo == null ? null : tokenInfo.getUserName());
         myChildSystemService.addChildSystemConfigs(childSystemConfigReqDTO);
         return DataResponse.success();
     }
 
     @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "子系统-删除")
+    @LogMaker(value = "子系统-删除")
     public DataResponse<Void> removeChildSystem(@PathVariable("id") Long id) {
         myChildSystemService.removeChildSystem(id);
         return DataResponse.success();
     }
 
     @PutMapping("/upData/{id}")
-    @ApiOperation(value = "修改")
+    @ApiOperation(value = "子系统-修改")
+    @LogMaker(value = "子系统-修改")
     public DataResponse<Void> modifyChildSystemConfig(@PathVariable("id") Long id,
-                                                      @RequestBody ChildSystemConfigReqDTO ChildSystemConfigReqDTO,
+                                                      @RequestBody ChildSystemConfigReqDTO childSystemConfigReqDTO,
                                                       ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
-        ChildSystemConfigReqDTO.setUserId(tokenInfo==null?null:tokenInfo.getUserName());
-        myChildSystemService.modifyChildSystemConfig(id, ChildSystemConfigReqDTO);
+        childSystemConfigReqDTO.setUserId(tokenInfo == null ? null : tokenInfo.getUserName());
+        myChildSystemService.modifyChildSystemConfig(id, childSystemConfigReqDTO);
         return DataResponse.success();
     }
-
-//    @GetMapping("/export")
-//    @ApiOperation(value = "子系统-导出列表")
-//    public <T> DataResponse<T> export() {
-//        return DataResponse.success();
-//    }
 }

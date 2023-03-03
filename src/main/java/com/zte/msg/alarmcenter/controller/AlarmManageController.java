@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -36,36 +37,25 @@ public class AlarmManageController {
 
     @GetMapping("/history")
     @ApiOperation("告警历史-查询")
-    public PageResponse<AlarmHistoryResDTO> pageAlarmHistory(@RequestParam(required = false)
-                                                                 @ApiParam("所属子系统") Long subsystemId,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("站点") Long siteId,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("告警级别") Integer alarmLevel,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("告警码") Integer alarmCode,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("开始时间") Timestamp startTime,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("结束时间") Timestamp endTime,
+    public PageResponse<AlarmHistoryResDTO> pageAlarmHistory(@RequestParam(required = false) @ApiParam("所属子系统") Long subsystemId,
+                                                             @RequestParam(required = false) @ApiParam("站点") Long siteId,
+                                                             @RequestParam(required = false) @ApiParam("告警级别") Integer alarmLevel,
+                                                             @RequestParam(required = false) @ApiParam("告警码") Integer alarmCode,
+                                                             @RequestParam(required = false) @ApiParam("开始时间") Timestamp startTime,
+                                                             @RequestParam(required = false) @ApiParam("结束时间") Timestamp endTime,
                                                              @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(alarmManageService.pageAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime, pageReqDTO));
     }
 
     @GetMapping("/history/export")
     @ApiOperation("告警历史-导出")
-    public DataResponse<T> exportAlarmHistory(@RequestParam(required = false)
-                                                      @ApiParam("所属子系统") Long subsystemId,
-                                              @RequestParam(required = false)
-                                                      @ApiParam("站点") Long siteId,
-                                              @RequestParam(required = false)
-                                                      @ApiParam("站点") Integer alarmLevel,
-                                              @RequestParam(required = false)
-                                                      @ApiParam("告警码") Integer alarmCode,
-                                              @RequestParam(required = false)
-                                                      @ApiParam("开始时间") Timestamp startTime,
-                                              @RequestParam(required = false)
-                                                      @ApiParam("结束时间") Timestamp endTime,
+    @LogMaker(value = "告警历史-导出")
+    public DataResponse<T> exportAlarmHistory(@RequestParam(required = false) @ApiParam("所属子系统") Long subsystemId,
+                                              @RequestParam(required = false) @ApiParam("站点") Long siteId,
+                                              @RequestParam(required = false) @ApiParam("站点") Integer alarmLevel,
+                                              @RequestParam(required = false) @ApiParam("告警码") Integer alarmCode,
+                                              @RequestParam(required = false) @ApiParam("开始时间") Timestamp startTime,
+                                              @RequestParam(required = false) @ApiParam("结束时间") Timestamp endTime,
                                               HttpServletResponse response) {
         alarmManageService.exportAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime, response);
         return DataResponse.success();
@@ -73,8 +63,9 @@ public class AlarmManageController {
 
     @PostMapping("/history/{id}")
     @ApiOperation("告警历史-添加备注")
+    @LogMaker(value = "告警历史-添加备注")
     public DataResponse<T> editRemark(@ApiParam(value = "告警历史id", required = true) @PathVariable(value = "id") Long id,
-                                          @RequestBody Map<String, Object> map) {
+                                      @RequestBody Map<String, Object> map) {
         String alarmRemark = (String) map.get("alarmRemark");
         alarmManageService.editRemark(alarmRemark, id);
         return DataResponse.success();

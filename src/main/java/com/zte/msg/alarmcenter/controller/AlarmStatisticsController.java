@@ -54,22 +54,18 @@ public class AlarmStatisticsController {
      */
     @GetMapping("/total")
     @ApiOperation(value = "告警数据总计")
-    public PageResponse<TotalAlarmDataResDTO> totalAlarmData(@RequestParam(required = false)
-                                                                 @ApiParam("系统") Long systemId,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("站点") Long siteId,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("告警原因") String alarmReason,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("开始时间") String startTime,
-                                                             @RequestParam(required = false)
-                                                                 @ApiParam("结束时间") String endTime,
+    public PageResponse<TotalAlarmDataResDTO> totalAlarmData(@RequestParam(required = false) @ApiParam("系统") Long systemId,
+                                                             @RequestParam(required = false) @ApiParam("站点") Long siteId,
+                                                             @RequestParam(required = false) @ApiParam("告警原因") String alarmReason,
+                                                             @RequestParam(required = false) @ApiParam("开始时间") String startTime,
+                                                             @RequestParam(required = false) @ApiParam("结束时间") String endTime,
                                                              @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, pageReqDTO));
     }
 
     /**
      * 导出告警数据
+     *
      * @param systemId
      * @param siteId
      * @param alarmReason
@@ -80,16 +76,11 @@ public class AlarmStatisticsController {
      */
     @GetMapping("/total/export")
     @ApiOperation(value = "导出告警数据")
-    public DataResponse<T> exportTotalAlarmData(@RequestParam(required = false)
-                                                        @ApiParam("系统") Long systemId,
-                                                @RequestParam(required = false)
-                                                        @ApiParam("站点") Long siteId,
-                                                @RequestParam(required = false)
-                                                        @ApiParam("告警原因") String alarmReason,
-                                                @RequestParam(required = false)
-                                                        @ApiParam("开始时间") String startTime,
-                                                @RequestParam(required = false)
-                                                        @ApiParam("结束时间") String endTime,
+    public DataResponse<T> exportTotalAlarmData(@RequestParam(required = false) @ApiParam("系统") Long systemId,
+                                                @RequestParam(required = false) @ApiParam("站点") Long siteId,
+                                                @RequestParam(required = false) @ApiParam("告警原因") String alarmReason,
+                                                @RequestParam(required = false) @ApiParam("开始时间") String startTime,
+                                                @RequestParam(required = false) @ApiParam("结束时间") String endTime,
                                                 HttpServletResponse response) {
         alarmStatisticsService.totalAlarmData(systemId, siteId, alarmReason, startTime, endTime, response);
         return DataResponse.success();

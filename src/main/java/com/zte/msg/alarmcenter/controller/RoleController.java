@@ -63,13 +63,10 @@ public class RoleController {
      * @return
      */
     @PermissionCheck(permissionName = {"system:role:list"})
-//    @LogMaker(value = "分页获取角色信息")
     @GetMapping
     @ApiOperation(value = "分页获取角色信息")
-    public PageResponse<Role> listRole(@RequestParam(required = false)
-                                           @ApiParam("状态") Integer status,
-                                       @RequestParam(required = false)
-                                           @ApiParam("角色名称") String roleName,
+    public PageResponse<Role> listRole(@RequestParam(required = false) @ApiParam("状态") Integer status,
+                                       @RequestParam(required = false) @ApiParam("角色名称") String roleName,
                                        @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(roleService.listRole(status, roleName, pageReqDTO));
     }
@@ -83,6 +80,7 @@ public class RoleController {
     @PermissionCheck(permissionName = {"system:role:remove"})
     @DeleteMapping
     @ApiOperation(value = "删除角色")
+    @LogMaker(value = "删除角色")
     public <T> DataResponse<T> deleteRole(@Valid @RequestBody List<Long> ids) {
         roleService.deleteRole(ids);
         return DataResponse.success();
@@ -97,6 +95,7 @@ public class RoleController {
     @PermissionCheck(permissionName = {"system:role:add"})
     @PutMapping
     @ApiOperation(value = "新增角色")
+    @LogMaker(value = "新增角色")
     public <T> DataResponse<T> insertRole(@Valid @RequestBody RoleReqDTO roleReqDTO){
         roleService.insertRole(roleReqDTO);
         return DataResponse.success();
@@ -111,6 +110,7 @@ public class RoleController {
     @PermissionCheck(permissionName = {"system:role:modify"})
     @PostMapping
     @ApiOperation(value = "修改角色")
+    @LogMaker(value = "修改角色")
     public <T> DataResponse<T> updateRole(@Valid @RequestBody RoleReqDTO roleReqDTO){
         roleService.updateRole(roleReqDTO);
         return DataResponse.success();

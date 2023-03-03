@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -39,20 +40,13 @@ public class PositionController {
     @GetMapping("/list")
     @ApiOperation(value = "位置信息-分页查询")
     public PageResponse<PositionResDTO> getPositions(@RequestParam("page") Long page,@RequestParam("size") Long size) {
-        Page<PositionResDTO> resDTOPage = myPositionService.getPositions(page,size);
-        return PageResponse.of(resDTOPage, page, size);
+        Page<PositionResDTO> resPage = myPositionService.getPositions(page,size);
+        return PageResponse.of(resPage, page, size);
     }
-//
-//    @GetMapping("list/{pId}")
-//    @ApiOperation(value = "位置信息-分页查询")
-//    public PageResponse<PositionResDTO> getPositionsById(@Valid @RequestBody PageReqDTO pageReqDTO,
-//                                                     @PathVariable @ApiParam(value = "线路id") Long pId) {
-//        Page<PositionResDTO> resDTOPageById = myPositionService.getPositionsById(pId,pageReqDTO);
-//        return PageResponse.of(resDTOPageById, pageReqDTO.getPage(), pageReqDTO.getSize());
-//    }
 
     @PostMapping("/add")
     @ApiOperation(value = "新增位置")
+    @LogMaker(value = "新增位置")
     public DataResponse<Void> addPosition(@RequestBody PositionReqDTO reqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -63,6 +57,7 @@ public class PositionController {
 
     @PutMapping("/upData/{id}")
     @ApiOperation(value = "修改位置")
+    @LogMaker(value = "修改位置")
     public DataResponse<Void> modifyPosition(@PathVariable("id") Long id,
                                              @RequestBody PositionReqDTO reqDTO,
                                              ServletRequest request) {
@@ -75,23 +70,10 @@ public class PositionController {
 
     @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "删除位置")
+    @LogMaker(value = "删除位置")
     public DataResponse<Void> deletePosition(@PathVariable("id") Long id) {
         myPositionService.deletePosition(id);
         return DataResponse.success();
     }
-
-
-//    @GetMapping("/export")
-//    @ApiOperation(value = "线路站点信息-列表导出")
-//    public <T> DataResponse<T> exportLinePosition() {
-//
-//        return DataResponse.success();
-//    }
-//
-//    @GetMapping("/{pId}/export")
-//    @ApiOperation(value = "位置信息-列表导出")
-//    public <T> DataResponse<T> exportPosition(@PathVariable @ApiParam(value = "线路id") Long pId) {
-//        return DataResponse.success();
-//    }
 
 }

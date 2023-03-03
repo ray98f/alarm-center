@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -66,6 +67,7 @@ public class SystemParamController {
      */
     @DeleteMapping
     @ApiOperation(value = "批量删除系统参数")
+    @LogMaker(value = "批量删除系统参数")
     public <T> DataResponse<T> deleteSystemParam(@Valid @RequestBody List<Long> ids) {
         systemParamService.deleteSystemParam(ids);
         return DataResponse.success();
@@ -78,6 +80,7 @@ public class SystemParamController {
      */
     @PostMapping
     @ApiOperation(value = "修改系统参数")
+    @LogMaker(value = "修改系统参数")
     public <T> DataResponse<T> updateSystemParam(@Valid @RequestBody SystemParameter systemParameter) {
         systemParamService.updateSystemParam(systemParameter);
         return DataResponse.success();
@@ -90,6 +93,7 @@ public class SystemParamController {
      */
     @PutMapping
     @ApiOperation(value = "新增系统参数")
+    @LogMaker(value = "新增系统参数")
     public <T> DataResponse<T> insertSystemParam(@Valid @RequestBody SystemParameter systemParameter) {
         systemParamService.insertSystemParam(systemParameter);
         return DataResponse.success();

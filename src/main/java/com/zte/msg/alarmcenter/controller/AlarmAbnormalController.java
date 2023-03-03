@@ -1,11 +1,9 @@
 package com.zte.msg.alarmcenter.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.res.AlarmAbnormalResDTO;
-import com.zte.msg.alarmcenter.dto.res.AlarmCodeResDTO;
 import com.zte.msg.alarmcenter.service.AlarmAbnormalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

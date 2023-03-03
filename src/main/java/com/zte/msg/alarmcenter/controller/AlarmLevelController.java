@@ -1,6 +1,7 @@
 package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageResponse;
 import com.zte.msg.alarmcenter.dto.SimpleTokenInfo;
@@ -43,7 +44,8 @@ public class AlarmLevelController {
 
 
     @PutMapping("/upData/{id}")
-    @ApiOperation(value = "修改")
+    @ApiOperation(value = "修改告警级别")
+    @LogMaker(value = "修改告警级别")
     public DataResponse<Void> modifyAlarmLevel(@PathVariable("id") Long id,
                                                       @RequestBody AlarmLevelReqDTO alarmLevelReqDTO,
                                                       ServletRequest request) {

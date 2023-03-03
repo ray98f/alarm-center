@@ -1,5 +1,6 @@
 package com.zte.msg.alarmcenter.controller;
 
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.annotation.PermissionCheck;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
@@ -9,12 +10,10 @@ import com.zte.msg.alarmcenter.dto.req.PasswordReqDTO;
 import com.zte.msg.alarmcenter.dto.req.UserReqDTO;
 import com.zte.msg.alarmcenter.entity.User;
 import com.zte.msg.alarmcenter.service.UserService;
-import com.zte.msg.alarmcenter.utils.AsyncSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +22,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -43,9 +41,6 @@ public class UserController {
     @Resource
     private UserService userService;
 
-    @Autowired
-    AsyncSender asyncSender;
-
     /**
      * 新增管理平台登录用户
      *
@@ -55,6 +50,7 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:add"})
     @PutMapping
     @ApiOperation(value = "新增管理平台登录用户")
+    @LogMaker(value = "新增管理平台登录用户")
     public <T> DataResponse<T> createUser(@RequestBody @Valid UserReqDTO userReqDTO) {
         userService.insertUser(userReqDTO);
         return DataResponse.success();
@@ -68,6 +64,7 @@ public class UserController {
      */
     @PostMapping("/change")
     @ApiOperation(value = "修改密码")
+    @LogMaker(value = "修改密码")
     public <T> DataResponse<T> changePwd(@RequestBody @Valid PasswordReqDTO passwordReqDTO) {
         userService.changePwd(passwordReqDTO);
         return DataResponse.success();
@@ -82,6 +79,7 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:reset-psw"})
     @GetMapping("/change")
     @ApiOperation(value = "重置密码")
+    @LogMaker(value = "重置密码")
     public <T> DataResponse<T> resetPwd(@Valid @RequestParam @NotNull(message = "32000006") Integer id) {
         userService.resetPwd(id);
         return DataResponse.success();
@@ -96,6 +94,7 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:modify"})
     @PostMapping
     @ApiOperation(value = "修改用户信息")
+    @LogMaker(value = "修改用户信息")
     public <T> DataResponse<T> edit(@RequestBody @Valid UserReqDTO userReqDTO) {
         userService.editUser(userReqDTO);
         return DataResponse.success();
@@ -110,6 +109,7 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:remove"})
     @DeleteMapping
     @ApiOperation(value = "删除用户")
+    @LogMaker(value = "删除用户")
     public <T> DataResponse<T> deleteUser(@Valid @RequestBody List<Integer> ids, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -136,10 +136,8 @@ public class UserController {
     @PermissionCheck(permissionName = {"system:user:list"})
     @GetMapping
     @ApiOperation(value = "分页查询用户列表")
-    public PageResponse<User> listUser(@RequestParam(required = false)
-                                           @ApiParam("状态") Integer status,
-                                       @RequestParam(required = false)
-                                           @ApiParam("姓名") String userRealName,
+    public PageResponse<User> listUser(@RequestParam(required = false) @ApiParam("状态") Integer status,
+                                       @RequestParam(required = false) @ApiParam("姓名") String userRealName,
                                        @Valid PageReqDTO pageReqDTO){
         return PageResponse.of(userService.listUser(status, userRealName, pageReqDTO));
     }

@@ -37,10 +37,8 @@ public class MsgController {
 
     @GetMapping("/config")
     @ApiOperation(value = "获取告警推送配置列表")
-    public PageResponse<MsgConfig> pageMsgConfig(@RequestParam(required = false)
-                                                     @ApiParam("名称") String name,
-                                                 @RequestParam(required = false)
-                                                     @ApiParam("推送类型") Integer type,
+    public PageResponse<MsgConfig> pageMsgConfig(@RequestParam(required = false) @ApiParam("名称") String name,
+                                                 @RequestParam(required = false) @ApiParam("推送类型") Integer type,
                                                  @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(msgService.pageMsgConfig(name, type, pageReqDTO));
     }

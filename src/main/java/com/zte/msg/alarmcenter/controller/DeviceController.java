@@ -2,6 +2,7 @@ package com.zte.msg.alarmcenter.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
+import com.zte.msg.alarmcenter.annotation.LogMaker;
 import com.zte.msg.alarmcenter.dto.DataResponse;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.PageResponse;
@@ -42,6 +43,7 @@ public class DeviceController {
 
     @PostMapping("/import")
     @ApiOperation(value = "批量导入设备列表")
+    @LogMaker(value = "批量导入设备列表")
     public DataResponse<T> importDevice(@RequestParam MultipartFile deviceFile, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -51,6 +53,7 @@ public class DeviceController {
 
     @GetMapping("/export")
     @ApiOperation(value = "批量导出设备列表")
+    @LogMaker(value = "批量导出设备列表")
     public DataResponse<T> exportDevice(@RequestParam(required = false) @ApiParam(value = "设备名称模糊查询") String name,
                                         @RequestParam(required = false) @ApiParam(value = "设备编号查询") String deviceCode,
                                         @RequestParam(required = false) @ApiParam(value = "系统id") Long systemId,
@@ -62,6 +65,7 @@ public class DeviceController {
 
     @PostMapping("/add")
     @ApiOperation(value = "新增设备")
+    @LogMaker(value = "新增设备")
     public DataResponse<Void> addDevice(@RequestBody DeviceReqDTO deviceReqDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -71,6 +75,7 @@ public class DeviceController {
 
     @PutMapping("/upData/{id}")
     @ApiOperation(value = "修改设备")
+    @LogMaker(value = "修改设备")
     public DataResponse<Void> modifyDevice(@PathVariable("id") Long id, @RequestBody DeviceReqModifyDTO reqModifyDTO, ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         SimpleTokenInfo tokenInfo = (SimpleTokenInfo) httpRequest.getAttribute("tokenInfo");
@@ -91,6 +96,7 @@ public class DeviceController {
 
     @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "删除设备")
+    @LogMaker(value = "删除设备")
     public DataResponse<T> deleteDevice(@PathVariable("id") Long id) {
         myDevice.deleteDevice(id);
         return DataResponse.success();

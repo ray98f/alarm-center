@@ -70,7 +70,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
 
     @Override
     public void exportDevice(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, HttpServletResponse response) {
-// 列名
+        // 列名
         List<String> listName = Arrays.asList("线路编号", "系统编号", "告警码", "告警级别", "告警名称", "告警原因", "处理意见", "线路名称", "系统名称");
         List<AlarmCodeResDTO> alarmCodeResList = alarmCodeMapper.exportAlarmCode(alarmCode, alarmName, systemId, alarmLevelId, null, null);
         // 列名 数据
@@ -122,7 +122,7 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
 
     @Override
     public Page<AlarmCodeResDTO> getAlarmCode(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, Long page, Long size) {
-        List<AlarmCodeResDTO> deviceReqDTOList = null;
+        List<AlarmCodeResDTO> deviceReqDTOList;
         if (alarmName.contains(Constants.PERCENT_SIGN)) {
             alarmName = "Prohibit input";
         }

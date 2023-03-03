@@ -58,26 +58,11 @@ public class PositionServiceImpl implements PositionService {
         Page<PositionResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-//            pageReqDTO.setPage((pageReqDTO.getPage() - 1) * pageReqDTO.getSize());
             page = (page - 1) * size;
             positionsList = myPositionMapper.getPositions(page,size);
             pageBean.setRecords(positionsList);
         }
         return pageBean;
     }
-
-//    @Override
-//    public Page<PositionResDTO> getPositionsById(Long pId, PageReqDTO pageReqDTO) {
-//        List<PositionResDTO> positionsByIdList = null;
-//        int count = myPositionMapper.getPositionsByIdCount(pId);
-//        Page<PositionResDTO> page = new Page<>();
-//        page.setCurrent(pageReqDTO.getPage()).setPages(pageReqDTO.getSize()).setTotal(count);
-//        if (count > 0) {
-//            pageReqDTO.setPage((pageReqDTO.getPage() - 1) * pageReqDTO.getSize());
-//            positionsByIdList = myPositionMapper.getPositionsById(pId,pageReqDTO);
-//            page.setRecords(positionsByIdList);
-//        }
-//        return page;
-//    }
 
 }
