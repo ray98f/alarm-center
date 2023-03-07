@@ -17,7 +17,7 @@ import java.util.List;
 @Repository
 public interface SnmpAlarmMapper {
 
-    AlarmHistoryReqDTO getAlarmHistoryBySnmpName(String snmpName);
+    AlarmHistoryReqDTO getAlarmHistoryBySnmpName(String snmpName, int stationCode);
 
     Integer getAlarmCodeBySnmpInfo(int systemId, String emsAlarmCode, String alarmNetype, String reason);
 }

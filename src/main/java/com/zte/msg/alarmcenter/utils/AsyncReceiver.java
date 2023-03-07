@@ -2,6 +2,7 @@ package com.zte.msg.alarmcenter.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zte.msg.alarmcenter.config.RabbitMqConfig;
 import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
@@ -114,24 +115,32 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void alarmProcess(String json) throws ParseException {
-        JSONArray jsonArray = JSONArray.parseArray(json);
-        List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
-        if (alarmReqList != null && !alarmReqList.isEmpty()) {
-            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
-            editData(alarmHistories);
+    public void alarmProcess(String json) {
+        try {
+            JSONArray jsonArray = JSONArray.parseArray(json);
+            List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
+            if (alarmReqList != null && !alarmReqList.isEmpty()) {
+                List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
+                editData(alarmHistories);
+            }
+        } catch (Exception e) {
+            log.error("TCP单条告警失败：" + e.getMessage());
         }
     }
 
     @RabbitListener(queues = RabbitMqConfig.SYNC_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void syncAlarmProcess(String json) throws ParseException {
-        JSONArray jsonArray = JSONArray.parseArray(json);
-        List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
-        if (alarmReqList != null && !alarmReqList.isEmpty()) {
-            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
-            syncData(alarmHistories);
+    public void syncAlarmProcess(String json) {
+        try {
+            JSONArray jsonArray = JSONArray.parseArray(json);
+            List<AlarmHistoryReqDTO> alarmReqList = jsonArray.toJavaList(AlarmHistoryReqDTO.class);
+            if (alarmReqList != null && !alarmReqList.isEmpty()) {
+                List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqList);
+                syncData(alarmHistories);
+            }
+        } catch (Exception e) {
+            log.error("TCP同步告警失败：" + e.getMessage());
         }
     }
 
@@ -143,13 +152,17 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.SNMP_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void snmpAlarmProcess(String json) throws ParseException {
-        JSONArray jsonArray = JSONArray.parseArray(json);
-        List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
-            List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
-            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-            editData(alarmHistories);
+    public void snmpAlarmProcess(String json) {
+        try {
+            JSONArray jsonArray = JSONArray.parseArray(json);
+            List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
+            if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
+                List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
+                List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+                editData(alarmHistories);
+            }
+        } catch (Exception e) {
+            log.error("SNMP告警失败：" + e.getMessage());
         }
     }
 
@@ -161,13 +174,17 @@ public class AsyncReceiver {
     @RabbitListener(queues = RabbitMqConfig.SNMP_SYNC_ALARM_QUEUE)
     @RabbitHandler
     @Async
-    public void snmpSyncAlarmProcess(String json) throws ParseException {
-        JSONArray jsonArray = JSONArray.parseArray(json);
-        List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
-        if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
-            List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
-            List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
-            syncData(alarmHistories);
+    public void snmpSyncAlarmProcess(String json) {
+        try {
+            JSONArray jsonArray = JSONArray.parseArray(json);
+            List<SnmpAlarmDTO> snmpAlarms = jsonArray.toJavaList(SnmpAlarmDTO.class);
+            if (snmpAlarms != null && !snmpAlarms.isEmpty()) {
+                List<AlarmHistoryReqDTO> alarmReqDTOList = transferSnmpToAlarmHistory(snmpAlarms);
+                List<AlarmHistory> alarmHistories = conversionAndFilter(alarmReqDTOList);
+                syncData(alarmHistories);
+            }
+        } catch (Exception e) {
+            log.error("SNMP同步告警失败：" + e.getMessage());
         }
     }
 
@@ -181,19 +198,27 @@ public class AsyncReceiver {
         List<AlarmHistoryReqDTO> alarmHistories = new ArrayList<>();
         for (SnmpAlarmDTO snmpAlarm : snmpAlarms) {
             Integer systemId = childSystemMapper.getIdBySidAndPositionCode(snmpAlarm.getSystemCode(), snmpAlarm.getLineCode());
-            if (systemId == null || systemId <= 0) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarm));
+            if (systemId == null || systemId < 0) {
+                AlarmHistoryReqDTO alarmHistory = new AlarmHistoryReqDTO();
+                alarmHistory.setSystem(snmpAlarm.getSystemCode());
+                alarmHistory.setAlarmTime(snmpAlarm.getAlarmTime());
+                alarmAbnormalMapper.insertAlarmError(alarmHistory, null, "系统数据异常，未找到对应的系统 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
-            AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarm.getAlarmManagedObjectInstanceName());
+            AlarmHistoryReqDTO alarmHistoryReqDTO = snmpAlarmMapper.getAlarmHistoryBySnmpName(snmpAlarm.getAlarmManagedObjectInstanceName(), snmpAlarm.getStationCode());
             if (alarmHistoryReqDTO == null) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarm));
+                AlarmHistoryReqDTO alarmHistory = new AlarmHistoryReqDTO();
+                alarmHistory.setSystem(snmpAlarm.getSystemCode());
+                alarmHistory.setAlarmTime(snmpAlarm.getAlarmTime());
+                alarmAbnormalMapper.insertAlarmError(alarmHistory, null, "系统数据异常，未找到SNMP位置 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
-
             Integer alarmCode = snmpAlarmMapper.getAlarmCodeBySnmpInfo(systemId, snmpAlarm.getEmsAlarmCode(), snmpAlarm.getAlarmNetype(), snmpAlarm.getAlarmSpecificProblem());
             if (alarmCode == null) {
-                alarmAbnormalMapper.insertAlarmError(new AlarmHistoryReqDTO(), null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarm));
+                AlarmHistoryReqDTO alarmHistory = new AlarmHistoryReqDTO();
+                alarmHistory.setSystem(snmpAlarm.getSystemCode());
+                alarmHistory.setAlarmTime(snmpAlarm.getAlarmTime());
+                alarmAbnormalMapper.insertAlarmError(alarmHistory, null, "系统数据异常，未找到SNMP告警码 | Data: " + JSON.toJSONString(snmpAlarm));
                 continue;
             }
             alarmHistoryReqDTO.setAlarmCode(alarmCode);
@@ -232,7 +257,6 @@ public class AsyncReceiver {
                             + "，告警内容为：" + alarm.getAlarmName());
                 }
             } catch (Exception e) {
-                log.error("告警失败：" + e.getMessage());
                 log.info(JSONArray.toJSONString(alarmHistories));
             }
         }
@@ -240,29 +264,33 @@ public class AsyncReceiver {
 
     private void syncData(List<AlarmHistory> alarmHistories) {
         if (alarmHistories != null && !alarmHistories.isEmpty()) {
-            List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
-            for (AlarmHistory alarmHistory : alarmHistories) {
-                if (alarmHistory.getSlotCode() == null) {
-                    alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
-                            alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
-                                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
-                                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
-                                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
-                } else {
-                    alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
-                            alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
-                                    alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
-                                    alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
-                                    alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                                    alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
-                                    alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+            try {
+                List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
+                for (AlarmHistory alarmHistory : alarmHistories) {
+                    if (alarmHistory.getSlotCode() == null) {
+                        alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                                alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                        alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                        alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                        alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                    } else {
+                        alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
+                                alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
+                                        alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
+                                        alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
+                                        alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
+                                        alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
+                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                    }
                 }
+                if (alarmHistoryResDTOList.size() > 0) {
+                    alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
+                }
+                alarmManageMapper.syncAlarmHistory(alarmHistories);
+            } catch (Exception e) {
+                log.info(JSONArray.toJSONString(alarmHistories));
             }
-            if (alarmHistoryResDTOList.size() > 0) {
-                alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
-            }
-            alarmManageMapper.syncAlarmHistory(alarmHistories);
         }
     }
 

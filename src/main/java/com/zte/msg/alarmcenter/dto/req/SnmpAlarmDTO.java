@@ -29,6 +29,10 @@ public class SnmpAlarmDTO {
      */
     private int systemCode;
     /**
+     * 车站编号
+     */
+    private int stationCode;
+    /**
      * 是否清除告警 false 正常告警  true 消除告警
      */
     private boolean cleared;
