@@ -24,7 +24,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
         setFieldValByName("isDeleted", Constants.DATA_NOT_DELETED, metaObject);
         //创建时间默认当前时间
         setFieldValByName("createdAt", new Timestamp(System.currentTimeMillis()), metaObject);
-        // TODO: 2021/1/6
+
         setFieldValByName("createdBy", TokenUtil.getCurrentUserName(), metaObject);
 
         setFieldValByName("updatedBy", TokenUtil.getCurrentUserName(), metaObject);
@@ -34,7 +34,7 @@ public class MetaObjectHandlerConfig implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        // TODO: 2021/1/6
+
         setFieldValByName("updateBy", TokenUtil.getCurrentUserName(), metaObject);
 
         setFieldValByName("updatedAt", new Timestamp(System.currentTimeMillis()), metaObject);

@@ -70,10 +70,8 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
 
     @Override
     public void exportDevice(Long alarmCode, String alarmName, Long systemId, Long alarmLevelId, HttpServletResponse response) {
-        // 列名
         List<String> listName = Arrays.asList("线路编号", "系统编号", "告警码", "告警级别", "告警名称", "告警原因", "处理意见", "线路名称", "系统名称");
         List<AlarmCodeResDTO> alarmCodeResList = alarmCodeMapper.exportAlarmCode(alarmCode, alarmName, systemId, alarmLevelId, null, null);
-        // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
         if (null != alarmCodeResList) {
             for (AlarmCodeResDTO alarmCodeRes : alarmCodeResList) {
@@ -90,7 +88,6 @@ public class AlarmCodeServiceImpl implements AlarmCodeService {
                 list.add(map);
             }
         }
-        // 将需要写入Excel的数据传入
         ExcelPortUtil.excelPort("告警码设置", listName, list, null, response);
     }
 

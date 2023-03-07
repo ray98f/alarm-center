@@ -37,34 +37,34 @@ public class ExcelPortUtil {
 
             // 表头
             XSSFRow rowReportTitle = sheet.createRow(0);
-            Cell cell1 = rowReportTitle.createCell(0); // 0列
+            Cell cell1 = rowReportTitle.createCell(0);
             // 设置值
             cell1.setCellValue(sheetName);
 
             // 合并表头
             sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, listName.size() - 1));
-            rowReportTitle.setHeight((short) 600); // 行高
+            rowReportTitle.setHeight((short) 600);
 
             //设置表头字体
             Font headFont = wb.createFont();
             headFont.setFontName("宋体");
-            headFont.setFontHeightInPoints((short) 18);// 字体大小
+            headFont.setFontHeightInPoints((short) 18);
 
             CellStyle headStyle = wb.createCellStyle();
             headStyle.setFont(headFont);
-            headStyle.setAlignment(HorizontalAlignment.CENTER);// 左右居中
-            headStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+            headStyle.setAlignment(HorizontalAlignment.CENTER);
+            headStyle.setVerticalAlignment(VerticalAlignment.CENTER);
             // 头部样式添加
             cell1.setCellStyle(headStyle);
 
             // 全局加线样式
             CellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setBorderBottom(BorderStyle.THIN); //下边框
-            cellStyle.setBorderLeft(BorderStyle.THIN);//左边框
-            cellStyle.setBorderTop(BorderStyle.THIN);//上边框
-            cellStyle.setBorderRight(BorderStyle.THIN);//右边框
-            cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
-            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+            cellStyle.setBorderBottom(BorderStyle.THIN);
+            cellStyle.setBorderLeft(BorderStyle.THIN);
+            cellStyle.setBorderTop(BorderStyle.THIN);
+            cellStyle.setBorderRight(BorderStyle.THIN);
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
             // 记录标题信息
             TreeMap<String, Integer> headMap = new TreeMap<>();
@@ -75,7 +75,7 @@ public class ExcelPortUtil {
                 row.setHeight((short) 450);
                 XSSFCell cell = row.createCell(i);
                 String headName = listName.get(i);
-                cell.setCellValue(headName); // 写入列名
+                cell.setCellValue(headName);
                 headMap.put(headName, i);
                 cell.setCellStyle(cellStyle);
             }
@@ -85,8 +85,8 @@ public class ExcelPortUtil {
             for (Map<String, String> map : list) {
                 XSSFRow r = sheet.createRow(ind++);
                 for (Map.Entry<String, Integer> m : headMap.entrySet()) {
-                    String name = m.getKey(); // 列名
-                    String value = map.get(name); // value 不一定存在
+                    String name = m.getKey();
+                    String value = map.get(name);
                     XSSFCell cell2 = r.createCell(m.getValue());
                     if (value != null) {
                         cell2.setCellValue(value);
@@ -97,23 +97,23 @@ public class ExcelPortUtil {
 
             // 底部样式
             CellStyle bottomStyle = wb.createCellStyle();
-            bottomStyle.setBorderBottom(BorderStyle.THIN); //下边框
-            bottomStyle.setBorderLeft(BorderStyle.THIN);//左边框
-            bottomStyle.setBorderTop(BorderStyle.THIN);//上边框
-            bottomStyle.setBorderRight(BorderStyle.THIN);//右边框
-            bottomStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
+            bottomStyle.setBorderBottom(BorderStyle.THIN);
+            bottomStyle.setBorderLeft(BorderStyle.THIN);
+            bottomStyle.setBorderTop(BorderStyle.THIN);
+            bottomStyle.setBorderRight(BorderStyle.THIN);
+            bottomStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
             // 写入底部
             if (listBottom != null) {
-                int columnNum = listName.size(); // 当前表有多少列
+                int columnNum = listName.size();
                 for (Map<Integer, String> map : listBottom) {
                     XSSFRow bottom = sheet.createRow(ind);
-                    bottom.setHeight((short) 400); // 行高
+                    bottom.setHeight((short) 400);
                     // 当前行分几列
                     int size = map.size();
                     if (columnNum % 2 == 0 & size % 2 == 0) {
                         // 都是偶数执行
-                        int c = columnNum / size;  // 列大小
+                        int c = columnNum / size;
                         for (int i = 0; i < size; i++) {
                             CellRangeAddress cellAddresses0 = new CellRangeAddress(ind, ind, i * c, i * c + c - 1);
                             sheet.addMergedRegion(cellAddresses0);

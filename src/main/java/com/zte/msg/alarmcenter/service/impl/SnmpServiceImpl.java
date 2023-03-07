@@ -43,11 +43,9 @@ public class SnmpServiceImpl implements SnmpService {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(file));
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
-            //读取第一个工作表
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             List<SnmpSlotReqDTO> temp = new ArrayList<>();
             for (Row cells : sheet) {
-                //如果当前行的行号（从0开始）未达到2（第三行）则从新循环
                 if (cells.getRowNum() < 2) {
                     continue;
                 }
@@ -272,12 +270,11 @@ public class SnmpServiceImpl implements SnmpService {
 
     @Override
     public Page<SnmpAlarmCodeResDTO> getSnmpAlarmCode(String code, Long systemId, Long page, Long size) {
-        List<SnmpAlarmCodeResDTO> snmpSlotResDTOList = null;
+        List<SnmpAlarmCodeResDTO> snmpSlotResDTOList;
         int count = mySlotMapper.getSnmpAlarmCodeCount(code, systemId);
         Page<SnmpAlarmCodeResDTO> pageBean = new Page<>();
         pageBean.setCurrent(page).setPages(size).setTotal(count);
         if (count > 0) {
-//            pageReq.setPage((pageReq.getPage() - 1) * pageReq.getSize());
             page = (page - 1) * size;
             snmpSlotResDTOList = mySlotMapper.getSnmpAlarmCode(code, systemId, page, size);
             pageBean.setRecords(snmpSlotResDTOList);

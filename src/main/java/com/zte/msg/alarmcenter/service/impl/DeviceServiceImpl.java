@@ -33,10 +33,8 @@ public class DeviceServiceImpl implements DeviceService {
 
     @Override
     public void exportDevice(String name, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
-        // 列名
         List<String> listName = Arrays.asList("线路编号", "车站编号", "系统编号", "设备编号", "设备名称", "规格型号", "设备厂商");
         List<DeviceResDTO> deviceResList = myDeviceMapper.exportDevice(name, deviceCode, systemId, positionId, null, null);
-        // 列名 数据
         List<Map<String, String>> list = new ArrayList<>();
         if (null != deviceResList) {
             for (DeviceResDTO deviceResDTO : deviceResList) {
@@ -51,7 +49,6 @@ public class DeviceServiceImpl implements DeviceService {
                 list.add(map);
             }
         }
-        // 将需要写入Excel的数据传入
         ExcelPortUtil.excelPort("设备信息", listName, list, null, response);
     }
 
@@ -61,18 +58,15 @@ public class DeviceServiceImpl implements DeviceService {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(deviceFile));
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
-            //读取第一个工作表
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             List<DeviceReqDTO> temp = new ArrayList<>();
             for (Row cells : sheet) {
-                //如果当前行的行号（从0开始）未达到2（第三行）则从新循环
                 if (cells.getRowNum() < 2) {
                     continue;
                 }
                 DeviceReqDTO reqDTO = new DeviceReqDTO();
                 cells.getCell(0).setCellType(CellType.STRING);
                 reqDTO.setLineCode(Integer.valueOf(cells.getCell(0).getStringCellValue()));
-                // 将列设置为字符串类型
                 cells.getCell(1).setCellType(CellType.STRING);
                 reqDTO.setPositionId(Long.valueOf(cells.getCell(1).getStringCellValue()));
                 cells.getCell(2).setCellType(CellType.STRING);
@@ -95,35 +89,6 @@ public class DeviceServiceImpl implements DeviceService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-//        File files = FileUtils.transferToFile(deviceFile);
-//        List<DeviceReqDTO> temp = new ArrayList<>();
-//        Workbook wb0 = null;
-//        try {
-//            FileInputStream fileIn = new FileInputStream(files);
-//            wb0 = new HSSFWorkbook(fileIn);
-//            //获取Excel文档中的第一个表单
-//            Sheet sht0 = wb0.getSheetAt(0);
-//            for (Row cells : sht0) {
-//                //如果当前行的行号（从0开始）未达到2（第三行）则从新循环
-//                if(cells.getRowNum()<1){
-//                    continue;
-//                }
-//                DeviceReqDTO reqDTO = new DeviceReqDTO();
-//                reqDTO.setName(cells.getCell(0).getStringCellValue());
-//                reqDTO.setSystemId(Long.valueOf(cells.getCell(1).getStringCellValue()));
-//                reqDTO.setPositionId(Long.valueOf(cells.getCell(2).getStringCellValue()));
-//                reqDTO.setDeviceCode(cells.getCell(3).getStringCellValue());
-//                reqDTO.setBrand(cells.getCell(4).getStringCellValue());
-//                reqDTO.setSerialNum(cells.getCell(5).getStringCellValue());
-//                reqDTO.setDescription(cells.getCell(6).getStringCellValue());
-//                temp.add(reqDTO);
-//            }
-//            fileIn.close();
-//            myDeviceMapper.importDevice(temp);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     @Override

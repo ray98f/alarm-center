@@ -6,7 +6,6 @@ import com.zte.msg.alarmcenter.dto.res.RedisUpdateFrequencyResDTO;
 import com.zte.msg.alarmcenter.entity.AlarmHistory;
 import com.zte.msg.alarmcenter.mapper.AlarmManageMapper;
 import com.zte.msg.alarmcenter.mapper.ChildSystemMapper;
-import com.zte.msg.alarmcenter.utils.SerializeUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.apache.commons.lang3.StringUtils;

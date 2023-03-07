@@ -33,7 +33,6 @@ public class TokenUtil {
      */
     public static String getUuId() {
         String uuid = UUID.randomUUID().toString();
-        //去掉“-”符号
         return uuid.replaceAll("-", Constants.EMPTY);
     }
 
@@ -99,8 +98,8 @@ public class TokenUtil {
      * @throws Exception Token校验失败
      */
     public static String createSimpleToken(UserReqDTO item) throws Exception {
-        //默认token有效时间为2小时
-        return createSimpleToken(item, 60 * 60 * 2 * 1000);
+        //默认token有效时间为12小时
+        return createSimpleToken(item, 60 * 60 * 12 * 1000);
     }
 
     /**

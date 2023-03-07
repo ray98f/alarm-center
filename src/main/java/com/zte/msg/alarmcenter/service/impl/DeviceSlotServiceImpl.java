@@ -38,11 +38,9 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
         try {
             FileInputStream fileInputStream = new FileInputStream(FileUtils.transferToFile(deviceFile));
             XSSFWorkbook xssfWorkbook = new XSSFWorkbook(fileInputStream);
-            //读取第一个工作表
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
             List<DeviceSlotReqDTO> temp = new ArrayList<>();
             for (Row cells : sheet) {
-                //如果当前行的行号（从0开始）未达到2（第三行）则从新循环
                 if (cells.getRowNum() < 2) {
                     continue;
                 }
@@ -73,10 +71,8 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
 
     @Override
     public void exportDevice(String slotName, String deviceName, String deviceCode, Long systemId, Long positionId, HttpServletResponse response) {
-        // 列名
         List<String> listName = Arrays.asList("线路编号", "车站编号", "系统编号", "设备编号", "槽位编号", "槽位名称", "所属系统", "线路名称", "车站名称", "设备名称");
         List<DeviceSlotResDTO> deviceSlotResList = myDeviceSlotMapper.exportDevice(slotName, deviceName, deviceCode, systemId, positionId, null, null);
-        // 列名 数据
         ArrayList<Map<String, String>> list = new ArrayList<>();
         if (null != deviceSlotResList) {
             for (DeviceSlotResDTO deviceSlotResDTO : deviceSlotResList) {
@@ -95,7 +91,6 @@ public class DeviceSlotServiceImpl implements DeviceSlotService {
             }
         }
         if (list.size() > 0) {
-            // 将需要写入Excel的数据传入
             ExcelPortUtil.excelPort("槽位信息（各子系统补充）", listName, list, null, response);
         }
     }

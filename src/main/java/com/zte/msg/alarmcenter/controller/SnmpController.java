@@ -10,7 +10,6 @@ import com.zte.msg.alarmcenter.dto.req.SnmpSlotModifyReqDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO;
 import com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO;
 import com.zte.msg.alarmcenter.service.SnmpService;
-import com.zte.msg.alarmcenter.utils.SendTrapUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -23,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * description:
@@ -155,18 +153,6 @@ public class SnmpController {
     @LogMaker(value = "删除SNMP告警码")
     public DataResponse<T> deleteSnmpAlarmCode(@PathVariable("id") Long id) {
         mySlotService.deleteSnmpAlarmCode(id);
-        return DataResponse.success();
-    }
-
-    @GetMapping("/sendSnmpMsg")
-    @ApiOperation(value = "发送snmp信息")
-    public DataResponse<Void> sendSnmpMsg(String udp, String oid, String content) {
-        try {
-            SendTrapUtil.initComm(udp);
-            SendTrapUtil.sendPDU(oid, content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return DataResponse.success();
     }
 

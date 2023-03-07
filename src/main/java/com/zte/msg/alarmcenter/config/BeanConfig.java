@@ -32,16 +32,8 @@ public class BeanConfig {
         factory.setConsumerFactory(consumerFactory);
         factory.getContainerProperties().setPollTimeout(1500);
         factory.setBatchListener(true);
-        //配置手动提交offset
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
         return factory;
     }
-
-//    @Bean
-//    public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(){
-//        PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-//        configurer.setIgnoreUnresolvablePlaceholders(true);
-//        return configurer;
-//    }
 
 }

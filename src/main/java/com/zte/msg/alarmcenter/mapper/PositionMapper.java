@@ -1,6 +1,5 @@
 package com.zte.msg.alarmcenter.mapper;
 
-import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.dto.req.PositionReqDTO;
 import com.zte.msg.alarmcenter.dto.res.PositionResDTO;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,8 +23,4 @@ public interface PositionMapper {
     Integer getPositionsCount();
 
     List<PositionResDTO> getPositions(@Param("page") Long page, @Param("size") Long size);
-//
-//    Integer getPositionsByIdCount(@Param("pId")Long pId);
-//
-//    List<PositionResDTO> getPositionsById(@Param("pId") Long pId,@Param("pageReqDTO") PageReqDTO pageReqDTO);
 }
