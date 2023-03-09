@@ -5,8 +5,8 @@
     <insert id="addChildSystemConfigs">
         INSERT INTO subsystem
         (
-         id,
          pid,
+         position_id,
          `name`,
          sid,
          server_ip,
@@ -19,8 +19,8 @@
         </if>
          is_deleted)
         VALUES (
-        null,
         #{pid},
+        2,
         #{name},
         #{sid},
         #{serverIp},
