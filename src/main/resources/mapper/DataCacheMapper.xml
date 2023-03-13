@@ -6,8 +6,8 @@
     </select>
 
     <select id="selectAlarmCodeByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmCode">
-        select * from alarm_code where (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
+        select * from alarm_code where ((#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})) and is_deleted in (0,1)
     </select>
 
     <resultMap id="sAlarmRule" type="com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO">
@@ -32,8 +32,8 @@
     </select>
 
     <select id="selectAlarmRuleByTime" resultMap="sAlarmRule">
-        SELECT * FROM alarm_rule where (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
+        SELECT * FROM alarm_rule where ((#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})) and is_deleted in (0,1)
     </select>
 
     <select id="selectFilterSystem" resultType="java.lang.Long">
@@ -62,8 +62,8 @@
         select d.id, d.name, d.exe_id, d.system_id,p.p_id as position_id,d.position_id as station_id, d.device_code, d.brand,
         d.serial_num, d.description, d.manufacturer, d.is_normal, d.is_locked, d.is_deleted
         from device as d left join position as p on d.position_id=p.id and p.is_deleted=0 where
-        (#{endTime}>=d.created_at and d.created_at>=#{startTime}) or
-        (#{endTime}>=d.updated_at and d.updated_at>=#{startTime})
+        ((#{endTime}>=d.created_at and d.created_at>=#{startTime}) or
+        (#{endTime}>=d.updated_at and d.updated_at>=#{startTime})) and d.is_deleted in (0,1)
     </select>
 
     <select id="selectDeviceSlot" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
@@ -74,8 +74,8 @@
     <select id="selectDeviceSlotByTime" resultType="com.zte.msg.alarmcenter.entity.DeviceSlot">
         select ds.id, ds.exe_id, ds.system_id, p.p_id as position_id, ds.position_id as station_id, ds.device_id, ds.slot_code,ds.is_deleted,
         ds.name, ds.is_locked from device_slot as ds left join position as p on p.id=ds.position_id and p.is_deleted=0 where
-        (#{endTime}>=ds.created_at and ds.created_at>=#{startTime}) or
-        (#{endTime}>=ds.updated_at and ds.updated_at>=#{startTime})
+        ((#{endTime}>=ds.created_at and ds.created_at>=#{startTime}) or
+        (#{endTime}>=ds.updated_at and ds.updated_at>=#{startTime})) and ds.is_deleted in (0,1)
     </select>
 
     <select id="selectSubsystem" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
@@ -83,8 +83,8 @@
     </select>
 
     <select id="selectSubsystemByTime" resultType="com.zte.msg.alarmcenter.entity.Subsystem">
-        select * from subsystem where (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
+        select * from subsystem where ((#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})) and is_deleted in (0,1)
     </select>
 
     <select id="selectPosition" resultType="com.zte.msg.alarmcenter.entity.Position">
@@ -101,8 +101,8 @@
     </select>
 
     <select id="selectLinePositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
-        select * from position where type=2 and (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
+        select * from position where type=2 and ((#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})) and is_deleted in (0,1)
     </select>
 
     <select id="selectSitePosition" resultType="com.zte.msg.alarmcenter.entity.Position">
@@ -111,7 +111,7 @@
 
     <select id="selectSitePositionByTime" resultType="com.zte.msg.alarmcenter.entity.Position">
         select p1.*,p2.position_code as line_code from position as p1 left join position as p2 on p1.p_id=p2.id and p2.is_deleted=0 and p2.type=2 where p1.type=3
-        and (#{endTime}>=p1.created_at and p1.created_at>=#{startTime}) or (#{endTime}>=p1.updated_at and p1.updated_at>=#{startTime})
+        and ((#{endTime}>=p1.created_at and p1.created_at>=#{startTime}) or (#{endTime}>=p1.updated_at and p1.updated_at>=#{startTime})) and p1.is_deleted in (0,1)
     </select>
 
     <select id="selectFrequencyAlarmHistory" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
@@ -122,7 +122,7 @@
     <select id="selectFrequencyAlarmHistoryByTime" resultType="com.zte.msg.alarmcenter.entity.AlarmHistory">
         select * from alarm_history where alarm_state in (0,2,3) and alarm_frequency is not null
         and frequency_time is not null and experience_time is null and alarm_level!=1
-        and (#{endTime}>=created_at and created_at>=#{startTime}) or
-        (#{endTime}>=updated_at and updated_at>=#{startTime})
+        and ((#{endTime}>=created_at and created_at>=#{startTime}) or
+        (#{endTime}>=updated_at and updated_at>=#{startTime})) and is_deleted in (0,1)
     </select>
 </mapper>

@@ -152,7 +152,13 @@
                 SELECT #{alarmHistory.subsystemId}, #{alarmHistory.subsystemCode}, #{alarmHistory.alarmLevel},
                 #{alarmHistory.lineId}, #{alarmHistory.lineCode}, #{alarmHistory.siteId}, #{alarmHistory.siteCode},
                 #{alarmHistory.deviceId}, #{alarmHistory.deviceCode}, #{alarmHistory.slotId}, #{alarmHistory.slotCode},
-                #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId}, 1,
+                #{alarmHistory.alarmCode}, #{alarmHistory.alarmCodeId},
+                <if test="alarmHistory.subsystemCode!=6">
+                    0,
+                </if>
+                <if test="alarmHistory.subsystemCode==6">
+                    1,
+                </if>
                 <if test="alarmHistory.alarmName!=null">
                     #{alarmHistory.alarmName},
                 </if>

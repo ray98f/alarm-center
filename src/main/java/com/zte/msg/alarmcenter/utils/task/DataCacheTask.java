@@ -1,8 +1,10 @@
 package com.zte.msg.alarmcenter.utils.task;
 
+import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.mapper.DataCacheMapper;
+import com.zte.msg.alarmcenter.mapper.SnmpAlarmMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 public class DataCacheTask {
+
     @Autowired
     private DataCacheMapper dataCacheMapper;
+
+    @Autowired
+    private SnmpAlarmMapper snmpAlarmMapper;
 
     public static ConcurrentHashMap<Integer, Subsystem> subsystemData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Integer, Position> lineData = new ConcurrentHashMap<>();
@@ -29,17 +35,19 @@ public class DataCacheTask {
     public static ConcurrentHashMap<String, Device> deviceData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, DeviceSlot> deviceSlotData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<String, AlarmCode> alarmCodeData = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, SnmpDeviceSlot> snmpDeviceSlotData = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, SnmpAlarmCode> snmpAlarmCodeData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmRuleDataResDTO> alarmRuleData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Long, AlarmHistory> frequencyAlarmHistoryData = new ConcurrentHashMap<>();
 
     /**
      * 数据库增量同步
      */
-    @Scheduled(cron = "*/2 * * * * ? ")
+    @Scheduled(cron = "*/30 * * * * ? ")
     @Async
-    @SchedulerLock(name = "cacheOne", lockAtMostFor = "PT10S", lockAtLeastFor = "PT2S")
+//    @SchedulerLock(name = "cacheOne", lockAtMostFor = "PT10S", lockAtLeastFor = "PT2S")
     public void cacheOne() {
-        Timestamp startTime = new Timestamp(System.currentTimeMillis() - 10000);
+        Timestamp startTime = new Timestamp(System.currentTimeMillis() - 35000);
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
         List<Subsystem> subsystems;
         List<Position> linePositions;
@@ -47,6 +55,8 @@ public class DataCacheTask {
         List<Device> devices;
         List<DeviceSlot> deviceSlots;
         List<AlarmCode> alarmCodes;
+        List<SnmpDeviceSlot> snmpDeviceSlots;
+        List<SnmpAlarmCode> snmpAlarmCodes;
         List<AlarmRuleDataResDTO> alarmRules;
         List<AlarmHistory> alarmHistories;
         if (subsystemData.isEmpty()) {
@@ -79,6 +89,16 @@ public class DataCacheTask {
         } else {
             alarmCodes = dataCacheMapper.selectAlarmCodeByTime(startTime, endTime);
         }
+        if (snmpDeviceSlotData.isEmpty()) {
+            snmpDeviceSlots = snmpAlarmMapper.listAlarmHistoryBySnmpName();
+        } else {
+            snmpDeviceSlots = snmpAlarmMapper.listAlarmHistoryBySnmpNameByTime(startTime, endTime);
+        }
+        if (snmpAlarmCodeData.isEmpty()) {
+            snmpAlarmCodes = snmpAlarmMapper.getAlarmCodeBySnmpInfo();
+        } else {
+            snmpAlarmCodes = snmpAlarmMapper.getAlarmCodeBySnmpInfoByTime(startTime, endTime);
+        }
         if (alarmRuleData.isEmpty()) {
             alarmRules = dataCacheMapper.selectAlarmRule();
         } else {
@@ -89,11 +109,11 @@ public class DataCacheTask {
         } else {
             alarmHistories = dataCacheMapper.selectFrequencyAlarmHistoryByTime(startTime, endTime);
         }
-        addDate(subsystems, linePositions, sitePositions, devices, deviceSlots, alarmCodes, alarmRules, alarmHistories);
+        addDate(subsystems, linePositions, sitePositions, devices, deviceSlots, alarmCodes, snmpDeviceSlots, snmpAlarmCodes, alarmRules, alarmHistories);
     }
 
     private void addDate(List<Subsystem> subsystems, List<Position> linePositions, List<Position> sitePositions, List<Device> devices, List<DeviceSlot> deviceSlots,
-                         List<AlarmCode> alarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmHistories) {
+                         List<AlarmCode> alarmCodes, List<SnmpDeviceSlot> snmpDeviceSlots, List<SnmpAlarmCode> snmpAlarmCodes, List<AlarmRuleDataResDTO> alarmRules, List<AlarmHistory> alarmHistories) {
         if (subsystems != null && subsystems.size() > 0) {
             for (Subsystem subsystem : subsystems) {
                 if (subsystem.getIsDeleted() == 1) {
@@ -152,6 +172,26 @@ public class DataCacheTask {
                 }
             }
         }
+        if (snmpDeviceSlots != null && snmpDeviceSlots.size() > 0) {
+            for (SnmpDeviceSlot snmpDeviceSlot : snmpDeviceSlots) {
+                String key = "snmpName:" + snmpDeviceSlot.getSnmpName() + "-site:" + snmpDeviceSlot.getStation();
+                if (snmpDeviceSlot.getIsDeleted() == 1) {
+                    snmpDeviceSlotData.remove(key);
+                } else {
+                    snmpDeviceSlotData.put(key, snmpDeviceSlot);
+                }
+            }
+        }
+        if (snmpAlarmCodes != null && snmpAlarmCodes.size() > 0) {
+            for (SnmpAlarmCode snmpAlarmCode : snmpAlarmCodes) {
+                String key = "system:" + snmpAlarmCode.getSystemCode() + "-snmpCode:" + snmpAlarmCode.getSnmpCode();
+                if (snmpAlarmCode.getIsDeleted() == 1) {
+                    snmpAlarmCodeData.remove(key);
+                } else {
+                    snmpAlarmCodeData.put(key, snmpAlarmCode);
+                }
+            }
+        }
         if (alarmRules != null && alarmRules.size() > 0) {
             for (AlarmRuleDataResDTO alarmCode : alarmRules) {
                 if (alarmCode.getIsDeleted() == 1) {
@@ -175,9 +215,8 @@ public class DataCacheTask {
     /**
      * 数据库全量同步
      */
-    @Scheduled(cron = "0 0 6 * * ?")
+    @Scheduled(cron = "0 0 1,9,17 * * ?")
     @Async
-    @SchedulerLock(name = "cacheAll", lockAtMostFor = "PT23H", lockAtLeastFor = "PT12H")
     public void cacheAll() {
         log.info("---------- 全量缓存开始 ----------");
         List<Subsystem> subsystemList = dataCacheMapper.selectSubsystem();
@@ -186,6 +225,8 @@ public class DataCacheTask {
         List<Device> deviceList = dataCacheMapper.selectDevice();
         List<DeviceSlot> deviceSlotList = dataCacheMapper.selectDeviceSlot();
         List<AlarmCode> alarmCodeList = dataCacheMapper.selectAlarmCode();
+        List<SnmpDeviceSlot> snmpDeviceSlots = snmpAlarmMapper.listAlarmHistoryBySnmpName();
+        List<SnmpAlarmCode> snmpAlarmCodes = snmpAlarmMapper.getAlarmCodeBySnmpInfo();
         List<AlarmRuleDataResDTO> alarmRuleDetailsResDTOList = dataCacheMapper.selectAlarmRule();
         List<AlarmHistory> alarmHistoryList = dataCacheMapper.selectFrequencyAlarmHistory();
         subsystemData = new ConcurrentHashMap<>();
@@ -194,6 +235,8 @@ public class DataCacheTask {
         deviceData = new ConcurrentHashMap<>();
         deviceSlotData = new ConcurrentHashMap<>();
         alarmCodeData = new ConcurrentHashMap<>();
+        snmpDeviceSlotData = new ConcurrentHashMap<>();
+        snmpAlarmCodeData = new ConcurrentHashMap<>();
         alarmRuleData = new ConcurrentHashMap<>();
         frequencyAlarmHistoryData = new ConcurrentHashMap<>();
         for (Subsystem subsystem : subsystemList) {
@@ -217,6 +260,14 @@ public class DataCacheTask {
         for (AlarmCode alarmCode : alarmCodeList) {
             String key = "system:" + alarmCode.getSystemId() + "-site:" + alarmCode.getPositionId() + "-rule:" + alarmCode.getCode();
             alarmCodeData.put(key, alarmCode);
+        }
+        for (SnmpDeviceSlot snmpDeviceSlot : snmpDeviceSlots) {
+            String key = "snmpName:" + snmpDeviceSlot.getSnmpName() + "-site:" + snmpDeviceSlot.getStation();
+            snmpDeviceSlotData.put(key, snmpDeviceSlot);
+        }
+        for (SnmpAlarmCode snmpAlarmCode : snmpAlarmCodes) {
+            String key = "system:" + snmpAlarmCode.getSystemCode() + "-snmpCode:" + snmpAlarmCode.getSnmpCode();
+            snmpAlarmCodeData.put(key, snmpAlarmCode);
         }
         for (AlarmRuleDataResDTO alarmRuleDetailsResDTO : alarmRuleDetailsResDTOList) {
             alarmRuleData.put(alarmRuleDetailsResDTO.getId(), alarmRuleDetailsResDTO);
