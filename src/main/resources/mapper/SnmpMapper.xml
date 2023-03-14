@@ -6,11 +6,11 @@
         <foreach collection ="list" item="item" index= "index" separator=";">
             insert into snmp_slot
             (
-                system_id,
-                position_id,
-                slot_id,
-                name,
-                created_by
+            system_id,
+            position_id,
+            slot_id,
+            name,
+            created_by
             )
             select
             (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
@@ -42,49 +42,53 @@
     <insert id="addSnmpSlot">
         insert into snmp_slot
         (
-            system_id,
-            position_id,
-            slot_id,
-            `name`,
-            created_at,
-            created_by
+        system_id,
+        position_id,
+        slot_id,
+        `name`,
+        created_at,
+        created_by
         )
         values
         (
-            #{slotModifyReqDTO.systemId},
-            #{slotModifyReqDTO.positionId},
-            #{slotModifyReqDTO.slotId},
-            #{slotModifyReqDTO.name},
-            NOW(),
-            #{userId}
+        #{slotModifyReqDTO.systemId},
+        #{slotModifyReqDTO.positionId},
+        #{slotModifyReqDTO.slotId},
+        #{slotModifyReqDTO.name},
+        NOW(),
+        #{userId}
         )
     </insert>
     <insert id="importSnmpAlarmCode">
         <foreach collection ="list" item="item" index= "index" separator =";">
             insert into snmp_alarm_code
             (
-                system_id,
-                positionId,
-                element_type,
-                snmp_code,
-                code,
-                reason,
-                created_by
+            system_id,
+            positionId,
+            element_type,
+            snmp_code,
+            code,
+            reason,
+            created_by
             )
             SELECT
-                (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
-                (select id from position where type = 2 and position_code = #{item.positionId}),
-                #{item.elementType},
-                #{item.snmpCode},
-                #{item.code},
-                #{item.reason},
-                #{userId}
+            (select id from subsystem where sid = #{item.systemId} and is_deleted=0),
+            (select id from position where type = 2 and position_code = #{item.positionId}),
+            #{item.elementType},
+            #{item.snmpCode},
+            #{item.code},
+            #{item.reason},
+            #{userId}
             FROM DUAL
-            WHERE NOT exists (SELECT id FROM snmp_alarm_code WHERE element_type=#{item.elementType} and snmp_code=#{item.snmpCode} and reason=#{item.reason} and is_deleted=0)
+            WHERE NOT exists (SELECT id FROM snmp_alarm_code
+            WHERE snmp_code=#{item.snmpCode} and is_deleted=0
+            and system_id=(select id from subsystem where sid=#{item.systemId} and is_deleted=0))
         </foreach>
     </insert>
     <select id="selectSnmpAlarmCodeIsExist" resultType="java.lang.Long" parameterType="com.zte.msg.alarmcenter.dto.req.SnmpAlarmCodeReqDTO">
-        select id from snmp_alarm_code where element_type=#{snmpAlarmCode.elementType} and snmp_code=#{snmpAlarmCode.snmpCode} and reason=#{snmpAlarmCode.reason} and is_deleted=0
+        select id from snmp_alarm_code
+        where snmp_code=#{snmpAlarmCode.snmpCode} and is_deleted=0
+        and system_id=(select id from subsystem where sid=#{snmpAlarmCode.systemId} and is_deleted=0)
         <if test="id!=null">
             and id!=#{id}
         </if>
@@ -92,38 +96,37 @@
     <insert id="addSSnmpAlarmCode">
         insert into snmp_alarm_code
         (
-            id,
-            system_id,
-            positionId,
-            element_type,
-            snmp_code,
-            code,
-            reason,
-            created_at,
-            created_by
+        id,
+        system_id,
+        positionId,
+        element_type,
+        snmp_code,
+        code,
+        reason,
+        created_at,
+        created_by
         )
         values
         (
-            null,
-            #{snmpAlarmCode.systemId},
-            #{snmpAlarmCode.positionId},
-            #{snmpAlarmCode.elementType},
-            #{snmpAlarmCode.snmpCode},
-            #{snmpAlarmCode.code},
-            #{snmpAlarmCode.reason},
-            NOW(),
-            #{userId}
+        null,
+        #{snmpAlarmCode.systemId},
+        #{snmpAlarmCode.positionId},
+        #{snmpAlarmCode.elementType},
+        #{snmpAlarmCode.snmpCode},
+        #{snmpAlarmCode.code},
+        #{snmpAlarmCode.reason},
+        NOW(),
+        #{userId}
         )
     </insert>
     <update id="modifySnmpSlot">
-        update snmp_slot
-        set
-            system_id = #{slotModifyReqDTO.systemId},
-            position_id = #{slotModifyReqDTO.positionId},
-            slot_id = #{slotModifyReqDTO.slotId},
-            `name` = #{slotModifyReqDTO.name},
-            updated_at = NOW(),
-            updated_by = #{userId}
+        update snmp_slot set
+        system_id = #{slotModifyReqDTO.systemId},
+        position_id = #{slotModifyReqDTO.positionId},
+        slot_id = #{slotModifyReqDTO.slotId},
+        `name` = #{slotModifyReqDTO.name},
+        updated_at = NOW(),
+        updated_by = #{userId}
         WHERE id = #{id}
     </update>
     <update id="deleteSnmpSlot">
@@ -135,20 +138,19 @@
     <update id="modifySnmpAlarmCode">
         update snmp_alarm_code
         set
-            system_id = #{snmpAlarmCode.systemId},
-            positionId = #{snmpAlarmCode.positionId},
-            element_type = #{snmpAlarmCode.elementType},
-            snmp_code = #{snmpAlarmCode.snmpCode},
-            code = #{snmpAlarmCode.code},
-            reason = #{snmpAlarmCode.reason},
-            updated_at = NOW(),
-            updated_by = #{userId}
+        system_id = #{snmpAlarmCode.systemId},
+        positionId = #{snmpAlarmCode.positionId},
+        element_type = #{snmpAlarmCode.elementType},
+        snmp_code = #{snmpAlarmCode.snmpCode},
+        code = #{snmpAlarmCode.code},
+        reason = #{snmpAlarmCode.reason},
+        updated_at = NOW(),
+        updated_by = #{userId}
         where id = #{id}
     </update>
     <update id="deleteSnmpAlarmCode">
-        update snmp_alarm_code
-        set
-            is_deleted = 1
+        update snmp_alarm_code set
+        is_deleted = 1
         where id = #{id}
     </update>
     <select id="exportDevice" resultType="com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO">
@@ -185,9 +187,7 @@
         </if>
     </select>
     <select id="getSnmpSlotCount" resultType="java.lang.Integer">
-        select
-            count(1)
-        from snmp_slot t
+        select count(1) from snmp_slot t
         left join subsystem t1 on t.system_id = t1.id and t1.is_deleted=0
         left join `position` t2 on t.position_id = t2.id and t2.is_deleted=0
         left join device_slot t3 on t.slot_id = t3.id and t3.is_deleted=0
@@ -205,16 +205,16 @@
     </select>
     <select id="getSnmpSlot" resultType="com.zte.msg.alarmcenter.dto.res.SnmpSlotResDTO">
         select
-            t.id,
-            t.system_id,
-            t.`name` as snmpSlotName,
-            t.position_id,
-            t1.`name` as systemName,
-            t.slot_id,
-            t2.`name` as siteName,
-            t4.`name` as deviceName,
-            t3.slot_code as slotCode,
-            t3.`name` as slotName
+        t.id,
+        t.system_id,
+        t.`name` as snmpSlotName,
+        t.position_id,
+        t1.`name` as systemName,
+        t.slot_id,
+        t2.`name` as siteName,
+        t4.`name` as deviceName,
+        t3.slot_code as slotCode,
+        t3.`name` as slotName
         from snmp_slot t
         left join subsystem t1 on t.system_id = t1.id and t1.is_deleted=0
         left join `position` t2 on t.position_id = t2.id and t2.is_deleted=0
@@ -236,14 +236,14 @@
     </select>
     <select id="exportSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
         select
-            t1.sid as system_code,
-            t1.name as system_name,
-            t2.position_code as position_code,
-            t2.name as position_name,
-            t.element_type,
-            t.snmp_code,
-            t.code,
-            t.reason
+        t1.sid as system_code,
+        t1.name as system_name,
+        t2.position_code as position_code,
+        t2.name as position_name,
+        t.element_type,
+        t.snmp_code,
+        t.code,
+        t.reason
         from snmp_alarm_code t
         join subsystem t1 on t1.id = t.system_id
         join `position` t2 on t2.id = t.positionId
@@ -256,9 +256,7 @@
         </if>
     </select>
     <select id="getSnmpAlarmCodeCount" resultType="java.lang.Integer">
-        select
-            count(1)
-        from snmp_alarm_code t
+        select count(1) from snmp_alarm_code t
         join subsystem t1 on t1.id = t.system_id
         join `position` t2 on t2.id = t.positionId
         where t.is_deleted = 0
@@ -271,17 +269,17 @@
     </select>
     <select id="getSnmpAlarmCode" resultType="com.zte.msg.alarmcenter.dto.res.SnmpAlarmCodeResDTO">
         select
-            t.id,
-            t.system_id,
-            t.positionId,
-            t1.sid as systemCode,
-            t2.position_code as systemCode,
-            t1.`name` as systemName,
-            t2.`name` as positionName,
-            t.element_type,
-            t.snmp_code,
-            t.code,
-            t.reason
+        t.id,
+        t.system_id,
+        t.positionId,
+        t1.sid as systemCode,
+        t2.position_code as systemCode,
+        t1.`name` as systemName,
+        t2.`name` as positionName,
+        t.element_type,
+        t.snmp_code,
+        t.code,
+        t.reason
         from snmp_alarm_code t
         join subsystem t1 on t1.id = t.system_id
         join `position` t2 on t2.id = t.positionId
