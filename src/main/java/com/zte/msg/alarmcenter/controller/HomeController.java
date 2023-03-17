@@ -79,9 +79,10 @@ public class HomeController {
      */
     @GetMapping("/alarm")
     @ApiOperation(value = "首页告警消息")
-    public DataResponse<List<AlarmHistoryResDTO>> selectAlarmHistory(@RequestParam(required = false)
-                                                                         @ApiParam("返回数据数量") Long size) {
-        return DataResponse.of(homeService.selectAlarmHistory(size));
+    public DataResponse<List<AlarmHistoryResDTO>> selectAlarmHistory(@RequestParam(required = false) @ApiParam("返回数据数量") Long size,
+                                                                     @RequestParam(required = false) @ApiParam("系统id") Long subsystemId,
+                                                                     @RequestParam(required = false) @ApiParam("站点id") Long siteId) {
+        return DataResponse.of(homeService.selectAlarmHistory(size, subsystemId, siteId));
     }
 
     /**
@@ -91,8 +92,9 @@ public class HomeController {
      */
     @GetMapping("/alarm/export")
     @ApiOperation(value = "首页告警消息导出")
-    public DataResponse<T> exportAlarmHistory() {
-        homeService.exportAlarmHistory();
+    public DataResponse<T> exportAlarmHistory(@RequestParam(required = false) @ApiParam("系统id") Long subsystemId,
+                                              @RequestParam(required = false) @ApiParam("站点id") Long siteId) {
+        homeService.exportAlarmHistory(subsystemId, siteId);
         return DataResponse.success();
     }
 

@@ -40,12 +40,12 @@ public interface HomeService {
      * @param size
      * @return
      */
-    List<AlarmHistoryResDTO> selectAlarmHistory(Long size);
+    List<AlarmHistoryResDTO> selectAlarmHistory(Long size, Long subsystemId, Long siteId);
 
     /**
      * 首页告警消息导出
      */
-    void exportAlarmHistory();
+    void exportAlarmHistory(Long subsystemId, Long siteId);
 
     /**
      * 静音

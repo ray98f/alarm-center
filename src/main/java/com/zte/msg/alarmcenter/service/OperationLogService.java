@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zte.msg.alarmcenter.dto.PageReqDTO;
 import com.zte.msg.alarmcenter.entity.OperationLog;
 
+import javax.servlet.http.HttpServletResponse;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -25,6 +26,8 @@ public interface OperationLogService {
      * @return
      */
     Page<OperationLog> listOperationLog(String userName, String operationType, Timestamp startTime, Timestamp endTime, PageReqDTO pageReqDTO);
+
+    void exportOperationLog(String userName, String operationType, Timestamp startTime, Timestamp endTime, HttpServletResponse response);
 
     /**
      * 获取所有操作类型

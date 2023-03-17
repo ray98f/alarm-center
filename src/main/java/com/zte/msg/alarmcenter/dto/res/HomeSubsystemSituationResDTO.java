@@ -11,6 +11,9 @@ import lombok.Data;
 @Data
 public class HomeSubsystemSituationResDTO {
 
+    @ApiModelProperty(value = "系统id")
+    private Long subsystemId;
+
     @ApiModelProperty(value = "系统code")
     private Integer subsystemCode;
 

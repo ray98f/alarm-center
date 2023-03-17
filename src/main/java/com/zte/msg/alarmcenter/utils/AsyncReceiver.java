@@ -114,7 +114,6 @@ public class AsyncReceiver {
 
     @RabbitListener(queues = RabbitMqConfig.ALARM_QUEUE)
     @RabbitHandler
-    @Async
     public void alarmProcess(String json) {
         try {
             JSONArray jsonArray = JSONArray.parseArray(json);
@@ -151,7 +150,6 @@ public class AsyncReceiver {
      */
     @RabbitListener(queues = RabbitMqConfig.SNMP_ALARM_QUEUE)
     @RabbitHandler
-    @Async
     public void snmpAlarmProcess(String json) {
         try {
             JSONArray jsonArray = JSONArray.parseArray(json);
@@ -267,7 +265,7 @@ public class AsyncReceiver {
     private void syncData(List<AlarmHistory> alarmHistories) {
         if (alarmHistories != null && !alarmHistories.isEmpty()) {
             try {
-                List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId());
+                List<AlarmHistoryResDTO> alarmHistoryResDTOList = homeMapper.selectAlarmHistory(null, 0, alarmHistories.get(0).getSubsystemId(), null);
                 for (AlarmHistory alarmHistory : alarmHistories) {
                     if (alarmHistory.getSlotCode() == null) {
                         alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->

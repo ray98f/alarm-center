@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Mapper
 @Repository
-public interface SystemParamMapper extends BaseMapper<SystemParameter> {
+public interface SystemParamMapper {
 
     /**
      * 查询系统参数列表

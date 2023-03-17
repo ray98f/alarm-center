@@ -43,8 +43,7 @@ public class SystemParamController {
      */
     @GetMapping
     @ApiOperation(value = "分页查询系统参数列表")
-    public PageResponse<SystemParameter> pageSystemParam(@RequestParam(required = false)
-                                                         @ApiParam("参数名模糊查询") String parameter,
+    public PageResponse<SystemParameter> pageSystemParam(@RequestParam(required = false) @ApiParam("参数名模糊查询") String parameter,
                                                          @Valid PageReqDTO pageReqDTO) {
         return PageResponse.of(systemParamService.listSystemParam(parameter, pageReqDTO));
     }

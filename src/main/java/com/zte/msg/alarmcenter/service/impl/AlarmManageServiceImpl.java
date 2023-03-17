@@ -68,7 +68,7 @@ public class AlarmManageServiceImpl implements AlarmManageService {
         List<AlarmHistoryResDTO> alarmHistory = alarmManageMapper.exportAlarmHistory(subsystemId, siteId, alarmLevel, alarmCode, startTime, endTime);
         List<Map<String, String>> list = new ArrayList<>();
         SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-        if (null != alarmHistory) {
+        if (null != alarmHistory && !alarmHistory.isEmpty()) {
             for (AlarmHistoryResDTO alarmHistoryResDTO : alarmHistory) {
                 Map<String, String> map = new HashMap<>(16);
                 String alarmLevelName, alarmStateName = "待处理";

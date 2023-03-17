@@ -36,6 +36,11 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
                                         Timestamp startTime,
                                         Timestamp endTime);
 
+    List<OperationLog> exportOperationLog(String userName,
+                                          String operationType,
+                                          Timestamp startTime,
+                                          Timestamp endTime);
+
     /**
      * 添加操作记录
      *
@@ -44,11 +49,12 @@ public interface OperationLogMapper extends BaseMapper<OperationLog> {
      */
     int addOperationLog(OperationLog operationLog);
 
+    void deleteOperationLog();
+
     /**
      * 获取所有操作类型
      *
      * @return
      */
     List<String> getOperationType();
-
 }

@@ -4,6 +4,7 @@ import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmRuleDataResDTO;
 import com.zte.msg.alarmcenter.entity.*;
 import com.zte.msg.alarmcenter.mapper.DataCacheMapper;
+import com.zte.msg.alarmcenter.mapper.OperationLogMapper;
 import com.zte.msg.alarmcenter.mapper.SnmpAlarmMapper;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -28,6 +29,9 @@ public class DataCacheTask {
 
     @Autowired
     private SnmpAlarmMapper snmpAlarmMapper;
+
+    @Autowired
+    private OperationLogMapper operationLogMapper;
 
     public static ConcurrentHashMap<Integer, Subsystem> subsystemData = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<Integer, Position> lineData = new ConcurrentHashMap<>();
@@ -275,5 +279,10 @@ public class DataCacheTask {
         for (AlarmHistory alarmHistory : alarmHistoryList) {
             frequencyAlarmHistoryData.put(alarmHistory.getId(), alarmHistory);
         }
+    }
+
+    @Scheduled(cron = "0 0 2 * * ?")
+    public void deleteOperationLog() {
+        operationLogMapper.deleteOperationLog();
     }
 }

@@ -18,6 +18,23 @@
         ORDER BY updated_at DESC
     </select>
 
+    <select id="exportOperationLog" resultType="com.zte.msg.alarmcenter.entity.OperationLog">
+        select * from operation_log where is_deleted=0
+        <if test="userName!=null and userName!=''">
+            and user_name like CONCAT('%',#{userName},'%')
+        </if>
+        <if test="operationType!=null and operationType!=''">
+            and operation_type=#{operationType}
+        </if>
+        <if test="startTime!=null">
+            and operation_time >= #{startTime}
+        </if>
+        <if test="endTime!=null">
+            and #{endTime} >= operation_time
+        </if>
+        ORDER BY updated_at DESC
+    </select>
+
     <insert id="addOperationLog" parameterType="com.zte.msg.alarmcenter.entity.OperationLog">
         insert into operation_log
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -62,6 +79,10 @@
             </if>
         </trim>
     </insert>
+
+    <delete id="deleteOperationLog">
+        delete from operation_log where DATE_ADD(CURDATE(),INTERVAL -1 YEAR) > created_at
+    </delete>
 
     <select id="getOperationType" resultType="java.lang.String">
         SELECT DISTINCT operation_type FROM operation_log WHERE is_deleted=0

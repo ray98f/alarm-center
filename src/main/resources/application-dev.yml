@@ -23,7 +23,7 @@ spring:
       minimum-idle: 10
 
   rabbitmq:
-    addresses: 192.168.30.100:5672, 192.168.30.101:5672, 192.168.30.102:5672
+    addresses: 192.168.30.108:5672
     username: root
     password: Zxwz@123!@#
     virtual-host: dev
