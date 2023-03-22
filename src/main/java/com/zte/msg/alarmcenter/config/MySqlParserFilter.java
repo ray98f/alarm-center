@@ -111,8 +111,6 @@ public class MySqlParserFilter implements ISqlParserFilter {
                     sqlBuilder.insert(StringUtils.indexOfIgnoreCase(sql, LIMIT), SPACE + WHERE + SPACE + join + SPACE);
                 }
             }
-
-
             metaObject.setValue(PluginUtils.DELEGATE_BOUNDSQL_SQL, sqlBuilder.toString());
         }
         return false;

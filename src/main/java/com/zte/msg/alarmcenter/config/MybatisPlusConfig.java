@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * @date 2020/4/21 15:34
  */
 @Configuration
-@MapperScan("com.zte.msg.pushcenter.mapper")
+@MapperScan("com.zte.msg.alarmcenter.mapper")
 public class MybatisPlusConfig {
 
     /**
