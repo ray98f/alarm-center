@@ -42,11 +42,15 @@
 
     <select id="stationSituation" resultMap="stationDTO">
         select p.id as station_id,p.name as station_name,p.coordinate,#{lineId} as line_id,
-        ifnull(sum(case when ah.alarm_level=1 and ah.alarm_state in (0,1,2,3) then 1 end),0) as emergency_alarm_num,
-        ifnull(sum(case when ah.alarm_level=2 and ah.alarm_state in (0,1,2,3) then 1 end),0) as serious_alarm_num,
-        ifnull(sum(case when ah.alarm_level=3 and ah.alarm_state in (0,1,2,3) then 1 end),0) as general_alarm_num
-        from position as p left join alarm_history as ah on ah.site_id=p.id and ah.line_id=#{lineId} and ah.is_deleted=0
-        where p.p_id=#{lineId} and p.type=3 and p.is_deleted=0 group by p.id
+        (select count(1) from alarm_history as ah1 where ah1.site_id=p.id and ah1.line_id=#{lineId} and ah1.is_deleted=0
+        and ah1.alarm_level=1 and ah1.alarm_state in (0,1,2,3) limit 1) as emergency_alarm_num,
+        (select count(1) from alarm_history as ah2 where ah2.site_id=p.id and ah2.line_id=#{lineId} and ah2.is_deleted=0
+        and ah2.alarm_level=2 and ah2.alarm_state in (0,1,2,3) limit 1) as serious_alarm_num,
+        (select count(1) from alarm_history as ah3 where ah3.site_id=p.id and ah3.line_id=#{lineId} and ah3.is_deleted=0
+        and ah3.alarm_level=3 and ah3.alarm_state in (0,1,2,3) limit 1) as general_alarm_num
+        from position as p
+        where p.p_id=#{lineId} and p.type=3 and p.is_deleted=0
+        group by p.id
         order by p.sort asc
     </select>
 
