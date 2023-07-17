@@ -273,7 +273,8 @@ public class AsyncReceiver {
                                         alarmHistory.getLineCode().equals(alarmHistoryResDTO.getLineCode()) &&
                                         alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
                                         alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
-                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()) &&
+                                        (alarmHistory.getIsRecovery() ? 1 : 0) == (alarmHistoryResDTO.getIsRecovery()));
                     } else {
                         alarmHistoryResDTOList.removeIf(alarmHistoryResDTO ->
                                 alarmHistory.getSubsystemCode().equals(alarmHistoryResDTO.getSubsystemCode()) &&
@@ -281,7 +282,8 @@ public class AsyncReceiver {
                                         alarmHistory.getSiteCode().equals(alarmHistoryResDTO.getSiteCode()) &&
                                         alarmHistory.getDeviceCode().equals(alarmHistoryResDTO.getDeviceCode()) &&
                                         alarmHistory.getSlotCode().equals(alarmHistoryResDTO.getSlotPositionCode()) &&
-                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()));
+                                        alarmHistory.getAlarmCodeId().toString().equals(alarmHistoryResDTO.getAlarmCode()) &&
+                                        (alarmHistory.getIsRecovery() ? 1 : 0) == (alarmHistoryResDTO.getIsRecovery()));
                     }
                 }
                 if (alarmHistoryResDTOList.size() > 0) {

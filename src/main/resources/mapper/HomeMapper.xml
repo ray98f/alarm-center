@@ -67,7 +67,7 @@
     <select id="selectAlarmHistory" resultType="com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO">
         SELECT ah.id,ah.subsystem_id,ah.subsystem_code,s.name as subsystem_name,ah.site_id,ah.site_code,p.name as site_name,ah.line_code,ah.device_code,ah.slot_code as slot_position_code,
         ah.device_id,d.name as device_name,ah.alarm_level,ah.slot_id,ds.name as slot_position,ac.code as alarm_code,
-        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.is_ring,ah.frequency,
+        ah.alarm_name,ah.alarm_reason,ah.first_time,ah.final_time,ah.is_upgrade,ah.is_mute,ah.is_ring,ah.frequency,ah.is_recovery,
         ah.alarm_volume,ah.alarm_state,ah.alarm_remark FROM alarm_history as ah
         left join subsystem as s on s.id=ah.subsystem_id and s.is_deleted=0
         left join position as p on p.id=ah.site_id and p.is_deleted=0

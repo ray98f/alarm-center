@@ -95,6 +95,9 @@ public class AlarmHistoryResDTO {
     @ApiModelProperty(value = "是否响铃")
     private Integer isRing;
 
+    @ApiModelProperty(value = "是否恢复")
+    private Integer isRecovery;
+
     @ApiModelProperty(value = "告警状态(1待处理;2手动确认;3自动确认;4已清除;5手动过滤;6自动过滤)")
     private Integer alarmState;
 
