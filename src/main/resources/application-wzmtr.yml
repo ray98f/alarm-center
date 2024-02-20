@@ -90,3 +90,8 @@ redisson:
   password: Zxwz123!@#
 
 imagePath: "http://10.20.10.187:8888/"
+
+eam:
+  address: http://192.168.30.140:8002
+  url:
+    fault: /eam/fault/report/insert/equip/open

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zte.msg.alarmcenter.config.RabbitMqConfig;
 import com.zte.msg.alarmcenter.dto.AsyncVO;
 import com.zte.msg.alarmcenter.dto.req.AlarmHistoryReqDTO;
+import com.zte.msg.alarmcenter.dto.req.EamFaultReportReqDTO;
 import com.zte.msg.alarmcenter.dto.req.HeartbeatQueueReqDTO;
 import com.zte.msg.alarmcenter.dto.req.SnmpAlarmDTO;
 import com.zte.msg.alarmcenter.dto.res.AlarmHistoryResDTO;
@@ -17,7 +18,6 @@ import com.zte.msg.alarmcenter.exception.CommonException;
 import com.zte.msg.alarmcenter.mapper.*;
 import com.zte.msg.alarmcenter.utils.task.DataCacheTask;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;
@@ -25,8 +25,12 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -47,6 +51,10 @@ public class AsyncReceiver {
 
     @Value("${spring.redis.key-prefix}")
     private String keyPrefix;
+    @Value("${eam.address}")
+    private String eamAddress;
+    @Value("${eam.url.fault}")
+    private String eamUrlFault;
 
     @Autowired
     private SynchronizeMapper synchronizeMapper;
@@ -77,6 +85,9 @@ public class AsyncReceiver {
 
     @Autowired
     AsyncSender asyncSender;
+
+    @Autowired
+    private RestTemplate restTemplate;
 
     @RabbitListener(queues = RabbitMqConfig.STRING_QUEUE)
     @RabbitHandler
@@ -262,6 +273,31 @@ public class AsyncReceiver {
         }
     }
 
+    /**
+     * 推送告警消息至EAM生成故障工单
+     * @param alarmHistories 告警信息列表
+     */
+    private void sendMsgToEam(List<AlarmHistory> alarmHistories) {
+        if (alarmHistories != null && !alarmHistories.isEmpty()) {
+            for (AlarmHistory alarm : alarmHistories) {
+                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.valueOf("application/json;UTF-8"));
+//                headers.add("Authorization", getBusinessManageToken(spaceListReqDTO.getCommunityNo()));
+                String url = eamAddress + eamUrlFault;
+                EamFaultReportReqDTO req = new EamFaultReportReqDTO();
+                // todo 填充eam推送信息
+                req.setAlamTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                req.setLineName("S2线");
+
+                HttpEntity<String> strEntity = new HttpEntity<>(JSONObject.toJSONString(req), headers);
+                JSONObject res = restTemplate.postForObject(url, strEntity, JSONObject.class);
+                if (!Constants.SUCCESS.equals(Objects.requireNonNull(res).getString(Constants.CODE))) {
+                    throw new CommonException(ErrorCode.OPENAPI_ERROR, String.valueOf(res.get(Constants.MESSAGE)));
+                }
+            }
+        }
+    }
+
     private void syncData(List<AlarmHistory> alarmHistories) {
         if (alarmHistories != null && !alarmHistories.isEmpty()) {
             try {
@@ -286,7 +322,7 @@ public class AsyncReceiver {
                                         (alarmHistory.getIsRecovery() ? 1 : 0) == (alarmHistoryResDTO.getIsRecovery()));
                     }
                 }
-                if (alarmHistoryResDTOList.size() > 0) {
+                if (!alarmHistoryResDTOList.isEmpty()) {
                     alarmManageMapper.updateSyncAlarmHistory(alarmHistoryResDTOList);
                 }
                 alarmManageMapper.syncAlarmHistory(alarmHistories);
