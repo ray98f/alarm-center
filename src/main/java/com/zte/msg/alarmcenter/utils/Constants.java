@@ -21,7 +21,11 @@ public class Constants {
 
     public static final long PER_MINUTE_MILLS = 60000;
 
-    public static final int SUCCESS = 0;
+    public static final String SUCCESS = "0";
+
+    public static final String CODE = "code";
+
+    public static final String MESSAGE = "message";
 
     public static final Pattern SMS_CONTENT_PATTERN_1 = Pattern.compile("\\{(.*?)}");
 
